@@ -1,0 +1,33 @@
+tier	family	file_name	expected_codepage	expected_name	notes
+strict	ASCII	ascii.txt	0	ASCII	Pure ASCII baseline
+strict	Unicode	utf8-bom.txt	65001	UTF-8	UTF-8 with BOM
+strict	Unicode	utf8-nobom.txt	65001	UTF-8	UTF-8 without BOM using a clear multibyte sample
+strict	Unicode	utf16le-bom.bin	1200	UTF-16LE	UTF-16 LE BOM path
+strict	Unicode	utf16be-bom.bin	1201	UTF-16BE	UTF-16 BE BOM path
+strict	Unicode	utf32le-bom.bin	12000	UTF-32LE	UTF-32 LE BOM path
+strict	Unicode	utf32be-bom.bin	12001	UTF-32BE	UTF-32 BE BOM path
+strict	Unicode	ucs4-2143-bom.bin	12000	X-ISO-10646-UCS-4-2143	UCS-4 unusual byte order 2143
+strict	Unicode	ucs4-3412-bom.bin	12001	X-ISO-10646-UCS-4-3412	UCS-4 unusual byte order 3412
+strict	Cyrillic	windows-1251.txt	1251	windows-1251	Windows Cyrillic baseline
+strict	Cyrillic	iso-8859-5.txt	28595	ISO-8859-5	ISO Cyrillic sample
+strict	Cyrillic	koi8-r.txt	20866	KOI8-R	KOI8-R sample
+strict	Cyrillic	ibm866.txt	866	IBM866	DOS Cyrillic sample
+strict	Cyrillic	ibm855.txt	855	IBM855	Alternate DOS Cyrillic sample
+strict	Cyrillic	x-mac-cyrillic.txt	10007	x-mac-cyrillic	Mac Cyrillic sample
+strict	Western	windows-1252.txt	1252	windows-1252	Western European sample with C1 bytes
+strict	Greek	iso-8859-7.txt	28597	ISO-8859-7	Greek ISO sample without C1 bytes
+strict	Greek	windows-1253.txt	1253	windows-1253	Greek Windows sample with C1 bytes
+strict	Greek	windows-1253-no-c1.txt	1253	windows-1253	Greek Windows sample without C1 bytes, using non-C1 discriminator bytes
+strict	Hebrew	windows-1255.txt	1255	windows-1255	Hebrew Windows sample with shekel sign
+strict	Hebrew	iso-8859-8.txt	28598	ISO-8859-8	Visual Hebrew sample to distinguish ISO-8859-8 from logical Windows-1255
+informational	Western	windows-1252-no-c1.txt	1252	windows-1252	No C1 bytes; sample is byte-compatible with ISO-8859-1-like content
+informational	Western	iso-8859-1-like.txt	1252	windows-1252	Source bytes are ISO-8859-1-compatible; detector contract collapses this family into windows-1252
+strict	Japanese	shift-jis.txt	932	Shift_JIS	Shift_JIS sample
+strict	Japanese	euc-jp.txt	51932	EUC-JP	EUC-JP sample
+strict	Japanese	iso-2022-jp.txt	50222	ISO-2022-JP	ISO-2022-JP sample
+strict	Korean	euc-kr.txt	51949	EUC-KR	EUC-KR sample
+strict	Korean	iso-2022-kr.txt	50225	ISO-2022-KR	ISO-2022-KR sample
+strict	Chinese	big5.txt	950	Big5	Traditional Chinese Big5 sample
+strict	Chinese	hz-gb-2312.txt	52936	HZ-GB-2312	HZ-GB-2312 sample
+strict	Chinese	gb18030.txt	54936	GB18030	Simplified Chinese GB18030 sample
+strict	Chinese	iso-2022-cn.txt	50227	ISO-2022-CN	RFC 1922 escape-stream sample
