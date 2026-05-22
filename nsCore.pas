@@ -131,7 +131,13 @@ type
     SHIFT_JIS_CHARSET         = 028,
     GB18030_CHARSET           = 029,
     HZ_GB_2312_CHARSET        = 030,
-    WINDOWS_1252_CHARSET      = 031
+    WINDOWS_1252_CHARSET      = 031,
+    IBM437_CHARSET            = 032,
+    IBM850_CHARSET            = 033,
+    IBM852_CHARSET            = 034,
+    IBM858_CHARSET            = 035,
+    WINDOWS_1250_CHARSET      = 036,
+    KOI8_U_CHARSET            = 037
   );
 
 const
@@ -327,6 +333,42 @@ const
       Name:  'windows-1252';
       CodePage:  1252;
       Language:  'eu';
+    ),
+  // IBM437_CHARSET
+    (
+      Name:  'IBM437';
+      CodePage:  437;
+      Language:  'DOS';
+    ),
+  // IBM850_CHARSET
+    (
+      Name:  'IBM850';
+      CodePage:  850;
+      Language:  'DOS';
+    ),
+  // IBM852_CHARSET
+    (
+      Name:  'IBM852';
+      CodePage:  852;
+      Language:  'DOS';
+    ),
+  // IBM858_CHARSET
+    (
+      Name:  'IBM858';
+      CodePage:  858;
+      Language:  'DOS';
+    ),
+  // WINDOWS_1250_CHARSET
+    (
+      Name:  'windows-1250';
+      CodePage:  1250;
+      Language:  'central european';
+    ),
+  // KOI8_U_CHARSET
+    (
+      Name:  'KOI8-U';
+      CodePage:  21866;
+      Language:  'ukrainian';
     )
 
   );

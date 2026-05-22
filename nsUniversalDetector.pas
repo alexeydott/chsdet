@@ -46,6 +46,14 @@ type nsInputState = (
       mSeenC1Byte: Boolean;
       mSeenGreek1253Byte: Boolean;
       mSeenGreekIsoByte: Boolean;
+      mTotalByteCount: Integer;
+      mHighByteCount: Integer;
+      mOemArtByteCount: Integer;
+      mOem850ByteCount: Integer;
+      mOem852ByteCount: Integer;
+      mOem858ByteCount: Integer;
+      mWin1250ByteCount: Integer;
+      mKoi8UByteCount: Integer;
       mLastChar: AnsiChar;
       mDetectedCharset: eInternalCharsetID;
       mDetectedConfidence: float;
@@ -59,6 +67,8 @@ type nsInputState = (
       function GetCharsetID(CodePage: integer): eInternalCharsetID;
       function CharsetFromBOM(BOM: eBOMKind): eInternalCharsetID;
       function NormalizeCharsetByObservedBytes(Charset: eInternalCharsetID): eInternalCharsetID;
+      function LooksLikeOemArt: Boolean;
+      function DetectLegacyByteSignature: eInternalCharsetID;
       procedure DoEnableCharset(Charset: eInternalCharsetID; SetEnabledTo: Boolean);
 		public
     	constructor Create;
@@ -94,6 +104,12 @@ uses
 
 const
 	MINIMUM_THRESHOLD: float  = 0.20;
+  OEM_ART_MIN_BYTES = 64;
+  OEM_ART_MIN_HIGH_RATIO: float = 0.15;
+  OEM_ART_MIN_ART_HIGH_RATIO: float = 0.70;
+  LEGACY_MIN_BYTES = 128;
+  LEGACY_MIN_HIGH_BYTES = 20;
+  OEM_LATIN_MAX_HIGH_RATIO: float = 0.65;
 
   AboutInfo: rAboutHolder = (
     MajorVersionNr: 0;
@@ -132,6 +148,8 @@ procedure TnsUniversalDetector.DataEnd;
 var
 	proberConfidence: float;
   maxProberConfidence: float;
+  LegacyCharset: eInternalCharsetID;
+  DetectedCharset: eInternalCharsetID;
   maxProber: PRInt32;
   i: integer;
 begin
@@ -148,6 +166,21 @@ begin
   case mInputState of
     eHighbyte:
       begin
+        if LooksLikeOemArt then
+        begin
+          mDetectedConfidence := SURE_YES;
+          Report(IBM437_CHARSET);
+          Exit;
+        end;
+
+        LegacyCharset := DetectLegacyByteSignature;
+        if LegacyCharset <> UNKNOWN_CHARSET then
+        begin
+          mDetectedConfidence := SURE_YES;
+          Report(LegacyCharset);
+          Exit;
+        end;
+
         maxProberConfidence := 0.0;
         maxProber := 0;
         for i := 0 to Pred(NUM_OF_CHARSET_PROBERS) do
@@ -163,7 +196,12 @@ begin
         if maxProberConfidence > MINIMUM_THRESHOLD then
           begin
             mDetectedConfidence := maxProberConfidence;
-	          Report(mCharSetProbers[maxProber].GetDetectedCharset);
+            DetectedCharset := mCharSetProbers[maxProber].GetDetectedCharset;
+            if (DetectedCharset = KOI8_R_CHARSET) and (mKoi8UByteCount >= 10) then
+              DetectedCharset := KOI8_U_CHARSET
+            else if (DetectedCharset = WINDOWS_1252_CHARSET) and (mWin1250ByteCount >= 20) then
+              DetectedCharset := WINDOWS_1250_CHARSET;
+	          Report(DetectedCharset);
           end;
       end;
     eEscAscii:
@@ -218,11 +256,33 @@ begin
 
   for i := 0 to Pred(aLen) do
     begin
+      Inc(mTotalByteCount);
+      if Byte(aBuf[i]) >= $80 then
+        Inc(mHighByteCount);
       if aBuf[i] = #0 then
         mSeenZeroByte := TRUE;
       if (Byte(aBuf[i]) >= $80) and (Byte(aBuf[i]) <= $9F) then
         mSeenC1Byte := TRUE;
+
+      if Byte(aBuf[i]) in [$87, $89, $97, $A2] then
+        Inc(mOem850ByteCount);
+      if Byte(aBuf[i]) in [$86, $88, $8B, $94, $98, $A0, $A1, $A3, $A5, $A7, $A9, $AB,
+        $B5, $BE, $D4, $D8] then
+        Inc(mOem852ByteCount);
+      if Byte(aBuf[i]) = $D5 then
+        Inc(mOem858ByteCount);
+      if Byte(aBuf[i]) in [$9A, $9C, $9D, $9E, $9F] then
+        Inc(mWin1250ByteCount);
+      if Byte(aBuf[i]) in [$A4, $A6, $A7, $AD] then
+        Inc(mKoi8UByteCount);
+
       case Byte(aBuf[i]) of
+        $B0, $B1, $B2, $B3, $B4,
+        $B9, $BA, $BB, $BC, $BF,
+        $C0, $C1, $C2, $C3, $C4, $C5,
+        $C8, $C9, $CA, $CB, $CC, $CD, $CE,
+        $D9, $DA, $DB, $DC, $DD, $DE, $DF, $FE:
+          Inc(mOemArtByteCount);
         $A1, $A2:
           mSeenGreek1253Byte := TRUE;
         $B5, $B6:
@@ -350,6 +410,14 @@ begin
   mSeenC1Byte := FALSE;
   mSeenGreek1253Byte := FALSE;
   mSeenGreekIsoByte := FALSE;
+  mTotalByteCount := 0;
+  mHighByteCount := 0;
+  mOemArtByteCount := 0;
+  mOem850ByteCount := 0;
+  mOem852ByteCount := 0;
+  mOem858ByteCount := 0;
+  mWin1250ByteCount := 0;
+  mKoi8UByteCount := 0;
   mInputState := ePureAscii;
   mLastChar := #0; (*illegal value as signal*)
   mEscCharSetProber.Reset;
@@ -459,6 +527,44 @@ begin
     ISO_8859_8_CHARSET:
       Result := WINDOWS_1255_CHARSET;
   end;
+end;
+
+function TnsUniversalDetector.LooksLikeOemArt: Boolean;
+begin
+  Result :=
+    (mTotalByteCount >= OEM_ART_MIN_BYTES) and
+    (mHighByteCount > 0) and
+    (mOemArtByteCount >= OEM_ART_MIN_BYTES) and
+    (mHighByteCount / mTotalByteCount >= OEM_ART_MIN_HIGH_RATIO) and
+    (mOemArtByteCount / mHighByteCount >= OEM_ART_MIN_ART_HIGH_RATIO);
+end;
+
+function TnsUniversalDetector.DetectLegacyByteSignature: eInternalCharsetID;
+var
+  HighRatio: float;
+begin
+  Result := UNKNOWN_CHARSET;
+
+  if (mTotalByteCount < LEGACY_MIN_BYTES) or
+     (mHighByteCount < LEGACY_MIN_HIGH_BYTES) then
+    Exit;
+
+  HighRatio := mHighByteCount / mTotalByteCount;
+
+  if HighRatio > OEM_LATIN_MAX_HIGH_RATIO then
+    Exit;
+
+  if (mOem858ByteCount >= 4) and (mOem850ByteCount >= 20) then
+    Exit(IBM858_CHARSET);
+
+  if mOem852ByteCount >= 20 then
+    Exit(IBM852_CHARSET);
+
+  if mOem850ByteCount >= 20 then
+    Exit(IBM850_CHARSET);
+
+  if mWin1250ByteCount >= 20 then
+    Exit(WINDOWS_1250_CHARSET);
 end;
 
 procedure TnsUniversalDetector.DisableCharset(CodePage: integer);
