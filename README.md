@@ -16,12 +16,17 @@ The table below is copied from the original [ReadMe.txt](ReadMe.txt) and updated
 | Code page | Name | Notes |
 | ---: | --- | --- |
 | 0 | `ASCII` | Pseudo code page used for pure ASCII input. |
+| 437 | `IBM437` | DOS/OEM NFO and box/block drawing art. |
+| 850 | `IBM850` | DOS Latin-1. |
+| 852 | `IBM852` | DOS Central European. |
 | 855 | `IBM855` | DOS Cyrillic. |
+| 858 | `IBM858` | DOS Latin-1 with euro sign. |
 | 866 | `IBM866` | DOS Cyrillic. |
 | 932 | `Shift_JIS` | Japanese. |
 | 950 | `Big5` | Traditional Chinese. |
 | 1200 | `UTF-16LE` | Unicode with BOM-aware detection. |
 | 1201 | `UTF-16BE` | Unicode with BOM-aware detection. |
+| 1250 | `windows-1250` | Central European single-byte path. |
 | 1251 | `windows-1251` | Cyrillic; public output may be paired with Russian or Bulgarian language hints. |
 | 1252 | `windows-1252` | Western European single-byte path. |
 | 1253 | `windows-1253` | Greek single-byte path. |
@@ -32,6 +37,7 @@ The table below is copied from the original [ReadMe.txt](ReadMe.txt) and updated
 | 12001 | `X-ISO-10646-UCS-4-3412` | UCS-4 unusual byte order, detected through BOM. |
 | 12001 | `UTF-32BE` | Shares code page `12001` with the UCS-4 BE-family alias. |
 | 20866 | `KOI8-R` | Cyrillic. |
+| 21866 | `KOI8-U` | Ukrainian Cyrillic. |
 | 28595 | `ISO-8859-5` | Cyrillic; public output may be paired with Russian or Bulgarian language hints. |
 | 28597 | `ISO-8859-7` | Greek. |
 | 28598 | `ISO-8859-8` | Hebrew. |
@@ -73,8 +79,11 @@ var
 begin
   Detection := TChsDetect.DetectFile('sample.txt');
 
-  if Detection.GetEncoding(Encoding) then
-    Writeln(Encoding.EncodingName)
+  if Detection.GetEncoding(Encoding) then begin
+    Writeln(Encoding.EncodingName);
+    if not TEncoding.IsStandardEncoding(Encoding) then
+      Encoding.Free; // dont forget to release it if needed.
+  end
   else
     Writeln('No RTL TEncoding is available for this result.');
 end;
