@@ -14,6 +14,12 @@ strict	Cyrillic	koi8-r.txt	20866	KOI8-R	KOI8-R sample
 strict	Cyrillic	ibm866.txt	866	IBM866	DOS Cyrillic sample
 strict	Cyrillic	ibm855.txt	855	IBM855	Alternate DOS Cyrillic sample
 strict	Cyrillic	x-mac-cyrillic.txt	10007	x-mac-cyrillic	Mac Cyrillic sample
+strict	Cyrillic	koi8-u.txt	21866	KOI8-U	Ukrainian KOI8 sample with distinctive Ukrainian letters
+strict	DOS	cp437-nfo-art.txt	437	IBM437	NFO-style pseudo-graphics with CP437 box and block drawing bytes
+strict	DOS	ibm850.txt	850	IBM850	DOS Latin-1 sample with OEM-specific accented bytes
+strict	DOS	ibm852.txt	852	IBM852	DOS Central European sample with Polish, Czech, and Hungarian letters
+strict	DOS	ibm858.txt	858	IBM858	DOS Latin-1 sample with euro sign discriminator
+strict	Central European	windows-1250.txt	1250	windows-1250	Windows Central European sample with C1 discriminator bytes
 strict	Western	windows-1252.txt	1252	windows-1252	Western European sample with C1 bytes
 strict	Greek	iso-8859-7.txt	28597	ISO-8859-7	Greek ISO sample without C1 bytes
 strict	Greek	windows-1253.txt	1253	windows-1253	Greek Windows sample with C1 bytes

@@ -21,8 +21,6 @@ type
     class function CombineBytes(const Prefix, Payload: TBytes): TBytes; static;
     class function BuildBytes(const Text: string; Encoding: TEncoding; IncludePreamble: Boolean = False): TBytes; static;
     class function MakeTempFile(const Bytes: TBytes): string; static;
-    class function FixturePath(const FileName: string): string; static;
-    class function LoadFixtureBytes(const FileName: string): TBytes; static;
     class function LoadCorpusFixtureBytes(const FileName: string): TBytes; static;
     class function AsciiText: string; static;
     class function RussianText: string; static;
@@ -43,6 +41,12 @@ type
     [Test] procedure PromotesWindows1253WhenC1BytesArePresent;
     [Test] procedure DetectsWindows1253WithoutC1FromDiscriminatorBytes;
     [Test] procedure DetectsIbm866FromChunkedInput;
+    [Test] procedure DetectsCp437FromCorpusNfoArt;
+    [Test] procedure DetectsIbm850FromCorpus;
+    [Test] procedure DetectsIbm852FromCorpus;
+    [Test] procedure DetectsIbm858FromCorpus;
+    [Test] procedure DetectsWindows1250FromCorpus;
+    [Test] procedure DetectsKoi8UFromCorpus;
     [Test] procedure DetectsShiftJisFromBytes;
     [Test] procedure DetectsIso88598FromVisualCorpusSample;
     [Test] procedure DetectsBig5FromBytes;
@@ -106,21 +110,6 @@ class function TChsDetectorTests.MakeTempFile(const Bytes: TBytes): string;
 begin
   Result := TPath.Combine(TPath.GetTempPath, TPath.GetRandomFileName + '.txt');
   TFile.WriteAllBytes(Result, Bytes);
-end;
-
-class function TChsDetectorTests.FixturePath(const FileName: string): string;
-begin
-  Result := TPath.GetFullPath(
-    TPath.Combine(
-      TPath.Combine(ExtractFilePath(ParamStr(0)), '..'),
-      TPath.Combine(TPath.Combine('tests', 'data'), FileName)
-    )
-  );
-end;
-
-class function TChsDetectorTests.LoadFixtureBytes(const FileName: string): TBytes;
-begin
-  Result := TFile.ReadAllBytes(FixturePath(FileName));
 end;
 
 class function TChsDetectorTests.LoadCorpusFixtureBytes(const FileName: string): TBytes;
@@ -381,6 +370,84 @@ begin
   Assert.AreEqual('IBM866', Detection.Name);
 end;
 
+procedure TChsDetectorTests.DetectsCp437FromCorpusNfoArt;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('cp437-nfo-art.txt');
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(437, Detection.CodePage);
+  Assert.AreEqual('IBM437', Detection.Name);
+  Assert.AreEqual('DOS', Detection.Language);
+end;
+
+procedure TChsDetectorTests.DetectsIbm850FromCorpus;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('ibm850.txt');
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(850, Detection.CodePage);
+  Assert.AreEqual('IBM850', Detection.Name);
+  Assert.AreEqual('DOS', Detection.Language);
+end;
+
+procedure TChsDetectorTests.DetectsIbm852FromCorpus;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('ibm852.txt');
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(852, Detection.CodePage);
+  Assert.AreEqual('IBM852', Detection.Name);
+  Assert.AreEqual('DOS', Detection.Language);
+end;
+
+procedure TChsDetectorTests.DetectsIbm858FromCorpus;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('ibm858.txt');
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(858, Detection.CodePage);
+  Assert.AreEqual('IBM858', Detection.Name);
+  Assert.AreEqual('DOS', Detection.Language);
+end;
+
+procedure TChsDetectorTests.DetectsWindows1250FromCorpus;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('windows-1250.txt');
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(1250, Detection.CodePage);
+  Assert.AreEqual('windows-1250', Detection.Name);
+  Assert.AreEqual('central european', Detection.Language);
+end;
+
+procedure TChsDetectorTests.DetectsKoi8UFromCorpus;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('koi8-u.txt');
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(21866, Detection.CodePage);
+  Assert.AreEqual('KOI8-U', Detection.Name);
+  Assert.AreEqual('ukrainian', Detection.Language);
+end;
+
 procedure TChsDetectorTests.DetectsShiftJisFromBytes;
 var
   Bytes: TBytes;
@@ -412,7 +479,7 @@ var
   Bytes: TBytes;
   Detection: TChsDetectionResult;
 begin
-  Bytes := LoadFixtureBytes('big5-sample.txt');
+  Bytes := LoadCorpusFixtureBytes('big5.txt');
   Detection := TChsDetect.Detect(Bytes);
 
   Assert.AreEqual<Integer>(950, Detection.CodePage);
@@ -425,7 +492,7 @@ var
   Bytes: TBytes;
   Detection: TChsDetectionResult;
 begin
-  Bytes := LoadFixtureBytes('euc-jp-sample.txt');
+  Bytes := LoadCorpusFixtureBytes('euc-jp.txt');
   Detection := TChsDetect.Detect(Bytes);
 
   Assert.AreEqual<Integer>(51932, Detection.CodePage);
@@ -443,7 +510,7 @@ var
 const
   ChunkSize = 53;
 begin
-  Bytes := LoadFixtureBytes('gb18030-sample.txt');
+  Bytes := LoadCorpusFixtureBytes('gb18030.txt');
   Detector := TChsDetect.New;
   Offset := 0;
 
@@ -466,7 +533,7 @@ var
   FileName: string;
   Detection: TChsDetectionResult;
 begin
-  FileName := FixturePath('iso-2022-jp-sample.txt');
+  FileName := TPath.Combine(TChsCorpus.DataDir, 'iso-2022-jp.txt');
   Detection := TChsEncodingDetector.DetectFile(FileName);
 
   Assert.AreEqual<Integer>(50222, Detection.CodePage);
@@ -479,7 +546,7 @@ var
   Bytes: TBytes;
   Detection: TChsDetectionResult;
 begin
-  Bytes := LoadFixtureBytes('iso-2022-jp-sample.txt');
+  Bytes := LoadCorpusFixtureBytes('iso-2022-jp.txt');
   Detection := TChsDetect.New
     .DisableCodePage(1252)
     .Feed(Bytes)
@@ -494,7 +561,7 @@ var
   FileName: string;
   Detection: TChsDetectionResult;
 begin
-  FileName := FixturePath('euc-kr-sample.txt');
+  FileName := TPath.Combine(TChsCorpus.DataDir, 'euc-kr.txt');
   Detection := TChsDetect.DetectFile(FileName);
 
   Assert.AreEqual<Integer>(51949, Detection.CodePage);
@@ -507,7 +574,7 @@ var
   Bytes: TBytes;
   Detection: TChsDetectionResult;
 begin
-  Bytes := LoadFixtureBytes('iso-2022-kr-sample.txt');
+  Bytes := LoadCorpusFixtureBytes('iso-2022-kr.txt');
   Detection := TChsEncodingDetector.Detect(Bytes);
 
   Assert.AreEqual<Integer>(50225, Detection.CodePage);
@@ -562,7 +629,7 @@ var
   Bytes: TBytes;
   Detection: TChsDetectionResult;
 begin
-  Bytes := LoadFixtureBytes('hz-gb-2312-sample.txt');
+  Bytes := LoadCorpusFixtureBytes('hz-gb-2312.txt');
   Detection := TChsEncodingDetector.Detect(Bytes);
 
   Assert.AreEqual<Integer>(52936, Detection.CodePage);

@@ -1,6 +1,5 @@
 ﻿$ErrorActionPreference = 'Stop'
 
-$root = Split-Path -Parent $PSScriptRoot
 $dataDir = Join-Path $PSScriptRoot 'data'
 New-Item -ItemType Directory -Force -Path $dataDir | Out-Null
 
@@ -73,16 +72,29 @@ $ascii = 'Plain ASCII detector sample. ' * 160
 $russian = 'Это тест кодировки. Русский текст повторяется. ' * 160
 $western = 'Cafe creme deja vu. Price 10 € and ellipsis … repeated with western punctuation. ' * 140
 $westernNoC1 = 'Café crème déjà vu. Élève fiancé, garçon, Noël, über. À la carte. ' * 140
+$oemLatin = 'Café Noël façade où déjà été garçon über Straße. Español: año corazón señor pingüino. Français et Deutsch répétés. ' * 140
+$oemLatinEuro = 'Café Noël façade où déjà été garçon über Straße. Prix 10 € répété. Español señor año. ' * 140
+$centralEuropean = 'Zażółć gęślą jaźń. Příliš žluťoučký kůň úpěl ďábelské ódy. Árvíztűrő tükörfúrógép. ' * 140
 $greekIso = 'Αυτο ειναι δοκιμη ανιχνευσης κωδικοποιησης. Ελληνικο κειμενο επαναλαμβανεται. ' * 140
 $greekWin = 'Αυτο ειναι δοκιμη με ευρω € και εισαγωγικα “κειμενο” που επαναλαμβανεται. ' * 140
 $greekWinNoC1 = '΅ Ά Αυτη ειναι δοκιμη windows-1253 χωρις c1 bytes. Ελληνικο κειμενο επαναλαμβανεται. ' * 140
 $hebrewWin = 'ם מטבע ₪ וסימנים מיוחדים שחוזרים על עצמם. ' * 140
 $hebrewIsoVisual = (Reverse-String 'זהו מבחן לזיהוי קידוד. טקסט בעברית חוזר על עצמו. ') * 140
+$ukrainianKoi8 = 'Український текст: ґанок, єдність, їжак, Київ, щирість. Повторення українських літер. ' * 140
 $japanese = 'これは文字コード判定のテストです。日本語の文章を繰り返します。東京、大阪、京都、漢字、かな、カナ。' * 140
 $korean = '이것은 문자 인코딩 판별 테스트입니다. 한국어 문장을 반복합니다. 서울, 부산, 한국어. ' * 140
 $tradChinese = '這是字元編碼偵測測試。繁體中文內容會重複出現。台北、高雄、漢字。' * 140
 $simpChinese = '这是字符编码检测测试。简体中文内容会重复出现。北京、上海、汉字。' * 140
 $gbChinese = '这是字符编码检测测试。简体中文内容会重复出现。华夏文明源远流长，江山如画。古语云：“𠀋者，仁之本也。” 观沧海之䶮䶮，望秋月之𣸣𣸣，万物生辉。' * 140
+$cp437Art = @'
+        ▄▄▄▄▄              ▀              ■
+    ██████▒▒▒▄          ▄▀                ▄
+    ▐███▒▒▒▀▀▀▀▀▄▄▄    ▄▄▒▒▌  ▄      ▄
+▒▒▄▒▒█▒▒▀           ▀▀▀▒▒▄▄▄▄    ▄███████
+╔════════════════════════════════════════╗
+║  ENCODING INFORMATION  ░▒▓█ CP437 █▓▒░ ║
+╚════════════════════════════════════════╝
+'@
 
 [System.IO.File]::WriteAllBytes((Join-Path $dataDir 'ascii.txt'), [System.Text.Encoding]::ASCII.GetBytes($ascii))
 [System.IO.File]::WriteAllBytes((Join-Path $dataDir 'utf8-bom.txt'), [System.Text.Encoding]::UTF8.GetPreamble() + [System.Text.Encoding]::UTF8.GetBytes($russian))
@@ -100,6 +112,12 @@ Write-EncodedFile 'koi8-r.txt' 20866 $russian
 Write-EncodedFile 'ibm866.txt' 866 $russian
 Write-EncodedFile 'ibm855.txt' 855 $russian
 Write-EncodedFile 'x-mac-cyrillic.txt' 10007 $russian
+Write-EncodedFile 'cp437-nfo-art.txt' 437 ($cp437Art * 120)
+Write-EncodedFile 'ibm850.txt' 850 $oemLatin
+Write-EncodedFile 'ibm852.txt' 852 $centralEuropean
+Write-EncodedFile 'ibm858.txt' 858 $oemLatinEuro
+Write-EncodedFile 'windows-1250.txt' 1250 $centralEuropean
+Write-EncodedFile 'koi8-u.txt' 21866 $ukrainianKoi8
 Write-EncodedFile 'windows-1252.txt' 1252 $western
 Write-EncodedFile 'windows-1252-no-c1.txt' 1252 $westernNoC1
 Write-EncodedFile 'iso-8859-1-like.txt' 28591 $westernNoC1

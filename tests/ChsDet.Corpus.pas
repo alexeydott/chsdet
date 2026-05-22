@@ -45,22 +45,39 @@ uses
   System.IOUtils;
 
 class function TChsCorpus.RepoRoot: string;
-var
-  Candidate: string;
-begin
-  Candidate := ExcludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)));
-  while Candidate <> '' do
+  function TryFindRepoRoot(const StartDir: string; out Root: string): Boolean;
+  var
+    Candidate: string;
   begin
-    if TFile.Exists(TPath.Combine(Candidate, TPath.Combine('tests', TPath.Combine('corpus', 'manifest.tsv')))) then
-      Exit(Candidate);
+    Result := False;
+    Root := '';
+    Candidate := ExcludeTrailingPathDelimiter(TPath.GetFullPath(StartDir));
 
-    if SameText(ExtractFileDrive(Candidate), Candidate) then
-      Break;
+    while Candidate <> '' do
+    begin
+      if TFile.Exists(TPath.Combine(Candidate, TPath.Combine('tests', TPath.Combine('corpus', 'manifest.tsv')))) then
+      begin
+        Root := Candidate;
+        Exit(True);
+      end;
 
-    Candidate := ExcludeTrailingPathDelimiter(ExtractFileDir(Candidate));
+      if SameText(ExtractFileDrive(Candidate), Candidate) then
+        Break;
+
+      Candidate := ExcludeTrailingPathDelimiter(ExtractFileDir(Candidate));
+    end;
   end;
+var
+  Root: string;
+begin
+  if TryFindRepoRoot(GetCurrentDir, Root) then
+    Exit(Root);
 
-  raise EFileNotFoundException.Create('Unable to locate repository root from executable path.');
+  if TryFindRepoRoot(ExtractFilePath(ParamStr(0)), Root) then
+    Exit(Root);
+
+  raise EFileNotFoundException.Create(
+    'Unable to locate repository root from current directory or executable path.');
 end;
 
 class function TChsCorpus.CorpusDir: string;
