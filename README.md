@@ -92,5 +92,9 @@ end;
 
 ## Notes
 
-- Unknown input should be processed as bytes, streams, or files
-- `UTF-8` without BOM can still be conservative for short or ambiguous samples (see [tests](docs/testing.md))
+- Encoding detection must run on the original byte representation of the text. Pass `TBytes`, `TStream`, or a file path. Do not convert unknown text into `string` first, because the original encoding information may already be lost at that point.
+- `UTF-8` without BOM can still be conservative for short or ambiguous samples (see [tests](testing.md))
+
+## License
+
+The repository includes the original license text in [Licence.txt](Licence.txt).
