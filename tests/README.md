@@ -51,4 +51,8 @@ The benchmark rewrites `corpus/MATRIX.md`. Strict rows are enforced by `CorpusSt
 
 `corpus/data/cp437-plain-no-art.txt` is generated as a negative regression fixture. It is encoded as CP437 but intentionally has no box/block drawing bytes, and the test suite verifies that it is not reported as `IBM437`.
 
+`corpus/data/cp437-small-nfo-art.txt` covers a smaller mixed text/art NFO sample. The CJK corpus fixtures are also checked explicitly so multibyte legacy text does not false-positive as `IBM437`.
+
 Additional generated fixtures cover `IBM850`, `IBM852`, `IBM858`, `windows-1250`, and `KOI8-U`. The related unit tests use corpus fixtures rather than ad hoc sample files.
+
+`DisableCodePage` is covered for the heuristic-only paths as well: CP437 pseudo-graphics, OEM text signatures, `windows-1250`, and `KOI8-U` must not be reported after their code page has been disabled.

@@ -42,12 +42,18 @@ type
     [Test] procedure DetectsWindows1253WithoutC1FromDiscriminatorBytes;
     [Test] procedure DetectsIbm866FromChunkedInput;
     [Test] procedure DetectsCp437FromCorpusNfoArt;
+    [Test] procedure DetectsCp437FromSmallNfoArt;
     [Test] procedure DoesNotDetectCp437WithoutPseudoGraphicsAsIbm437;
+    [Test] procedure DoesNotTreatPlainOemTextAsCp437PseudoGraphics;
     [Test] procedure DetectsIbm850FromCorpus;
     [Test] procedure DetectsIbm852FromCorpus;
     [Test] procedure DetectsIbm858FromCorpus;
     [Test] procedure DetectsWindows1250FromCorpus;
     [Test] procedure DetectsKoi8UFromCorpus;
+    [Test] procedure DisableCodePageSuppressesCp437PseudoGraphicsDetection;
+    [Test] procedure DisableCodePageSuppressesOemTextSignatureDetection;
+    [Test] procedure DisableCodePageSuppressesWindows1250SignatureDetection;
+    [Test] procedure DisableCodePageSuppressesKoi8USignatureDetection;
     [Test] procedure DetectsShiftJisFromBytes;
     [Test] procedure DetectsIso88598FromVisualCorpusSample;
     [Test] procedure DetectsBig5FromBytes;
@@ -60,6 +66,7 @@ type
     [Test] procedure DetectsIso2022CnAcrossChunkBoundaries;
     [Test] procedure DisableCodePageSuppressesIso2022CnDetection;
     [Test] procedure DetectsHzGb2312FromBytes;
+    [Test] procedure CjkCorpusFixturesDoNotLookLikeCp437PseudoGraphics;
     [Test] procedure CorpusStrictBenchmarkPasses;
     [Test] procedure GetEncodingDefUsesFallbacks;
   end;
@@ -384,6 +391,19 @@ begin
   Assert.AreEqual('DOS', Detection.Language);
 end;
 
+procedure TChsDetectorTests.DetectsCp437FromSmallNfoArt;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('cp437-small-nfo-art.txt');
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(437, Detection.CodePage);
+  Assert.AreEqual('IBM437', Detection.Name);
+  Assert.AreEqual('DOS', Detection.Language);
+end;
+
 procedure TChsDetectorTests.DoesNotDetectCp437WithoutPseudoGraphicsAsIbm437;
 var
   Bytes: TBytes;
@@ -394,6 +414,28 @@ begin
 
   Assert.AreNotEqual<Integer>(437, Detection.CodePage);
   Assert.AreNotEqual('IBM437', Detection.Name);
+end;
+
+procedure TChsDetectorTests.DoesNotTreatPlainOemTextAsCp437PseudoGraphics;
+const
+  PlainOemFixtures: array [0..2] of string = (
+    'ibm850-plain-no-art.txt',
+    'ibm852-plain-no-art.txt',
+    'ibm858-plain-no-art.txt'
+  );
+var
+  FileName: string;
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  for FileName in PlainOemFixtures do
+  begin
+    Bytes := LoadCorpusFixtureBytes(FileName);
+    Detection := TChsDetect.Detect(Bytes);
+
+    Assert.AreNotEqual<Integer>(437, Detection.CodePage, FileName);
+    Assert.AreNotEqual('IBM437', Detection.Name, FileName);
+  end;
 end;
 
 procedure TChsDetectorTests.DetectsIbm850FromCorpus;
@@ -459,6 +501,66 @@ begin
   Assert.AreEqual<Integer>(21866, Detection.CodePage);
   Assert.AreEqual('KOI8-U', Detection.Name);
   Assert.AreEqual('ukrainian', Detection.Language);
+end;
+
+procedure TChsDetectorTests.DisableCodePageSuppressesCp437PseudoGraphicsDetection;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('cp437-nfo-art.txt');
+  Detection := TChsDetect.New
+    .DisableCodePage(437)
+    .Feed(Bytes)
+    .Detect;
+
+  Assert.AreNotEqual<Integer>(437, Detection.CodePage);
+  Assert.AreNotEqual('IBM437', Detection.Name);
+end;
+
+procedure TChsDetectorTests.DisableCodePageSuppressesOemTextSignatureDetection;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('ibm850.txt');
+  Detection := TChsDetect.New
+    .DisableCodePage(850)
+    .Feed(Bytes)
+    .Detect;
+
+  Assert.AreNotEqual<Integer>(850, Detection.CodePage);
+  Assert.AreNotEqual('IBM850', Detection.Name);
+end;
+
+procedure TChsDetectorTests.DisableCodePageSuppressesWindows1250SignatureDetection;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('windows-1250.txt');
+  Detection := TChsDetect.New
+    .DisableCodePage(1250)
+    .Feed(Bytes)
+    .Detect;
+
+  Assert.AreNotEqual<Integer>(1250, Detection.CodePage);
+  Assert.AreNotEqual('windows-1250', Detection.Name);
+end;
+
+procedure TChsDetectorTests.DisableCodePageSuppressesKoi8USignatureDetection;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('koi8-u.txt');
+  Detection := TChsDetect.New
+    .DisableCodePage(21866)
+    .Feed(Bytes)
+    .Detect;
+
+  Assert.AreNotEqual<Integer>(21866, Detection.CodePage);
+  Assert.AreNotEqual('KOI8-U', Detection.Name);
 end;
 
 procedure TChsDetectorTests.DetectsShiftJisFromBytes;
@@ -648,6 +750,29 @@ begin
   Assert.AreEqual<Integer>(52936, Detection.CodePage);
   Assert.AreEqual('HZ-GB-2312', Detection.Name);
   Assert.AreEqual('ch', Detection.Language);
+end;
+
+procedure TChsDetectorTests.CjkCorpusFixturesDoNotLookLikeCp437PseudoGraphics;
+const
+  CjkFixtures: array [0..3] of string = (
+    'big5.txt',
+    'euc-jp.txt',
+    'euc-kr.txt',
+    'gb18030.txt'
+  );
+var
+  FileName: string;
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  for FileName in CjkFixtures do
+  begin
+    Bytes := LoadCorpusFixtureBytes(FileName);
+    Detection := TChsDetect.Detect(Bytes);
+
+    Assert.AreNotEqual<Integer>(437, Detection.CodePage, FileName);
+    Assert.AreNotEqual('IBM437', Detection.Name, FileName);
+  end;
 end;
 
 procedure TChsDetectorTests.CorpusStrictBenchmarkPasses;
