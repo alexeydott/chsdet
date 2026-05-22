@@ -204,7 +204,7 @@ begin
       end;
     for i := 0 to Pred(newLen1) do
       begin
-        charClass := AnsiChar(Latin1_CharToClass[integer(newBuf1[i])]);
+        charClass := AnsiChar(Latin1_CharToClass[Byte(newBuf1[i])]);
         freq := Latin1ClassModel[byte(mLastCharClass) * CLASS_NUM + byte(charClass)];
         if freq = 0 then
           begin

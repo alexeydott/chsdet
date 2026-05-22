@@ -93,7 +93,7 @@ begin
       exit;
     end;
 	(*for each byte we get its class , if it is first byte, we also get byte length*)
-  byteCls  := pByteArray(mModel.classTable)[integer(c)];
+  byteCls  := pByteArray(mModel.classTable)[Byte(c)];
   if mCurrentState = eStart then
     begin
       mCurrentBytePos := 0;
