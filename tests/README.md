@@ -49,4 +49,6 @@ The benchmark rewrites `corpus/MATRIX.md`. Strict rows are enforced by `CorpusSt
 - Code page: `437`
 - Language: `DOS`
 
+`corpus/data/cp437-plain-no-art.txt` is generated as a negative regression fixture. It is encoded as CP437 but intentionally has no box/block drawing bytes, and the test suite verifies that it is not reported as `IBM437`.
+
 Additional generated fixtures cover `IBM850`, `IBM852`, `IBM858`, `windows-1250`, and `KOI8-U`. The related unit tests use corpus fixtures rather than ad hoc sample files.

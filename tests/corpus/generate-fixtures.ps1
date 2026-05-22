@@ -95,6 +95,7 @@ $cp437Art = @'
 ║  ENCODING INFORMATION  ░▒▓█ CP437 █▓▒░ ║
 ╚════════════════════════════════════════╝
 '@
+$cp437PlainNoArt = 'Café Noël façade déjà vu. Plain CP437 accented text without box or block drawing bytes. ' * 140
 
 [System.IO.File]::WriteAllBytes((Join-Path $dataDir 'ascii.txt'), [System.Text.Encoding]::ASCII.GetBytes($ascii))
 [System.IO.File]::WriteAllBytes((Join-Path $dataDir 'utf8-bom.txt'), [System.Text.Encoding]::UTF8.GetPreamble() + [System.Text.Encoding]::UTF8.GetBytes($russian))
@@ -113,6 +114,7 @@ Write-EncodedFile 'ibm866.txt' 866 $russian
 Write-EncodedFile 'ibm855.txt' 855 $russian
 Write-EncodedFile 'x-mac-cyrillic.txt' 10007 $russian
 Write-EncodedFile 'cp437-nfo-art.txt' 437 ($cp437Art * 120)
+Write-EncodedFile 'cp437-plain-no-art.txt' 437 $cp437PlainNoArt
 Write-EncodedFile 'ibm850.txt' 850 $oemLatin
 Write-EncodedFile 'ibm852.txt' 852 $centralEuropean
 Write-EncodedFile 'ibm858.txt' 858 $oemLatinEuro

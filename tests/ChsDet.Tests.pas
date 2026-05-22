@@ -42,6 +42,7 @@ type
     [Test] procedure DetectsWindows1253WithoutC1FromDiscriminatorBytes;
     [Test] procedure DetectsIbm866FromChunkedInput;
     [Test] procedure DetectsCp437FromCorpusNfoArt;
+    [Test] procedure DoesNotDetectCp437WithoutPseudoGraphicsAsIbm437;
     [Test] procedure DetectsIbm850FromCorpus;
     [Test] procedure DetectsIbm852FromCorpus;
     [Test] procedure DetectsIbm858FromCorpus;
@@ -381,6 +382,18 @@ begin
   Assert.AreEqual<Integer>(437, Detection.CodePage);
   Assert.AreEqual('IBM437', Detection.Name);
   Assert.AreEqual('DOS', Detection.Language);
+end;
+
+procedure TChsDetectorTests.DoesNotDetectCp437WithoutPseudoGraphicsAsIbm437;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := LoadCorpusFixtureBytes('cp437-plain-no-art.txt');
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreNotEqual<Integer>(437, Detection.CodePage);
+  Assert.AreNotEqual('IBM437', Detection.Name);
 end;
 
 procedure TChsDetectorTests.DetectsIbm850FromCorpus;
