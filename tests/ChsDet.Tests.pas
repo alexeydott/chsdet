@@ -20,11 +20,13 @@ type
     class function RepeatText(const Value: string; Count: Integer): string; static;
     class function CombineBytes(const Prefix, Payload: TBytes): TBytes; static;
     class function BuildBytes(const Text: string; Encoding: TEncoding; IncludePreamble: Boolean = False): TBytes; static;
+    class function CountCp852SignatureBytes(const Bytes: TBytes): Integer; static;
     class function MakeTempFile(const Bytes: TBytes): string; static;
     class function LoadCorpusFixtureBytes(const FileName: string): TBytes; static;
     class function AsciiText: string; static;
     class function RussianText: string; static;
     class function Latin1252Text: string; static;
+    class function ChineseBatchText: string; static;
     class function JapaneseText: string; static;
   public
     [Test] procedure DetectsAsciiFromBytes;
@@ -56,6 +58,7 @@ type
     [Test] procedure DisableCodePageSuppressesKoi8USignatureDetection;
     [Test] procedure DetectsShiftJisFromBytes;
     [Test] procedure DetectsIso88598FromVisualCorpusSample;
+    [Test] procedure DetectsGbkTextWithCp852SignatureBytesAsCodePage936;
     [Test] procedure DetectsBig5FromBytes;
     [Test] procedure DetectsEucJpFromBytes;
     [Test] procedure DetectsGb18030FromChunkedInput;
@@ -114,6 +117,19 @@ begin
   Result := CombineBytes(Preamble, Payload);
 end;
 
+class function TChsDetectorTests.CountCp852SignatureBytes(const Bytes: TBytes): Integer;
+var
+  Value: Byte;
+begin
+  Result := 0;
+  for Value in Bytes do
+    case Value of
+      $86, $88, $8B, $94, $98, $A0, $A1, $A3, $A5, $A7, $A9, $AB,
+      $B5, $BE, $D4, $D8:
+        Inc(Result);
+    end;
+end;
+
 class function TChsDetectorTests.MakeTempFile(const Bytes: TBytes): string;
 begin
   Result := TPath.Combine(TPath.GetTempPath, TPath.GetRandomFileName + '.txt');
@@ -144,6 +160,17 @@ const
     #$0043#$0061#$0066#$00E9#$0020#$0063#$0072#$00E8#$006D#$0065#$0020#$0064#$00E9#$006A#$00E0#$0020#$0076#$0075#$002E#$0020 +
     #$00C0#$0020#$006C#$0061#$0020#$0063#$0061#$0072#$0074#$0065#$002C#$0020#$00E9#$006C#$00E8#$0076#$0065#$002C#$0020 +
     #$0066#$0069#$0061#$006E#$0063#$00E9#$002C#$0020#$0067#$0061#$0072#$00E7#$006F#$006E#$002C#$0020#$004E#$006F#$00EB#$006C#$002C#$0020#$00FC#$0062#$0065#$0072#$002E#$0020;
+begin
+  Result := RepeatText(Phrase, 80);
+end;
+
+class function TChsDetectorTests.ChineseBatchText: string;
+const
+  Phrase =
+    '@echo off'#13#10 +
+    'REM ' + #$521D#$59CB#$5316 + #13#10 +
+    'if not defined findstr echo cf.: ' + #$627E#$4E0D#$5230#$0020 + 'find.exe ' + #$6587#$4EF6#$3002 + #13#10 +
+    'echo ' + #$64CD#$4F5C#$5B8C#$6210#$0020 + #$FF01#$FF01 + #13#10;
 begin
   Result := RepeatText(Phrase, 80);
 end;
@@ -587,6 +614,24 @@ begin
   Assert.AreEqual<Integer>(28598, Detection.CodePage);
   Assert.AreEqual('ISO-8859-8', Detection.Name);
   Assert.AreEqual('hebrew', Detection.Language);
+end;
+
+procedure TChsDetectorTests.DetectsGbkTextWithCp852SignatureBytesAsCodePage936;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := BuildBytes(ChineseBatchText, TEncoding.GetEncoding(936));
+  Assert.IsTrue(
+    CountCp852SignatureBytes(Bytes) >= 20,
+    'The GBK sample must keep enough overlapping bytes to exercise the old IBM852 heuristic.');
+
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(936, Detection.CodePage);
+  Assert.AreEqual('GBK', Detection.Name);
+  Assert.AreEqual('ch', Detection.Language);
+  Assert.AreNotEqual<Integer>(852, Detection.CodePage);
 end;
 
 procedure TChsDetectorTests.DetectsBig5FromBytes;
