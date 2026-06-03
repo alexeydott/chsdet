@@ -36,11 +36,11 @@ type nsInputState = (
   eHighbyte  = 2
 	) ;
 
-  TCjkByteState = (
-    cbsNone,
-    cbsNeedTrail,
-    cbsNeedThird,
-    cbsNeedFourth
+  TDbcsByteState = (
+    dbsNone,
+    dbsNeedTrail,
+    dbsNeedThird,
+    dbsNeedFourth
   );
 
   TObservedByteStats = record
@@ -52,18 +52,29 @@ type nsInputState = (
     Oem858ByteCount: Integer;
     Win1250ByteCount: Integer;
     Koi8UByteCount: Integer;
-    GbkPairCount: Integer;
+    DbcsPairCount: Integer;
     Gb18030FourByteCount: Integer;
-    GbkConsumedHighByteCount: Integer;
-    GbkInvalidHighByteCount: Integer;
-    CjkByteState: TCjkByteState;
+    DbcsConsumedHighByteCount: Integer;
+    DbcsInvalidHighByteCount: Integer;
+    DbcsByteState: TDbcsByteState;
+    Utf8ValidSequenceCount: Integer;
+    Utf8ConsumedHighByteCount: Integer;
+    Utf8InvalidByteCount: Integer;
+    Utf8ExpectedTrailByteCount: Integer;
+    EvenZeroByteCount: Integer;
+    OddZeroByteCount: Integer;
 
     procedure Reset;
     procedure Feed(Value: Byte);
-    procedure FeedCjkByte(Value: Byte);
+    procedure FeedDbcsByte(Value: Byte);
+    procedure FeedUtf8Byte(Value: Byte);
     function LooksLikeOemArt: Boolean;
     function DetectOemTextSignature: eInternalCharsetID;
-    function LooksLikeGbkText: Boolean;
+    function LooksLikeDbcsText: Boolean;
+    function LooksLikeUtf8Text: Boolean;
+    function LooksLikeUtf16Text: Boolean;
+    function LooksLikeStructuredMultiByteText: Boolean;
+    function DetectUtf16TextSignature: eInternalCharsetID;
     function HasGb18030FourByteSequence: Boolean;
     function HasKoi8USignal: Boolean;
     function HasWin1250Signal: Boolean;
@@ -146,9 +157,14 @@ const
   OEM_LATIN_MAX_HIGH_RATIO: float = 0.65;
   KOI8_U_MIN_SIGNATURE_BYTES = 10;
   WINDOWS_1250_MIN_SIGNATURE_BYTES = 20;
-  GBK_MIN_PAIR_COUNT = 10;
-  GBK_MIN_CONSUMED_HIGH_RATIO: float = 0.95;
-  GBK_MAX_INVALID_HIGH_RATIO: float = 0.02;
+  DBCS_MIN_PAIR_COUNT = 10;
+  DBCS_MIN_CONSUMED_HIGH_RATIO: float = 0.95;
+  DBCS_MAX_INVALID_HIGH_RATIO: float = 0.02;
+  UTF8_MIN_SEQUENCE_COUNT = 6;
+  UTF8_MIN_CONSUMED_HIGH_RATIO: float = 0.95;
+  UTF8_MAX_INVALID_HIGH_RATIO: float = 0.02;
+  UTF16_MIN_ZERO_RATIO: float = 0.20;
+  UTF16_MIN_ZERO_PARITY_RATIO: float = 0.85;
 
   AboutInfo: rAboutHolder = (
     MajorVersionNr: 0;
@@ -157,12 +173,12 @@ const
     About: 'Charset Detector Library. Copyright (C) 2006 - 2008, Nick Yakowlew. http://chsdet.sourceforge.net';
   );
 
-function IsGbkLeadByte(Value: Byte): Boolean; inline;
+function IsDbcsLeadByte(Value: Byte): Boolean; inline;
 begin
   Result := (Value >= $81) and (Value <= $FE);
 end;
 
-function IsGbkTrailByte(Value: Byte): Boolean; inline;
+function IsDbcsTrailByte(Value: Byte): Boolean; inline;
 begin
   Result :=
     ((Value >= $40) and (Value <= $7E)) or
@@ -172,6 +188,31 @@ end;
 function IsGb18030DigitByte(Value: Byte): Boolean; inline;
 begin
   Result := (Value >= $30) and (Value <= $39);
+end;
+
+function IsUtf8LeadByte(Value: Byte): Boolean; inline;
+begin
+  Result :=
+    ((Value >= $C2) and (Value <= $DF)) or
+    ((Value >= $E0) and (Value <= $EF)) or
+    ((Value >= $F0) and (Value <= $F4));
+end;
+
+function Utf8TrailByteCount(Value: Byte): Integer; inline;
+begin
+  if (Value >= $C2) and (Value <= $DF) then
+    Result := 1
+  else if (Value >= $E0) and (Value <= $EF) then
+    Result := 2
+  else if (Value >= $F0) and (Value <= $F4) then
+    Result := 3
+  else
+    Result := 0;
+end;
+
+function IsUtf8TrailByte(Value: Byte): Boolean; inline;
+begin
+  Result := (Value >= $80) and (Value <= $BF);
 end;
 
 { TObservedByteStats }
@@ -186,19 +227,34 @@ begin
   Oem858ByteCount := 0;
   Win1250ByteCount := 0;
   Koi8UByteCount := 0;
-  GbkPairCount := 0;
+  DbcsPairCount := 0;
   Gb18030FourByteCount := 0;
-  GbkConsumedHighByteCount := 0;
-  GbkInvalidHighByteCount := 0;
-  CjkByteState := cbsNone;
+  DbcsConsumedHighByteCount := 0;
+  DbcsInvalidHighByteCount := 0;
+  DbcsByteState := dbsNone;
+  Utf8ValidSequenceCount := 0;
+  Utf8ConsumedHighByteCount := 0;
+  Utf8InvalidByteCount := 0;
+  Utf8ExpectedTrailByteCount := 0;
+  EvenZeroByteCount := 0;
+  OddZeroByteCount := 0;
 end;
 
 procedure TObservedByteStats.Feed(Value: Byte);
+var
+  ByteIndex: Integer;
 begin
   Inc(TotalByteCount);
+  ByteIndex := TotalByteCount - 1;
 
   if Value >= $80 then
     Inc(HighByteCount);
+
+  if Value = 0 then
+    if (ByteIndex mod 2) = 0 then
+      Inc(EvenZeroByteCount)
+    else
+      Inc(OddZeroByteCount);
 
   if Value in [$87, $89, $97, $A2] then
     Inc(Oem850ByteCount);
@@ -221,74 +277,105 @@ begin
       Inc(OemArtByteCount);
   end;
 
-  FeedCjkByte(Value);
+  FeedDbcsByte(Value);
+  FeedUtf8Byte(Value);
 end;
 
-procedure TObservedByteStats.FeedCjkByte(Value: Byte);
+procedure TObservedByteStats.FeedDbcsByte(Value: Byte);
 var
   Reprocess: Boolean;
 begin
   repeat
     Reprocess := False;
 
-    case CjkByteState of
-      cbsNone:
+    case DbcsByteState of
+      dbsNone:
         begin
-          if IsGbkLeadByte(Value) then
-            CjkByteState := cbsNeedTrail
+          if IsDbcsLeadByte(Value) then
+            DbcsByteState := dbsNeedTrail
           else if Value >= $80 then
-            Inc(GbkInvalidHighByteCount);
+            Inc(DbcsInvalidHighByteCount);
         end;
 
-      cbsNeedTrail:
+      dbsNeedTrail:
         begin
-          if IsGbkTrailByte(Value) then
+          if IsDbcsTrailByte(Value) then
           begin
-            Inc(GbkPairCount);
-            Inc(GbkConsumedHighByteCount);
+            Inc(DbcsPairCount);
+            Inc(DbcsConsumedHighByteCount);
             if Value >= $80 then
-              Inc(GbkConsumedHighByteCount);
-            CjkByteState := cbsNone;
+              Inc(DbcsConsumedHighByteCount);
+            DbcsByteState := dbsNone;
           end
           else if IsGb18030DigitByte(Value) then
-            CjkByteState := cbsNeedThird
+            DbcsByteState := dbsNeedThird
           else
           begin
-            Inc(GbkInvalidHighByteCount);
-            CjkByteState := cbsNone;
+            Inc(DbcsInvalidHighByteCount);
+            DbcsByteState := dbsNone;
             Reprocess := Value >= $80;
           end;
         end;
 
-      cbsNeedThird:
+      dbsNeedThird:
         begin
-          if IsGbkLeadByte(Value) then
-            CjkByteState := cbsNeedFourth
+          if IsDbcsLeadByte(Value) then
+            DbcsByteState := dbsNeedFourth
           else
           begin
-            Inc(GbkInvalidHighByteCount);
-            CjkByteState := cbsNone;
+            Inc(DbcsInvalidHighByteCount);
+            DbcsByteState := dbsNone;
             Reprocess := Value >= $80;
           end;
         end;
 
-      cbsNeedFourth:
+      dbsNeedFourth:
         begin
           if IsGb18030DigitByte(Value) then
           begin
             Inc(Gb18030FourByteCount);
-            Inc(GbkConsumedHighByteCount, 2);
-            CjkByteState := cbsNone;
+            Inc(DbcsConsumedHighByteCount, 2);
+            DbcsByteState := dbsNone;
           end
           else
           begin
-            Inc(GbkInvalidHighByteCount);
-            CjkByteState := cbsNone;
+            Inc(DbcsInvalidHighByteCount);
+            DbcsByteState := dbsNone;
             Reprocess := Value >= $80;
           end;
         end;
     end;
   until not Reprocess;
+end;
+
+procedure TObservedByteStats.FeedUtf8Byte(Value: Byte);
+begin
+  if Utf8ExpectedTrailByteCount > 0 then
+  begin
+    if IsUtf8TrailByte(Value) then
+    begin
+      Inc(Utf8ConsumedHighByteCount);
+      Dec(Utf8ExpectedTrailByteCount);
+      if Utf8ExpectedTrailByteCount = 0 then
+        Inc(Utf8ValidSequenceCount);
+    end
+    else
+    begin
+      Inc(Utf8InvalidByteCount);
+      Utf8ExpectedTrailByteCount := 0;
+      if Value >= $80 then
+        FeedUtf8Byte(Value);
+    end;
+    Exit;
+  end;
+
+  if IsUtf8LeadByte(Value) then
+  begin
+    Inc(Utf8ConsumedHighByteCount);
+    Utf8ExpectedTrailByteCount := Utf8TrailByteCount(Value);
+  end
+  else if Value >= $80 then
+    Inc(Utf8InvalidByteCount);
 end;
 
 function TObservedByteStats.LooksLikeOemArt: Boolean;
@@ -316,7 +403,7 @@ begin
   if HighRatio > OEM_LATIN_MAX_HIGH_RATIO then
     Exit;
 
-  if LooksLikeGbkText then
+  if LooksLikeStructuredMultiByteText then
     Exit;
 
   if (Oem858ByteCount >= 4) and (Oem850ByteCount >= 20) then
@@ -332,7 +419,7 @@ begin
     Exit(WINDOWS_1250_CHARSET);
 end;
 
-function TObservedByteStats.LooksLikeGbkText: Boolean;
+function TObservedByteStats.LooksLikeDbcsText: Boolean;
 var
   ConsumedHighRatio: float;
   InvalidHighRatio: float;
@@ -341,15 +428,76 @@ begin
 
   if (TotalByteCount < LEGACY_MIN_BYTES) or
      (HighByteCount < LEGACY_MIN_HIGH_BYTES) or
-     (GbkPairCount < GBK_MIN_PAIR_COUNT) then
+     (DbcsPairCount < DBCS_MIN_PAIR_COUNT) then
     Exit;
 
-  ConsumedHighRatio := GbkConsumedHighByteCount / HighByteCount;
-  InvalidHighRatio := GbkInvalidHighByteCount / HighByteCount;
+  ConsumedHighRatio := DbcsConsumedHighByteCount / HighByteCount;
+  InvalidHighRatio := DbcsInvalidHighByteCount / HighByteCount;
 
   Result :=
-    (ConsumedHighRatio >= GBK_MIN_CONSUMED_HIGH_RATIO) and
-    (InvalidHighRatio <= GBK_MAX_INVALID_HIGH_RATIO);
+    (ConsumedHighRatio >= DBCS_MIN_CONSUMED_HIGH_RATIO) and
+    (InvalidHighRatio <= DBCS_MAX_INVALID_HIGH_RATIO);
+end;
+
+function TObservedByteStats.LooksLikeUtf8Text: Boolean;
+var
+  ConsumedHighRatio: float;
+  InvalidHighRatio: float;
+begin
+  Result := False;
+
+  if (TotalByteCount < LEGACY_MIN_BYTES) or
+     (HighByteCount < LEGACY_MIN_HIGH_BYTES) or
+     (Utf8ValidSequenceCount < UTF8_MIN_SEQUENCE_COUNT) or
+     (Utf8ExpectedTrailByteCount <> 0) then
+    Exit;
+
+  ConsumedHighRatio := Utf8ConsumedHighByteCount / HighByteCount;
+  InvalidHighRatio := Utf8InvalidByteCount / HighByteCount;
+
+  Result :=
+    (ConsumedHighRatio >= UTF8_MIN_CONSUMED_HIGH_RATIO) and
+    (InvalidHighRatio <= UTF8_MAX_INVALID_HIGH_RATIO);
+end;
+
+function TObservedByteStats.LooksLikeUtf16Text: Boolean;
+var
+  ZeroByteCount: Integer;
+  ZeroRatio: float;
+  ZeroParityRatio: float;
+begin
+  Result := False;
+  ZeroByteCount := EvenZeroByteCount + OddZeroByteCount;
+
+  if (TotalByteCount < LEGACY_MIN_BYTES) or
+     (ZeroByteCount = 0) then
+    Exit;
+
+  ZeroRatio := ZeroByteCount / TotalByteCount;
+  if EvenZeroByteCount > OddZeroByteCount then
+    ZeroParityRatio := EvenZeroByteCount / ZeroByteCount
+  else
+    ZeroParityRatio := OddZeroByteCount / ZeroByteCount;
+
+  Result :=
+    (ZeroRatio >= UTF16_MIN_ZERO_RATIO) and
+    (ZeroParityRatio >= UTF16_MIN_ZERO_PARITY_RATIO);
+end;
+
+function TObservedByteStats.LooksLikeStructuredMultiByteText: Boolean;
+begin
+  Result := LooksLikeDbcsText or LooksLikeUtf8Text or LooksLikeUtf16Text;
+end;
+
+function TObservedByteStats.DetectUtf16TextSignature: eInternalCharsetID;
+begin
+  if not LooksLikeUtf16Text then
+    Exit(UNKNOWN_CHARSET);
+
+  if OddZeroByteCount > EvenZeroByteCount then
+    Result := UTF16_LE_CHARSET
+  else
+    Result := UTF16_BE_CHARSET;
 end;
 
 function TObservedByteStats.HasGb18030FourByteSequence: Boolean;
@@ -400,6 +548,7 @@ var
   maxProberConfidence: float;
   LegacyCharset: eInternalCharsetID;
   DetectedCharset: eInternalCharsetID;
+  StructuredMultiByteText: Boolean;
   maxProber: PRInt32;
   i: integer;
 begin
@@ -416,17 +565,28 @@ begin
   case mInputState of
     eHighbyte:
       begin
-        if LooksLikeOemArt then
+        StructuredMultiByteText := mObservedBytes.LooksLikeStructuredMultiByteText;
+
+        if mObservedBytes.LooksLikeUtf16Text then
+        begin
+          if ReportWithConfidence(mObservedBytes.DetectUtf16TextSignature, OEM_TEXT_CONFIDENCE) then
+            Exit;
+        end;
+
+        if (not StructuredMultiByteText) and LooksLikeOemArt then
         begin
           if ReportWithConfidence(IBM437_CHARSET, OEM_ART_CONFIDENCE) then
             Exit;
         end;
 
-        LegacyCharset := DetectLegacyByteSignature;
-        if LegacyCharset <> UNKNOWN_CHARSET then
+        if not StructuredMultiByteText then
         begin
-          if ReportWithConfidence(LegacyCharset, OEM_TEXT_CONFIDENCE) then
-            Exit;
+          LegacyCharset := DetectLegacyByteSignature;
+          if LegacyCharset <> UNKNOWN_CHARSET then
+          begin
+            if ReportWithConfidence(LegacyCharset, OEM_TEXT_CONFIDENCE) then
+              Exit;
+          end;
         end;
 
         maxProberConfidence := 0.0;
@@ -753,7 +913,7 @@ begin
     end;
 
   if (Charset = GB18030_CHARSET) and
-     mObservedBytes.LooksLikeGbkText and
+     mObservedBytes.LooksLikeDbcsText and
      (not mObservedBytes.HasGb18030FourByteSequence) then
     begin
       Result := GBK_CHARSET;
