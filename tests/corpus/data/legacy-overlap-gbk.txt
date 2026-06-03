@@ -1,0 +1,320 @@
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！

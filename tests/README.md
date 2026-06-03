@@ -56,3 +56,7 @@ The benchmark rewrites `corpus/MATRIX.md`. Strict rows are enforced by `CorpusSt
 Additional generated fixtures cover `IBM850`, `IBM852`, `IBM858`, `windows-1250`, and `KOI8-U`. The related unit tests use corpus fixtures rather than ad hoc sample files.
 
 `DisableCodePage` is covered for the heuristic-only paths as well: CP437 pseudo-graphics, OEM text signatures, `windows-1250`, and `KOI8-U` must not be reported after their code page has been disabled.
+
+Multibyte regression coverage uses generated mixed ASCII/script samples that preserve the key characteristic from real files: structured multibyte sequences contain bytes that also look like legacy single-byte signatures when counted individually. DUnitX covers DBCS samples for `GBK`, `Big5`, `Shift_JIS`, `EUC-JP`, and `EUC-KR`, plus UTF-8 and UTF-16 LE/BE without BOM. These samples must report their structural encodings instead of `IBM437`, `IBM850`, `IBM852`, `IBM858`, `windows-1250`, or `KOI8-U`.
+
+The generated DBCS overlap fixtures are named `legacy-overlap-*.txt` in `corpus/data/`.

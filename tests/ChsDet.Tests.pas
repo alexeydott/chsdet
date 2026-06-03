@@ -20,13 +20,13 @@ type
     class function RepeatText(const Value: string; Count: Integer): string; static;
     class function CombineBytes(const Prefix, Payload: TBytes): TBytes; static;
     class function BuildBytes(const Text: string; Encoding: TEncoding; IncludePreamble: Boolean = False): TBytes; static;
-    class function CountCp852SignatureBytes(const Bytes: TBytes): Integer; static;
+    class function CountLegacySignatureBytes(const Bytes: TBytes): Integer; static;
     class function MakeTempFile(const Bytes: TBytes): string; static;
     class function LoadCorpusFixtureBytes(const FileName: string): TBytes; static;
     class function AsciiText: string; static;
     class function RussianText: string; static;
     class function Latin1252Text: string; static;
-    class function ChineseBatchText: string; static;
+    class function MixedUnicodeBatchText: string; static;
     class function JapaneseText: string; static;
   public
     [Test] procedure DetectsAsciiFromBytes;
@@ -43,6 +43,7 @@ type
     [Test] procedure PromotesWindows1253WhenC1BytesArePresent;
     [Test] procedure DetectsWindows1253WithoutC1FromDiscriminatorBytes;
     [Test] procedure DetectsIbm866FromChunkedInput;
+    [Test] procedure DetectsUtf8WithLegacySignatureBytes;
     [Test] procedure DetectsCp437FromCorpusNfoArt;
     [Test] procedure DetectsCp437FromSmallNfoArt;
     [Test] procedure DoesNotDetectCp437WithoutPseudoGraphicsAsIbm437;
@@ -58,7 +59,8 @@ type
     [Test] procedure DisableCodePageSuppressesKoi8USignatureDetection;
     [Test] procedure DetectsShiftJisFromBytes;
     [Test] procedure DetectsIso88598FromVisualCorpusSample;
-    [Test] procedure DetectsGbkTextWithCp852SignatureBytesAsCodePage936;
+    [Test] procedure DetectsDbcsTextWithLegacySignatureBytes;
+    [Test] procedure DetectsUtf16WithoutBomWithLegacySignatureBytes;
     [Test] procedure DetectsBig5FromBytes;
     [Test] procedure DetectsEucJpFromBytes;
     [Test] procedure DetectsGb18030FromChunkedInput;
@@ -117,15 +119,24 @@ begin
   Result := CombineBytes(Preamble, Payload);
 end;
 
-class function TChsDetectorTests.CountCp852SignatureBytes(const Bytes: TBytes): Integer;
+class function TChsDetectorTests.CountLegacySignatureBytes(const Bytes: TBytes): Integer;
 var
   Value: Byte;
 begin
   Result := 0;
   for Value in Bytes do
     case Value of
+      $87, $89, $97, $A2,
       $86, $88, $8B, $94, $98, $A0, $A1, $A3, $A5, $A7, $A9, $AB,
-      $B5, $BE, $D4, $D8:
+      $B5, $BE, $D4, $D8,
+      $D5,
+      $9A, $9C, $9D, $9E, $9F,
+      $A4, $A6, $AD,
+      $B0, $B1, $B2, $B3, $B4,
+      $B9, $BA, $BB, $BC, $BF,
+      $C0, $C1, $C2, $C3, $C4, $C5,
+      $C8, $C9, $CA, $CB, $CC, $CD, $CE,
+      $D9, $DA, $DB, $DC, $DD, $DE, $DF, $FE:
         Inc(Result);
     end;
 end;
@@ -164,13 +175,13 @@ begin
   Result := RepeatText(Phrase, 80);
 end;
 
-class function TChsDetectorTests.ChineseBatchText: string;
+class function TChsDetectorTests.MixedUnicodeBatchText: string;
 const
   Phrase =
     '@echo off'#13#10 +
-    'REM ' + #$521D#$59CB#$5316 + #13#10 +
-    'if not defined findstr echo cf.: ' + #$627E#$4E0D#$5230#$0020 + 'find.exe ' + #$6587#$4EF6#$3002 + #13#10 +
-    'echo ' + #$64CD#$4F5C#$5B8C#$6210#$0020 + #$FF01#$FF01 + #13#10;
+    'REM ' + #$521D#$59CB#$5316#$0020#$0442#$0435#$0441#$0442#$0020#$03B4#$03BF#$03BA#$03B9#$03BC#$03AE + #13#10 +
+    'echo ' + #$627E#$4E0D#$5230#$0020#$0444#$0430#$0439#$043B#$0020#$03B1#$03C1#$03C7#$03B5#$03AF#$03BF#$002E + #13#10 +
+    'echo ' + #$64CD#$4F5C#$5B8C#$6210#$0020#$FF01#$FF01 + #13#10;
 begin
   Result := RepeatText(Phrase, 80);
 end;
@@ -405,6 +416,24 @@ begin
   Assert.AreEqual('IBM866', Detection.Name);
 end;
 
+procedure TChsDetectorTests.DetectsUtf8WithLegacySignatureBytes;
+var
+  Bytes: TBytes;
+  Detection: TChsDetectionResult;
+begin
+  Bytes := TEncoding.UTF8.GetBytes(MixedUnicodeBatchText);
+  Assert.IsTrue(
+    CountLegacySignatureBytes(Bytes) >= 20,
+    'UTF-8 sample must keep enough overlapping bytes to exercise legacy byte heuristics.');
+
+  Detection := TChsDetect.Detect(Bytes);
+
+  Assert.AreEqual<Integer>(65001, Detection.CodePage);
+  Assert.AreEqual('UTF-8', Detection.Name);
+  Assert.AreEqual('Unicode', Detection.Language);
+  Assert.AreNotEqual<Integer>(852, Detection.CodePage);
+end;
+
 procedure TChsDetectorTests.DetectsCp437FromCorpusNfoArt;
 var
   Bytes: TBytes;
@@ -616,22 +645,62 @@ begin
   Assert.AreEqual('hebrew', Detection.Language);
 end;
 
-procedure TChsDetectorTests.DetectsGbkTextWithCp852SignatureBytesAsCodePage936;
-var
-  Bytes: TBytes;
-  Detection: TChsDetectionResult;
+procedure TChsDetectorTests.DetectsDbcsTextWithLegacySignatureBytes;
+  procedure CheckCase(
+    const LabelText: string;
+    const FileName: string;
+    const ExpectedCodePage: Integer;
+    const ExpectedName: string;
+    const ExpectedLanguage: string);
+  var
+    Bytes: TBytes;
+    Detection: TChsDetectionResult;
+  begin
+    Bytes := LoadCorpusFixtureBytes(FileName);
+    Assert.IsTrue(
+      CountLegacySignatureBytes(Bytes) >= 20,
+      LabelText + ' sample must keep enough overlapping bytes to exercise legacy byte heuristics.');
+
+    Detection := TChsDetect.Detect(Bytes);
+
+    Assert.AreEqual<Integer>(ExpectedCodePage, Detection.CodePage, LabelText);
+    Assert.AreEqual(ExpectedName, Detection.Name, LabelText);
+    Assert.AreEqual(ExpectedLanguage, Detection.Language, LabelText);
+    Assert.AreNotEqual<Integer>(852, Detection.CodePage, LabelText);
+  end;
 begin
-  Bytes := BuildBytes(ChineseBatchText, TEncoding.GetEncoding(936));
-  Assert.IsTrue(
-    CountCp852SignatureBytes(Bytes) >= 20,
-    'The GBK sample must keep enough overlapping bytes to exercise the old IBM852 heuristic.');
+  CheckCase('GBK', 'legacy-overlap-gbk.txt', 936, 'GBK', 'ch');
+  CheckCase('Big5', 'legacy-overlap-big5.txt', 950, 'Big5', 'ch');
+  CheckCase('Shift_JIS', 'legacy-overlap-shift-jis.txt', 932, 'Shift_JIS', 'japanese');
+  CheckCase('EUC-JP', 'legacy-overlap-euc-jp.txt', 51932, 'EUC-JP', 'japanese');
+  CheckCase('EUC-KR', 'legacy-overlap-euc-kr.txt', 51949, 'EUC-KR', 'kr');
+end;
 
-  Detection := TChsDetect.Detect(Bytes);
+procedure TChsDetectorTests.DetectsUtf16WithoutBomWithLegacySignatureBytes;
+  procedure CheckCase(
+    const LabelText: string;
+    const Encoding: TEncoding;
+    const ExpectedCodePage: Integer;
+    const ExpectedName: string);
+  var
+    Bytes: TBytes;
+    Detection: TChsDetectionResult;
+  begin
+    Bytes := BuildBytes(MixedUnicodeBatchText, Encoding);
+    Assert.IsTrue(
+      CountLegacySignatureBytes(Bytes) >= 20,
+      LabelText + ' sample must keep enough overlapping bytes to exercise legacy byte heuristics.');
 
-  Assert.AreEqual<Integer>(936, Detection.CodePage);
-  Assert.AreEqual('GBK', Detection.Name);
-  Assert.AreEqual('ch', Detection.Language);
-  Assert.AreNotEqual<Integer>(852, Detection.CodePage);
+    Detection := TChsDetect.Detect(Bytes);
+
+    Assert.AreEqual<Integer>(ExpectedCodePage, Detection.CodePage, LabelText);
+    Assert.AreEqual(ExpectedName, Detection.Name, LabelText);
+    Assert.AreEqual('Unicode', Detection.Language, LabelText);
+    Assert.AreNotEqual<Integer>(852, Detection.CodePage, LabelText);
+  end;
+begin
+  CheckCase('UTF-16LE without BOM', TEncoding.Unicode, 1200, 'UTF-16LE');
+  CheckCase('UTF-16BE without BOM', TEncoding.BigEndianUnicode, 1201, 'UTF-16BE');
 end;
 
 procedure TChsDetectorTests.DetectsBig5FromBytes;

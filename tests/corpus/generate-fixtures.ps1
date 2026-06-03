@@ -108,6 +108,30 @@ $cp437PlainNoArt = 'Café Noël façade déjà vu. Plain CP437 accented text wit
 $ibm850PlainNoArt = 'Café Noël façade où déjà été garçon über Straße. Español año corazón señor pingüino. ' * 140
 $ibm852PlainNoArt = 'Zażółć gęślą jaźń. Příliš žluťoučký kůň úpěl ďábelské ódy. Árvíztűrő tükörfúrógép. ' * 140
 $ibm858PlainNoArt = 'Café Noël façade où déjà été garçon über Straße. Prix 10 € répété. Español señor año. ' * 140
+$gbkBatchOverlap = (@'
+@echo off
+REM 初始化
+echo 找不到 find.exe 文件。
+echo 操作完成 ！！
+'@ + "`r`n") * 80
+$big5BatchOverlap = (@'
+@echo off
+REM 初始化測試
+echo 找不到檔案。
+echo 操作完成！！
+'@ + "`r`n") * 80
+$japaneseBatchOverlap = (@'
+@echo off
+REM 初期化テスト
+echo ファイルが見つかりません。
+echo 操作が完了しました。
+'@ + "`r`n") * 80
+$koreanBatchOverlap = (@'
+@echo off
+REM 초기화 테스트
+echo 파일을 찾을 수 없습니다.
+echo 작업이 완료되었습니다.
+'@ + "`r`n") * 80
 
 [System.IO.File]::WriteAllBytes((Join-Path $dataDir 'ascii.txt'), [System.Text.Encoding]::ASCII.GetBytes($ascii))
 [System.IO.File]::WriteAllBytes((Join-Path $dataDir 'utf8-bom.txt'), [System.Text.Encoding]::UTF8.GetPreamble() + [System.Text.Encoding]::UTF8.GetBytes($russian))
@@ -153,5 +177,10 @@ Write-EncodedFile 'big5.txt' 950 $tradChinese
 Write-EncodedFile 'hz-gb-2312.txt' 52936 $simpChinese
 Write-EncodedFile 'gb18030.txt' 54936 $gbChinese
 Write-Iso2022CnFixture 'iso-2022-cn.txt'
+Write-EncodedFile 'legacy-overlap-gbk.txt' 936 $gbkBatchOverlap
+Write-EncodedFile 'legacy-overlap-big5.txt' 950 $big5BatchOverlap
+Write-EncodedFile 'legacy-overlap-shift-jis.txt' 932 $japaneseBatchOverlap
+Write-EncodedFile 'legacy-overlap-euc-jp.txt' 51932 $japaneseBatchOverlap
+Write-EncodedFile 'legacy-overlap-euc-kr.txt' 51949 $koreanBatchOverlap
 
 Get-ChildItem -Path $dataDir -File | Select-Object Name, Length | Sort-Object Name

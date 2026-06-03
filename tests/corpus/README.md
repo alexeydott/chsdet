@@ -23,6 +23,7 @@ Files:
 - `cp437-small-nfo-art.txt` is a generated DUnitX regression fixture for a smaller, mixed text/art NFO sample with a less dense pseudo-graphics signal than the strict corpus case
 - `cp437-plain-no-art.txt` is a generated DUnitX regression fixture, intentionally kept out of the exact manifest because it asserts a negative condition: plain CP437 text without box/block drawing bytes must not be reported as `IBM437`
 - `ibm850-plain-no-art.txt`, `ibm852-plain-no-art.txt`, and `ibm858-plain-no-art.txt` are generated DUnitX regression fixtures that assert plain OEM text is not treated as CP437 pseudo-graphics
+- `legacy-overlap-gbk.txt`, `legacy-overlap-big5.txt`, `legacy-overlap-shift-jis.txt`, `legacy-overlap-euc-jp.txt`, and `legacy-overlap-euc-kr.txt` are generated DUnitX regression fixtures for mixed ASCII/script multibyte text whose bytes overlap with legacy single-byte signatures
 - The strict `ibm850`, `ibm852`, and `ibm858` fixtures use generated DOS/OEM Latin and Central European samples with byte signatures that are intentionally stronger than plain ASCII-compatible text
 - The strict `windows-1250` and `koi8-u` fixtures cover conservative discriminator-byte paths rather than full language-model detection
 - The informational Western rows document that Latin-1-like bytes collapse into `windows-1252`, because `ISO-8859-1` is not exposed as a separate output charset
