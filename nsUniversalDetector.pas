@@ -36,6 +36,13 @@ type nsInputState = (
   eHighbyte  = 2
 	) ;
 
+  TCjkByteState = (
+    cbsNone,
+    cbsNeedTrail,
+    cbsNeedThird,
+    cbsNeedFourth
+  );
+
   TObservedByteStats = record
     TotalByteCount: Integer;
     HighByteCount: Integer;
@@ -45,11 +52,19 @@ type nsInputState = (
     Oem858ByteCount: Integer;
     Win1250ByteCount: Integer;
     Koi8UByteCount: Integer;
+    GbkPairCount: Integer;
+    Gb18030FourByteCount: Integer;
+    GbkConsumedHighByteCount: Integer;
+    GbkInvalidHighByteCount: Integer;
+    CjkByteState: TCjkByteState;
 
     procedure Reset;
     procedure Feed(Value: Byte);
+    procedure FeedCjkByte(Value: Byte);
     function LooksLikeOemArt: Boolean;
     function DetectOemTextSignature: eInternalCharsetID;
+    function LooksLikeGbkText: Boolean;
+    function HasGb18030FourByteSequence: Boolean;
     function HasKoi8USignal: Boolean;
     function HasWin1250Signal: Boolean;
   end;
@@ -131,6 +146,9 @@ const
   OEM_LATIN_MAX_HIGH_RATIO: float = 0.65;
   KOI8_U_MIN_SIGNATURE_BYTES = 10;
   WINDOWS_1250_MIN_SIGNATURE_BYTES = 20;
+  GBK_MIN_PAIR_COUNT = 10;
+  GBK_MIN_CONSUMED_HIGH_RATIO: float = 0.95;
+  GBK_MAX_INVALID_HIGH_RATIO: float = 0.02;
 
   AboutInfo: rAboutHolder = (
     MajorVersionNr: 0;
@@ -138,6 +156,23 @@ const
     BuildVersionNr: 6;
     About: 'Charset Detector Library. Copyright (C) 2006 - 2008, Nick Yakowlew. http://chsdet.sourceforge.net';
   );
+
+function IsGbkLeadByte(Value: Byte): Boolean; inline;
+begin
+  Result := (Value >= $81) and (Value <= $FE);
+end;
+
+function IsGbkTrailByte(Value: Byte): Boolean; inline;
+begin
+  Result :=
+    ((Value >= $40) and (Value <= $7E)) or
+    ((Value >= $80) and (Value <= $FE));
+end;
+
+function IsGb18030DigitByte(Value: Byte): Boolean; inline;
+begin
+  Result := (Value >= $30) and (Value <= $39);
+end;
 
 { TObservedByteStats }
 
@@ -151,6 +186,11 @@ begin
   Oem858ByteCount := 0;
   Win1250ByteCount := 0;
   Koi8UByteCount := 0;
+  GbkPairCount := 0;
+  Gb18030FourByteCount := 0;
+  GbkConsumedHighByteCount := 0;
+  GbkInvalidHighByteCount := 0;
+  CjkByteState := cbsNone;
 end;
 
 procedure TObservedByteStats.Feed(Value: Byte);
@@ -180,6 +220,75 @@ begin
     $D9, $DA, $DB, $DC, $DD, $DE, $DF, $FE:
       Inc(OemArtByteCount);
   end;
+
+  FeedCjkByte(Value);
+end;
+
+procedure TObservedByteStats.FeedCjkByte(Value: Byte);
+var
+  Reprocess: Boolean;
+begin
+  repeat
+    Reprocess := False;
+
+    case CjkByteState of
+      cbsNone:
+        begin
+          if IsGbkLeadByte(Value) then
+            CjkByteState := cbsNeedTrail
+          else if Value >= $80 then
+            Inc(GbkInvalidHighByteCount);
+        end;
+
+      cbsNeedTrail:
+        begin
+          if IsGbkTrailByte(Value) then
+          begin
+            Inc(GbkPairCount);
+            Inc(GbkConsumedHighByteCount);
+            if Value >= $80 then
+              Inc(GbkConsumedHighByteCount);
+            CjkByteState := cbsNone;
+          end
+          else if IsGb18030DigitByte(Value) then
+            CjkByteState := cbsNeedThird
+          else
+          begin
+            Inc(GbkInvalidHighByteCount);
+            CjkByteState := cbsNone;
+            Reprocess := Value >= $80;
+          end;
+        end;
+
+      cbsNeedThird:
+        begin
+          if IsGbkLeadByte(Value) then
+            CjkByteState := cbsNeedFourth
+          else
+          begin
+            Inc(GbkInvalidHighByteCount);
+            CjkByteState := cbsNone;
+            Reprocess := Value >= $80;
+          end;
+        end;
+
+      cbsNeedFourth:
+        begin
+          if IsGb18030DigitByte(Value) then
+          begin
+            Inc(Gb18030FourByteCount);
+            Inc(GbkConsumedHighByteCount, 2);
+            CjkByteState := cbsNone;
+          end
+          else
+          begin
+            Inc(GbkInvalidHighByteCount);
+            CjkByteState := cbsNone;
+            Reprocess := Value >= $80;
+          end;
+        end;
+    end;
+  until not Reprocess;
 end;
 
 function TObservedByteStats.LooksLikeOemArt: Boolean;
@@ -207,6 +316,9 @@ begin
   if HighRatio > OEM_LATIN_MAX_HIGH_RATIO then
     Exit;
 
+  if LooksLikeGbkText then
+    Exit;
+
   if (Oem858ByteCount >= 4) and (Oem850ByteCount >= 20) then
     Exit(IBM858_CHARSET);
 
@@ -218,6 +330,31 @@ begin
 
   if Win1250ByteCount >= WINDOWS_1250_MIN_SIGNATURE_BYTES then
     Exit(WINDOWS_1250_CHARSET);
+end;
+
+function TObservedByteStats.LooksLikeGbkText: Boolean;
+var
+  ConsumedHighRatio: float;
+  InvalidHighRatio: float;
+begin
+  Result := False;
+
+  if (TotalByteCount < LEGACY_MIN_BYTES) or
+     (HighByteCount < LEGACY_MIN_HIGH_BYTES) or
+     (GbkPairCount < GBK_MIN_PAIR_COUNT) then
+    Exit;
+
+  ConsumedHighRatio := GbkConsumedHighByteCount / HighByteCount;
+  InvalidHighRatio := GbkInvalidHighByteCount / HighByteCount;
+
+  Result :=
+    (ConsumedHighRatio >= GBK_MIN_CONSUMED_HIGH_RATIO) and
+    (InvalidHighRatio <= GBK_MAX_INVALID_HIGH_RATIO);
+end;
+
+function TObservedByteStats.HasGb18030FourByteSequence: Boolean;
+begin
+  Result := Gb18030FourByteCount > 0;
 end;
 
 function TObservedByteStats.HasKoi8USignal: Boolean;
@@ -612,6 +749,14 @@ begin
      (not mSeenGreekIsoByte) then
     begin
       Result := WINDOWS_1253_CHARSET;
+      Exit;
+    end;
+
+  if (Charset = GB18030_CHARSET) and
+     mObservedBytes.LooksLikeGbkText and
+     (not mObservedBytes.HasGb18030FourByteSequence) then
+    begin
+      Result := GBK_CHARSET;
       Exit;
     end;
 

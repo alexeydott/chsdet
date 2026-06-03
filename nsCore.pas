@@ -137,7 +137,8 @@ type
     IBM852_CHARSET            = 034,
     IBM858_CHARSET            = 035,
     WINDOWS_1250_CHARSET      = 036,
-    KOI8_U_CHARSET            = 037
+    KOI8_U_CHARSET            = 037,
+    GBK_CHARSET               = 038
   );
 
 const
@@ -369,6 +370,12 @@ const
       Name:  'KOI8-U';
       CodePage:  21866;
       Language:  'ukrainian';
+    ),
+  // GBK_CHARSET
+    (
+      Name:  'GBK';
+      CodePage:  936;
+      Language:  'ch';
     )
 
   );
