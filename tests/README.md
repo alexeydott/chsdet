@@ -60,3 +60,53 @@ Additional generated fixtures cover `IBM850`, `IBM852`, `IBM858`, `windows-1250`
 Multibyte regression coverage uses generated mixed ASCII/script samples that preserve the key characteristic from real files: structured multibyte sequences contain bytes that also look like legacy single-byte signatures when counted individually. DUnitX covers DBCS samples for `GBK`, `Big5`, `Shift_JIS`, `EUC-JP`, and `EUC-KR`, plus UTF-8 and UTF-16 LE/BE without BOM. These samples must report their structural encodings instead of `IBM437`, `IBM850`, `IBM852`, `IBM858`, `windows-1250`, or `KOI8-U`.
 
 The generated DBCS overlap fixtures are named `legacy-overlap-*.txt` in `corpus/data/`.
+
+## PR #1 range/overflow regression gate
+
+`ChsDetTests.dpr` explicitly links `tests/ChsDet.Tests.pas` and
+`tests/ChsDet.TableTests.pas`; the similarly named file at repository root is
+not the runner's fixture. DUnitX must already be available in the Delphi paths.
+
+From a RAD Studio command environment, run PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-range-matrix.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/compare-pr1-baseline.ps1
+```
+
+The first script rebuilds with `-B` into isolated DCU/output directories for
+Win32 and Win64, with all four R/Q combinations. It runs the full existing suite,
+checks the NUnit XML for discovered table tests and non-passing cases, and
+compares exact snapshots across directive modes within each platform. It does
+not assume identical floating-point bits between Win32 and Win64.
+
+The second script uses an isolated temporary git worktree at main commit
+`4660893fb7966f78982ef23fb2fb92215499cbec`. It copies the **same test harness and
+corpus** there, leaves production code from main intact, compares R-/Q-
+snapshots, and requires runtime range failures in the three deterministic raw
+memory tests under R+/Q+. A compilation failure does not count as reproduction.
+Logs and XML remain under ignored `build-range/`. The script removes only its
+own uniquely named temporary worktree.
+
+The literal ESC fixtures extend the strict manifest from 36 to 39 cases. Their
+bytes are written directly by `generate-fixtures.ps1`, without a code-page
+encoder. `EscProberPreservesDesignatorsAtEverySplitAndAfterReset` deliberately
+tests the ESC prober directly; it does not assert every split works through the
+universal wrapper (see `PR1-REVIEW.md` for the existing HZ prefix issue).
+
+`RawTablesDoNotRequireDynamicArrayHeaders`,
+`PackedNibblesIncludeHighBitAndWordBoundary`, and
+`DistributionChecksActualLengthBeforeReading` place a zero 8-byte sentinel
+immediately before raw payloads. This supplies zero in the location incorrectly
+read as dynamic-array length on either architecture, making old-code failures
+independent of linker placement. No unexpected exception is swallowed.
+
+A compiler-independent audit of literal tables can also be run:
+
+```sh
+python tests/audit-tables.py
+```
+
+This parses only the repository's literal table syntax, traverses the reachable
+state graph for every byte and checks frequency initializer counts. It does not
+compile or execute Delphi and cannot establish a runtime PASS.

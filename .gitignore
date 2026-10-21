@@ -80,3 +80,6 @@ __recovery/
 
 # Boss dependency manager vendor folder https://github.com/HashLoad/boss
 modules/
+
+# Range-check review build outputs and logs
+build-range/
