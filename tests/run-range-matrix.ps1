@@ -23,7 +23,7 @@ try {
       if (!(Test-Path $report)) { throw "Missing DUnitX XML: $out" }
       [xml]$xml = Get-Content -Raw $report
       $cases = @($xml.SelectNodes('//test-case'))
-      $tableCases = @($cases | Where-Object { $_.name -match 'TChsTableTests' })
+      $tableCases = @($xml.SelectNodes('//test-suite[@name="TChsTableTests"]//test-case'))
       if ($tableCases.Count -lt 4) { throw "Table tests not discovered: $out" }
       foreach ($case in $cases) {
         if ($case.success -ne 'True' -and $case.result -ne 'Success' -and $case.result -ne 'Passed') {
@@ -44,3 +44,4 @@ try {
   Write-Host 'All eight build/test configurations passed; snapshots match within each platform.'
   Write-Host 'Cross-platform confidence bits are retained for inspection, not asserted identical.'
 } finally { Pop-Location }
+
