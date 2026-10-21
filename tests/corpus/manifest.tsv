@@ -37,3 +37,6 @@ strict	Chinese	big5.txt	950	Big5	Traditional Chinese Big5 sample
 strict	Chinese	hz-gb-2312.txt	52936	HZ-GB-2312	HZ-GB-2312 sample
 strict	Chinese	gb18030.txt	54936	GB18030	Simplified Chinese GB18030 sample
 strict	Chinese	iso-2022-cn.txt	50227	ISO-2022-CN	RFC 1922 escape-stream sample
+strict	Japanese	esc-minimal-jp.txt	50222	ISO-2022-JP	Literal ESC regression bytes; no platform encoder required
+strict	Korean	esc-minimal-kr.txt	50225	ISO-2022-KR	Literal ESC regression bytes; no platform encoder required
+strict	Chinese	esc-minimal-hz.txt	52936	HZ-GB-2312	Literal ESC regression bytes; no platform encoder required

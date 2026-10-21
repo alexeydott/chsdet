@@ -11,6 +11,7 @@ uses
   System.SysUtils,
   ChsDet.Corpus in 'tests\ChsDet.Corpus.pas',
   ChsDet.Tests in 'tests\ChsDet.Tests.pas',
+  ChsDet.TableTests in 'tests\ChsDet.TableTests.pas',
   ChsDet.EncodingDetector in 'ChsDet.EncodingDetector.pas',
   ChsDet.Fluent in 'ChsDet.Fluent.pas',
   nsCore in 'nsCore.pas',

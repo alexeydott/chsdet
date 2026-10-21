@@ -183,4 +183,9 @@ Write-EncodedFile 'legacy-overlap-shift-jis.txt' 932 $japaneseBatchOverlap
 Write-EncodedFile 'legacy-overlap-euc-jp.txt' 51932 $japaneseBatchOverlap
 Write-EncodedFile 'legacy-overlap-euc-kr.txt' 51949 $koreanBatchOverlap
 
+# Literal ESC fixtures: reproducible without optional Windows encoders.
+[System.IO.File]::WriteAllBytes((Join-Path $dataDir 'esc-minimal-jp.txt'), [byte[]](0x1B, 0x24, 0x42, 0x46, 0x7C, 0x4B, 0x5C, 0x1B, 0x28, 0x42))
+[System.IO.File]::WriteAllBytes((Join-Path $dataDir 'esc-minimal-kr.txt'), [byte[]](0x1B, 0x24, 0x29, 0x43, 0x0E, 0x30, 0x21, 0x33, 0x2A, 0x0F))
+[System.IO.File]::WriteAllBytes((Join-Path $dataDir 'esc-minimal-hz.txt'), [byte[]](0x7E, 0x7B, 0x56, 0x50, 0x4E, 0x44, 0x7E, 0x7D))
+
 Get-ChildItem -Path $dataDir -File | Select-Object Name, Length | Sort-Object Name

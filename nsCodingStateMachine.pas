@@ -93,14 +93,14 @@ begin
       exit;
     end;
 	(*for each byte we get its class , if it is first byte, we also get byte length*)
-  byteCls  := pByteArray(mModel.classTable)[Byte(c)];
+  byteCls  := PPRUInt8Arr(mModel.classTable)[Byte(c)];
   if mCurrentState = eStart then
     begin
       mCurrentBytePos := 0;
-      mCurrentCharLen := pByteArray(mModel.charLenTable)[byteCls];
+      mCurrentCharLen := PPRUInt8Arr(mModel.charLenTable)[byteCls];
     end;
   (*from byte's class and stateTable, we get its next state*)
-  mCurrentState := nsSMState(pByteArray(mModel.stateTable)[cardinal(mCurrentState) * mModel.classFactor + byteCls]);
+  mCurrentState := nsSMState(PPRUInt8Arr(mModel.stateTable)[cardinal(mCurrentState) * mModel.classFactor + byteCls]);
   inc(mCurrentBytePos);
 
 //if mCurrentBytePos > mCurrentCharLen then

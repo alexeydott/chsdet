@@ -88,7 +88,7 @@ end;
 
 function GETFROMPCK(i: integer; c: pnsPkgInt): integer;
 begin
-  Result:= (((aPRUint32(c^.data)[i shr integer(c^.idxsft)]) shr (i and integer(c^.sftmsk) shl integer(c^.bitsft))) and integer(c^.unitmsk));
+  Result:= (((PPRUInt32Arr(c^.data)[i shr integer(c^.idxsft)]) shr (i and integer(c^.sftmsk) shl integer(c^.bitsft))) and integer(c^.unitmsk));
 end;
 
 end.

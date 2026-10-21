@@ -37,6 +37,17 @@ type
   pPRint16 = ^PRint16;
   aPRint16 = array of PRint16;
 
+  // Bounded array views for indexing raw tables. Casting a raw pointer to a
+  // dynamic array type makes $R+ read a length header that does not exist.
+  TPRInt16Arr = array[0..MaxInt div SizeOf(PRInt16) - 1] of PRInt16;
+  PPRInt16Arr = ^TPRInt16Arr;
+
+  TPRUInt32Arr = array[0..MaxInt div SizeOf(PRUint32) - 1] of PRUint32;
+  PPRUInt32Arr = ^TPRUInt32Arr;
+
+  TPRUInt8Arr = array[0..MaxInt - 1] of Byte;
+  PPRUInt8Arr = ^TPRUInt8Arr;
+
 const
   SURE_YES: double = 0.99;
   SURE_NO: double  = 0.01;

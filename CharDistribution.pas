@@ -163,7 +163,7 @@ begin
       inc(mTotalChars); (*order is valid*)
       if order < integer(mTableSize) then
         begin
-          if 512 > aPRint16(mCharToFreqOrder)[order] then
+          if 512 > PPRInt16Arr(mCharToFreqOrder)[order] then
             inc(mFreqChars);
         end;
     end;

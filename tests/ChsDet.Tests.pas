@@ -72,11 +72,15 @@ type
     [Test] procedure DisableCodePageSuppressesIso2022CnDetection;
     [Test] procedure DetectsHzGb2312FromBytes;
     [Test] procedure CjkCorpusFixturesDoNotLookLikeCp437PseudoGraphics;
+    [Test] procedure EscLiteralCorpusMatchesNamesCodePagesAndConfidence;
+    [Test] procedure EscProberPreservesDesignatorsAtEverySplitAndAfterReset;
     [Test] procedure CorpusStrictBenchmarkPasses;
     [Test] procedure GetEncodingDefUsesFallbacks;
   end;
 
 implementation
+
+uses nsEscCharsetProber;
 
 { TChsDetectorTests }
 
@@ -886,6 +890,64 @@ begin
 
     Assert.AreNotEqual<Integer>(437, Detection.CodePage, FileName);
     Assert.AreNotEqual('IBM437', Detection.Name, FileName);
+  end;
+end;
+
+procedure TChsDetectorTests.EscLiteralCorpusMatchesNamesCodePagesAndConfidence;
+const
+  Files: array [0..2] of string = ('esc-minimal-jp.txt', 'esc-minimal-kr.txt', 'esc-minimal-hz.txt');
+  Names: array [0..2] of string = ('ISO-2022-JP', 'ISO-2022-KR', 'HZ-GB-2312');
+  CodePages: array [0..2] of Integer = (50222, 50225, 52936);
+var
+  I: Integer;
+  Detection: TChsDetectionResult;
+begin
+  for I := 0 to High(Files) do
+  begin
+    Detection := TChsEncodingDetector.Detect(LoadCorpusFixtureBytes(Files[I]));
+    Assert.AreEqual<Integer>(CodePages[I], Detection.CodePage, Files[I]);
+    Assert.AreEqual(Names[I], Detection.Name, Files[I]);
+    Assert.IsTrue(Abs(Detection.Confidence - SURE_YES) < 1E-12, Files[I]);
+    Assert.IsFalse(Detection.HasBom, Files[I]);
+  end;
+end;
+
+procedure TChsDetectorTests.EscProberPreservesDesignatorsAtEverySplitAndAfterReset;
+const
+  Files: array [0..2] of string = ('esc-minimal-jp.txt', 'esc-minimal-kr.txt', 'esc-minimal-hz.txt');
+  IDs: array [0..2] of eInternalCharsetID = (ISO_2022_JP_CHARSET, ISO_2022_KR_CHARSET, HZ_GB_2312_CHARSET);
+var
+  I, Split: Integer;
+  Bytes: TBytes;
+  Prober: TnsEscCharSetProber;
+  State: eProbingState;
+begin
+  Prober := TnsEscCharSetProber.Create;
+  try
+    for I := 0 to High(Files) do
+    begin
+      Bytes := LoadCorpusFixtureBytes(Files[I]);
+      Assert.IsTrue(Length(Bytes) > 1, Files[I]);
+      for Split := 1 to Length(Bytes) - 1 do
+      begin
+        Prober.Reset;
+        State := Prober.HandleData(PAnsiChar(@Bytes[0]), Split);
+        if State <> psFoundIt then
+          State := Prober.HandleData(PAnsiChar(@Bytes[Split]), Length(Bytes) - Split);
+        Assert.AreEqual<Integer>(Ord(psFoundIt), Ord(State), Files[I] + ' split ' + IntToStr(Split));
+        Assert.AreEqual<Integer>(Ord(IDs[I]), Ord(Prober.GetDetectedCharset), Files[I]);
+      end;
+      // A truncated designator must not be accepted, nor poison a reset.
+      Prober.Reset;
+      State := Prober.HandleData(PAnsiChar(@Bytes[0]), 1);
+      Assert.AreEqual<Integer>(Ord(psDetecting), Ord(State), Files[I]);
+      Prober.Reset;
+      State := Prober.HandleData(PAnsiChar(@Bytes[0]), Length(Bytes));
+      Assert.AreEqual<Integer>(Ord(psFoundIt), Ord(State), Files[I]);
+      Assert.AreEqual<Integer>(Ord(IDs[I]), Ord(Prober.GetDetectedCharset), Files[I]);
+    end;
+  finally
+    Prober.Free;
   end;
 end;
 
