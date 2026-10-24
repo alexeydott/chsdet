@@ -100,7 +100,7 @@ end;
 `GetEncoding` returns `False` when the result cannot be resolved by the RTL, including the `ASCII` pseudo code page `0`. `GetEncodingDef` returns the resolved encoding, or your explicit fallback, or `TEncoding.Default` when no fallback is supplied. A caller-supplied fallback remains caller-owned.
 
 ## Validation and Documentation
-The current suite passes **95/95 tests** on Delphi 12 Win32 and Win64 in each of the four `R+/R-` and `Q+/Q-` combinations. Recognition snapshots match across directive modes within each platform. The bounded-prefix memory regression also fails on the previous byte-buffer implementation, confirming that it protects the resource limit.
+The current suite passes **98/98 tests** on Delphi 12 Win32 and Win64 in each of the four `R+/R-` and `Q+/Q-` combinations. Recognition snapshots match across directive modes within each platform. The bounded-prefix memory regression also fails on the previous byte-buffer implementation, confirming that it protects the resource limit.
 
 Run the complete native matrix:
 
@@ -119,7 +119,7 @@ See [testing and limitations](testing.md), [test workflow](tests/README.md), and
 - Statistical decisions remain provisional until `Finish` / `DataEnd`; stream helpers therefore read to EOF unless a BOM or a recognized escape designator provides an early result. A late GB18030 character or malformed Unicode tail can change a prefix guess.
 - `Finish` closes the current detection, including an empty or unknown result. Repeated `Finish` is idempotent; call `Reset` before feeding a new input. Disabled code pages remain disabled after `Reset`.
 - `Confidence` is a heuristic score, not a calibrated probability of correct detection.
-- BOM-less UTF-16 requires plausible text as well as valid code units: control-dominated binary arrays are not sufficient evidence. OEM art/text heuristics require multiple distinct signature bytes, so repetition of a single Western symbol cannot alone select an OEM family. These are conservative policies, not complete binary classification or probability calibration.
+- BOM-less UTF-16 requires plausible text as well as valid code units, while allowing sparse controls in short text. OEM heuristics require diverse signature bytes or repeated in-word accents / multiline graphic layout; isolated Western symbols remain insufficient. These are conservative policies, not complete binary classification or probability calibration.
 - SBCS mixed words preserve their ASCII-prefix statistics across `Feed` boundaries; ASCII-only words are discarded consistently, including at EOF. Fixed-size model summaries replace prefix byte buffers, keeping pending memory below 1 KiB regardless of word length.
 - `GetEncoding` refuses the unusual UCS-4 byte orders 2143 and 3412: their legacy numeric aliases 12000/12001 must not select an ordinary UTF-32 decoder. `GetEncodingDef` still returns the caller's explicit fallback when resolution is unavailable.
 - See the [October 2026 detection review](tests/review-2026-10-24/REPORT.ru.md) for fixes, reproducible tests, remaining limitations and research-based development ideas. Supplementary Free Pascal results do not replace the Delphi Win32/Win64 validation matrix.

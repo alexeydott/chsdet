@@ -29,9 +29,84 @@ type
     [Test] procedure BomlessUtf16RejectsControlDominatedBinary;
     [Test] procedure RepeatedWesternSymbolsDoNotSelectOemFamilies;
     [Test] procedure BomlessUtf16TextControlsRemainSupported;
+    [Test] procedure ShortUtf16WithSparseControlsIsStillText;
+    [Test] procedure RepeatedOemWordAccentsRemainSupported;
+    [Test] procedure SingleSymbolNfoLinesRemainSupported;
   end;
 
 implementation
+
+procedure TChsRegressionTests.ShortUtf16WithSparseControlsIsStillText;
+const
+  Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+var
+  Data: TBytes;
+  Text: string;
+  Endian, Kind, Chunk: Integer;
+  Encoding: TEncoding;
+begin
+  for Endian := 0 to 1 do
+  begin
+    if Endian = 0 then Encoding := TEncoding.Unicode
+    else Encoding := TEncoding.BigEndianUnicode;
+    for Kind := 0 to 1 do
+    begin
+      if Kind = 0 then Text := Char($E9) + 'ABC' + #0 + 'DEF'
+      else Text := Char($E9) + #27 + '[31mOK' + #27 + '[0m';
+      Data := Encoding.GetBytes(Text);
+      for Chunk in Chunks do
+        Assert.AreEqual<Integer>(1200 + Endian, DetectChunks(Data, Chunk).CodePage,
+          Format('Short text: endian=%d kind=%d chunk=%d', [Endian, Kind, Chunk]));
+    end;
+  end;
+end;
+
+procedure TChsRegressionTests.RepeatedOemWordAccentsRemainSupported;
+const
+  Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+var
+  Data, WordBytes: TBytes;
+  I, Kind, Chunk: Integer;
+begin
+  // Literal bytes for "facade" with c-cedilla, "zaklad" with a-acute,
+  // and the same French word followed by a euro price in CP858.
+  for Kind := 0 to 2 do
+  begin
+    if Kind = 0 then WordBytes := TBytes.Create($66, $61, $87, $61, $64, $65, $20)
+    else if Kind = 1 then WordBytes := TBytes.Create($7A, $A0, $6B, $6C, $61, $64, $20)
+    else WordBytes := TBytes.Create($66, $61, $87, $61, $64, $65, $20, $31, $30, $20, $D5, $20);
+    SetLength(Data, Length(WordBytes) * 100);
+    for I := 0 to 99 do
+      Move(WordBytes[0], Data[I * Length(WordBytes)], Length(WordBytes));
+    for Chunk in Chunks do
+      if Kind = 0 then Assert.AreEqual<Integer>(850, DetectChunks(Data, Chunk).CodePage)
+      else if Kind = 1 then Assert.AreEqual<Integer>(852, DetectChunks(Data, Chunk).CodePage)
+      else Assert.AreEqual<Integer>(858, DetectChunks(Data, Chunk).CodePage);
+  end;
+end;
+
+procedure TChsRegressionTests.SingleSymbolNfoLinesRemainSupported;
+const
+  Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+var
+  Data: TBytes;
+  I, Line, Chunk, Terminated: Integer;
+begin
+  SetLength(Data, 68);
+  for Line := 0 to 1 do
+  begin
+    for I := 0 to 31 do Data[Line * 34 + I] := $DB;
+    Data[Line * 34 + 32] := 13;
+    Data[Line * 34 + 33] := 10;
+  end;
+  for Terminated := 1 downto 0 do
+  begin
+    if Terminated = 0 then SetLength(Data, Length(Data) - 2);
+    for Chunk in Chunks do
+      Assert.AreEqual<Integer>(437, DetectChunks(Data, Chunk).CodePage,
+        Format('Repeated NFO lines: terminated=%d chunk=%d', [Terminated, Chunk]));
+  end;
+end;
 
 procedure TChsRegressionTests.BomlessUtf16TextControlsRemainSupported;
 const

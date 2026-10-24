@@ -49,6 +49,9 @@ type nsInputState = (
     OemArtByteCount: Integer;
     SeenBytes: set of Byte;
     OemArtDistinctCount, Oem850DistinctCount, Oem852DistinctCount: Integer;
+    PreviousByte, BeforePreviousByte: Byte;
+    Oem850WordCount, Oem852WordCount: Integer;
+    OemArtRunLength, OemArtLineCount: Integer;
     Oem850ByteCount: Integer;
     Oem852ByteCount: Integer;
     Oem858ByteCount: Integer;
@@ -78,6 +81,8 @@ type nsInputState = (
     function IsValidUtf16(Charset: eInternalCharsetID): Boolean;
     function IsPlausibleUtf16Text(Charset: eInternalCharsetID): Boolean;
     function LooksLikeOemArt: Boolean;
+    function HasOemArtLayout: Boolean;
+    function HasOemWordContext: Boolean;
     function DetectOemTextSignature: eInternalCharsetID;
     function LooksLikeDbcsText: Boolean;
     function LooksLikeUtf8Text: Boolean;
@@ -160,6 +165,8 @@ const
   OEM_ART_CONFIDENCE: float = 0.95;
   OEM_TEXT_CONFIDENCE: float = 0.80;
   OEM_ART_MIN_BYTES = 64;
+  OEM_ART_MIN_RUN_BYTES = 8;
+  OEM_ART_MIN_LAYOUT_LINES = 2;
   OEM_ART_MIN_HIGH_RATIO: float = 0.15;
   OEM_ART_MIN_ART_HIGH_RATIO: float = 0.70;
   LEGACY_MIN_BYTES = 128;
@@ -174,8 +181,11 @@ const
   UTF8_MIN_CONSUMED_HIGH_RATIO: float = 0.95;
   UTF8_MAX_INVALID_HIGH_RATIO: float = 0.02;
   UTF16_MIN_ZERO_RATIO: float = 0.20;
+  UTF16_MIN_TEXT_BYTES = 8;
   UTF16_MIN_ZERO_PARITY_RATIO: float = 0.85;
   UTF16_MAX_CONTROL_RATIO: float = 0.02;
+  UTF16_SPARSE_CONTROL_BUDGET = 2;
+  UTF16_MIN_NONCONTROL_UNITS = 4;
 
   AboutInfo: rAboutHolder = (
     MajorVersionNr: 0;
@@ -237,6 +247,12 @@ begin
   OemArtDistinctCount := 0;
   Oem850DistinctCount := 0;
   Oem852DistinctCount := 0;
+  PreviousByte := 0;
+  BeforePreviousByte := 0;
+  Oem850WordCount := 0;
+  Oem852WordCount := 0;
+  OemArtRunLength := 0;
+  OemArtLineCount := 0;
   Oem850ByteCount := 0;
   Oem852ByteCount := 0;
   Oem858ByteCount := 0;
@@ -268,6 +284,22 @@ var
 begin
   Inc(TotalByteCount);
   ByteIndex := TotalByteCount - 1;
+
+  // A repeated accent inside words supplies context missing from isolated
+  // Western punctuation. Preserve both neighbours across input blocks.
+  if (BeforePreviousByte in [Ord('A')..Ord('Z'), Ord('a')..Ord('z')]) and
+     (Value in [Ord('A')..Ord('Z'), Ord('a')..Ord('z')]) then
+  begin
+    if PreviousByte in [$87, $89, $97, $A2] then Inc(Oem850WordCount);
+    if PreviousByte in [$86, $88, $8B, $94, $98, $A0, $A1, $A3, $A5, $A7, $A9, $AB,
+      $B5, $BE, $D4, $D8] then Inc(Oem852WordCount);
+  end;
+  BeforePreviousByte := PreviousByte;
+  PreviousByte := Value;
+
+  if (Value in [10, 13]) and (OemArtRunLength >= OEM_ART_MIN_RUN_BYTES) and
+     (OemArtLineCount < OEM_ART_MIN_LAYOUT_LINES) then
+    Inc(OemArtLineCount);
 
   if Value >= $80 then
     Inc(HighByteCount);
@@ -308,7 +340,10 @@ begin
       if not (Value in SeenBytes) then
         Inc(OemArtDistinctCount);
       Inc(OemArtByteCount);
+      if OemArtRunLength < OEM_ART_MIN_RUN_BYTES then Inc(OemArtRunLength);
     end;
+  else
+    OemArtRunLength := 0;
   end;
   Include(SeenBytes, Value);
 
@@ -467,12 +502,24 @@ begin
     Result := False;
 end;
 
+function TObservedByteStats.HasOemArtLayout: Boolean;
+begin
+  Result := OemArtLineCount + Ord(OemArtRunLength >= OEM_ART_MIN_RUN_BYTES) >=
+    OEM_ART_MIN_LAYOUT_LINES;
+end;
+
+function TObservedByteStats.HasOemWordContext: Boolean;
+begin
+  Result := (Oem850WordCount >= LEGACY_MIN_HIGH_BYTES) or
+    (Oem852WordCount >= LEGACY_MIN_HIGH_BYTES);
+end;
+
 function TObservedByteStats.LooksLikeOemArt: Boolean;
 begin
   Result :=
     (TotalByteCount >= OEM_ART_MIN_BYTES) and
     (HighByteCount > 0) and
-    (OemArtDistinctCount >= 2) and
+    ((OemArtDistinctCount >= 2) or HasOemArtLayout) and
     (OemArtByteCount >= OEM_ART_MIN_BYTES) and
     (HighByteCount / TotalByteCount >= OEM_ART_MIN_HIGH_RATIO) and
     (OemArtByteCount / HighByteCount >= OEM_ART_MIN_ART_HIGH_RATIO);
@@ -493,17 +540,19 @@ begin
   if HighRatio > OEM_LATIN_MAX_HIGH_RATIO then
     Exit;
 
-  if LooksLikeStructuredMultiByteText then
+  if LooksLikeStructuredMultiByteText and not HasOemWordContext then
     Exit;
 
   if (Oem858ByteCount >= 4) and (Oem850ByteCount >= 20) and
-     (Oem850DistinctCount >= 2) then
+     ((Oem850DistinctCount >= 2) or (Oem850WordCount >= LEGACY_MIN_HIGH_BYTES)) then
     Exit(IBM858_CHARSET);
 
-  if (Oem852ByteCount >= 20) and (Oem852DistinctCount >= 2) then
+  if (Oem852ByteCount >= 20) and
+     ((Oem852DistinctCount >= 2) or (Oem852WordCount >= LEGACY_MIN_HIGH_BYTES)) then
     Exit(IBM852_CHARSET);
 
-  if (Oem850ByteCount >= 20) and (Oem850DistinctCount >= 2) then
+  if (Oem850ByteCount >= 20) and
+     ((Oem850DistinctCount >= 2) or (Oem850WordCount >= LEGACY_MIN_HIGH_BYTES)) then
     Exit(IBM850_CHARSET);
 
   if Win1250ByteCount >= WINDOWS_1250_MIN_SIGNATURE_BYTES then
@@ -563,7 +612,9 @@ begin
   else
     Controls := Utf16BEControlCount;
   // Valid code units and zero parity alone also describe binary integer arrays.
-  Result := Controls / (TotalByteCount div 2) <= UTF16_MAX_CONTROL_RATIO;
+  Result := ((Controls <= UTF16_SPARSE_CONTROL_BUDGET) and
+    ((TotalByteCount div 2) - Controls >= UTF16_MIN_NONCONTROL_UNITS)) or
+    (Controls / (TotalByteCount div 2) <= UTF16_MAX_CONTROL_RATIO);
 end;
 
 function TObservedByteStats.LooksLikeUtf16Text: Boolean;
@@ -575,7 +626,7 @@ begin
   Result := False;
   ZeroByteCount := EvenZeroByteCount + OddZeroByteCount;
 
-  if (TotalByteCount < LEGACY_MIN_BYTES) or
+  if (TotalByteCount < UTF16_MIN_TEXT_BYTES) or
      (ZeroByteCount = 0) then
     Exit;
 
@@ -718,9 +769,21 @@ begin
           end;
 
           StructuredMultiByteText := mObservedBytes.LooksLikeStructuredMultiByteText;
+          // Long repeated graphic rows carry layout evidence, not language
+          // bigrams. Allow this to beat SBCS repetitions, never a CJK/Unicode model.
+          if mObservedBytes.HasOemArtLayout and LooksLikeOemArt and
+             not (BestCharset in [SHIFT_JIS_CHARSET, GB18030_CHARSET, GBK_CHARSET,
+               BIG5_CHARSET, EUC_JP_CHARSET, EUC_KR_CHARSET, X_EUC_TW_CHARSET,
+               UTF8_CHARSET, UTF16_LE_CHARSET, UTF16_BE_CHARSET]) and
+             ReportWithConfidence(IBM437_CHARSET, OEM_ART_CONFIDENCE) then
+            Exit;
           // Isolated OEM signature bytes must not override a stronger model
           // supported by the complete stream's character sequences.
-          if not StructuredMultiByteText then
+          if (not StructuredMultiByteText) or
+             (mObservedBytes.HasOemWordContext and
+              not (BestCharset in [SHIFT_JIS_CHARSET, GB18030_CHARSET, GBK_CHARSET,
+                BIG5_CHARSET, EUC_JP_CHARSET, EUC_KR_CHARSET, X_EUC_TW_CHARSET,
+                UTF8_CHARSET, UTF16_LE_CHARSET, UTF16_BE_CHARSET])) then
           begin
             if LooksLikeOemArt and (BestConfidence < OEM_ART_CONFIDENCE) and
                ReportWithConfidence(IBM437_CHARSET, OEM_ART_CONFIDENCE) then

@@ -2,12 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The current recognition and streaming regressions comprise 41 DUnitX methods in
+The current recognition and streaming regressions comprise 44 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
 model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
 byte filtering, reset and guard-page memory boundaries. They are explicitly
-registered and linked by the runner; the full suite currently contains 95 tests.
+registered and linked by the runner; the full suite currently contains 98 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests
@@ -133,7 +133,7 @@ the representable count remains finite; this is not arbitrary-precision input
 accounting. Three additional regressions enforce bounded allocation while
 streaming 2 MiB, exact model-summary joins, and counts beyond `2^32`.
 
-Delphi 12 Win32 and Win64 validation passes all 95 tests in every R/Q combination,
+Delphi 12 Win32 and Win64 validation passes all 98 tests in every R/Q combination,
 with matching recognition snapshots across R/Q modes within each platform.
 
 ### MBCS Syntax and End-of-Input Audit
@@ -159,17 +159,30 @@ corpus and valid structural-signature/reset checks remain enforced.
 
 BOM-less UTF-16 needs text plausibility in addition to alignment and surrogate
 validity. Both the zero-parity heuristic and Unicode-prober result selection
-reject a candidate when more than 2% of decoded code units are C0/C1 controls.
+normally reject a candidate when more than 2% of decoded code units are C0/C1 controls.
 TAB through CR and Unicode NEL are treated as text whitespace. Sparse controls,
 such as an isolated terminal ESC in an otherwise textual input, remain allowed.
 This explicit conservative policy is not an empirically calibrated probability;
 BOM-based detection remains unchanged, and this is not a general binary filter.
+To avoid excluding short text, up to two controls are also allowed when at least
+four other code units are present. The zero-parity path accepts inputs from eight
+bytes rather than reusing the unrelated 128-byte OEM minimum. Both endian orders
+of short accented text with embedded NUL or ANSI-style ESC controls are tested.
 
 OEM850/858 and OEM852 signatures must include at least two different supporting
-byte values, and OEM art likewise needs two distinct art bytes. Repeating a
-single byte no longer manufactures additional kinds of evidence. Very repetitive
-one-symbol OEM motifs are intentionally left ambiguous; diversity alone is still
-not proof of an encoding or a substitute for language models.
+byte values, unless at least 20 supporting accents occur between ASCII letters.
+This word context may bypass the coarse DBCS byte-pair heuristic, but not an
+actual winning CJK/Unicode model. OEM art likewise needs two distinct art bytes,
+or two graphic rows with runs of at least eight art bytes. The existing art
+volume/ratio requirements still apply. The final row may end at EOF. This layout
+can outrank repetitive SBCS scores, but never a winning CJK/Unicode model.
+Counters for layout are bounded and neighbour bytes survive chunk boundaries.
+
+Repetition alone remains insufficient: the isolated-symbol negative fixtures
+still pass. Added positive fixtures cover CP850 c-cedilla words, CP852 a-acute
+words, CP858 euro prices, and single-symbol CP437 block rows. These contextual
+preferences cannot distinguish byte-identical texts with different intended
+encodings; neither diversity nor layout is proof of the original encoding.
 
 Before correction, native regressions reproduced a binary small-integer array
 reported as UTF-16 and repeated CP1252 `0x87` reported as OEM. The resulting
