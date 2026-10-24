@@ -36,9 +36,94 @@ type
     [Test] procedure GraphicRunsMustNotOverrideNonOemContext;
     [Test] procedure SingleByteRunSamplingSurvivesSplitsEofAndReset;
     [Test] procedure AccentedNfoFramesRemainChunkIndependent;
+    [Test] procedure ShortSingleByteEmphasisRetainsLiteralEvidence;
+    [Test] procedure UnrelatedCornerFragmentsAreNotAnNfoFrame;
   end;
 
 implementation
+
+procedure TChsRegressionTests.ShortSingleByteEmphasisRetainsLiteralEvidence;
+const
+  Chunks: array [0..5] of Integer = (1, 2, 3, 7, 64, 8192);
+var
+  Data: TBytes;
+  Kind, I, Chunk: Integer;
+  Expected, Actual: TChsDetectionResult;
+begin
+  for Kind := 0 to 1 do
+  begin
+    if Kind = 0 then
+    begin
+      // CP1251 "Daaaaaaa!", an expressive short word rather than padding.
+      SetLength(Data, 10);
+      Data[0] := $C4;
+      for I := 1 to 8 do Data[I] := $E0;
+      Data[9] := Ord('!');
+    end
+    else
+    begin
+      Data := TBytes.Create($31, $30, $20, $80, $80, $80, $80, $80, $80, $80, $80);
+    end;
+    for Chunk in Chunks do
+      if Kind = 0 then
+        // Too little evidence for an exact label, but not Western prose.
+        Assert.AreEqual<Integer>(-1, DetectChunks(Data, Chunk).CodePage,
+          'Ambiguous emphatic word must remain unknown')
+      else
+        Assert.AreEqual<Integer>(1252, DetectChunks(Data, Chunk).CodePage,
+          Format('Short literal evidence: kind=%d chunk=%d', [Kind, Chunk]));
+  end;
+  // Crossing the bounded literal-prefix threshold must not depend on chunks.
+  for I := 127 to 129 do
+  begin
+    Data := TBytes.Create($31, $30, $20, $80, $80, $80, $80, $80, $80, $80, $80);
+    SetLength(Data, I);
+    FillChar(Data[11], I - 11, Ord(' '));
+    Expected := TChsEncodingDetector.Detect(Data);
+    for Chunk in Chunks do
+    begin
+      Actual := DetectChunks(Data, Chunk);
+      Assert.AreEqual<Integer>(Expected.CodePage, Actual.CodePage);
+      Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+    end;
+  end;
+end;
+
+procedure TChsRegressionTests.UnrelatedCornerFragmentsAreNotAnNfoFrame;
+const
+  Chunks: array [0..5] of Integer = (1, 2, 3, 7, 64, 8192);
+var
+  Data, Prose: TBytes;
+  I, Line, Chunk, Kind: Integer;
+begin
+  for Kind := 0 to 1 do
+  begin
+    Prose := TFile.ReadAllBytes(TPath.Combine(TChsCorpus.DataDir, 'windows-1251.txt'));
+    Data := Copy(Prose, 0, 256);
+    if Kind = 1 then
+      for I := 0 to High(Data) do
+        case I mod 4 of
+          0: Data[I] := Ord('a');
+          1: Data[I] := $E9;
+          2: Data[I] := $80;
+          3: Data[I] := 32;
+        end;
+    // Corner-like letter triples scattered in prose, not a rectangular frame.
+    Data := Append(Data, [13, 10, $C9, $CD, $CD, $20, $61, 13, 10,
+      $62, $20, $CD, $CD, $BB, 13, 10, $BA, $20, $63, 13, 10]);
+    I := Length(Data);
+    SetLength(Data, I + 4 * 514);
+    for Line := 0 to 3 do
+    begin
+      FillChar(Data[I + Line * 514], 512, $DB);
+      Data[I + Line * 514 + 512] := 13;
+      Data[I + Line * 514 + 513] := 10;
+    end;
+    for Chunk in Chunks do
+      Assert.IsTrue(DetectChunks(Data, Chunk).CodePage <> 437,
+        'Scattered letter triples must not bypass prose protection, chunk=' + IntToStr(Chunk));
+  end;
+end;
 
 procedure TChsRegressionTests.SingleByteRunSamplingSurvivesSplitsEofAndReset;
 const

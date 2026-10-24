@@ -2,12 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The current recognition and streaming regressions comprise 48 DUnitX methods in
+The current recognition and streaming regressions comprise 50 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
 model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
 byte filtering, reset and guard-page memory boundaries. They are explicitly
-registered and linked by the runner; the full suite currently contains 102 tests.
+registered and linked by the runner; the full suite currently contains 104 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests
@@ -133,7 +133,7 @@ the representable count remains finite; this is not arbitrary-precision input
 accounting. Three additional regressions enforce bounded allocation while
 streaming 2 MiB, exact model-summary joins, and counts beyond `2^32`.
 
-Delphi 12 Win32 and Win64 validation passes all 102 tests in every R/Q combination,
+Delphi 12 Win32 and Win64 validation passes all 104 tests in every R/Q combination,
 with matching recognition snapshots across R/Q modes within each platform.
 
 ### MBCS Syntax and End-of-Input Audit
@@ -178,8 +178,8 @@ volume/ratio requirements still apply. The final row may end at EOF. This layout
 can outrank repetitive SBCS scores, but never a winning CJK/Unicode model.
 An additional guard now prevents either art path from overriding a model above
 the minimum reporting threshold when high bytes outside the art set supply
-competing text evidence. Explicit corner/horizontal triplets plus a vertical side
-and multiline art layout provide a frame exception, preserving real NFO with
+competing text evidence. Matching single- or double-line top and bottom borders
+with aligned vertical sides and multiline art layout provide a frame exception, preserving real NFO with
 accented text. Pure graphic rows retain their positive coverage.
 Counters for layout are bounded and neighbour bytes survive chunk boundaries.
 
@@ -196,11 +196,19 @@ words, CP858 euro prices, and single-symbol CP437 block rows. These contextual
 preferences cannot distinguish byte-identical texts with different intended
 encodings; neither diversity nor layout is proof of the original encoding.
 The formerly ambiguous mixed-prose regressions now require exact CP1251/CP1252
-results. Only the SBCS and Latin-1 statistical sample replaces maximal uniform
+results. For inputs longer than 128 bytes, only the SBCS and Latin-1 statistical sample replaces maximal uniform
 byte runs of length eight or more with a neutral space. Shorter runs, including
 ordinary doubled letters, remain literal. Raw observed-byte statistics, BOM and
 Unicode/CJK validation still consume every original byte; source data is never
 rewritten. OEM/NFO inference therefore retains its full layout evidence.
+
+Inputs up to 128 bytes are buffered literally until EOF, preserving expressive
+short words and repeated Western punctuation. Ambiguous short words may remain
+unknown rather than acquiring a false Western label. A fixed 128-byte prefix
+buffer switches to sampling when the input exceeds that size; tests cover
+127/128/129-byte inputs across chunk sizes. Scattered corner-like fragments in
+CP1251 and CP1252 prose cannot trigger the accented-frame exception. Frame
+recognition uses constant-size row geometry, including CRLF and EOF handling.
 
 The sampler retains a byte and a capped run length, with a fixed 256-byte output
 buffer. It does not commit a pending run on an arbitrary chunk boundary: the

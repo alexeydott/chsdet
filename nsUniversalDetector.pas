@@ -43,6 +43,18 @@ type nsInputState = (
     dbsNeedFourth
   );
 
+  TOemBoxState = record
+    Column, LeftColumn, LastColumn, HorizontalCount: Integer;
+    FirstByte, LastByte, HorizontalByte: Byte;
+    InteriorIsHorizontal, PreviousCR: Boolean;
+    OpenLeft, OpenRight: Integer;
+    OpenStyle: Byte;
+    HasSide, Complete: Boolean;
+    procedure Feed(Value: Byte);
+    procedure FinishLine;
+    function HasFrame: Boolean;
+  end;
+
   TObservedByteStats = record
     TotalByteCount: Integer;
     HighByteCount: Integer;
@@ -51,7 +63,7 @@ type nsInputState = (
     OemArtDistinctCount, Oem850DistinctCount, Oem852DistinctCount: Integer;
     PreviousByte, BeforePreviousByte: Byte;
     WesternPunctuationSeen: Boolean;
-    OemBoxStartSeen, OemBoxEndSeen, OemBoxSideSeen: Boolean;
+    OemBox: TOemBoxState;
     Oem850WordCount, Oem852WordCount: Integer;
     OemArtRunLength, OemArtLineCount: Integer;
     Oem850ByteCount: Integer;
@@ -121,6 +133,9 @@ type nsInputState = (
       mDetectedBOM: eBOMKind;
       mKnownCharsetsCache: RawByteString;
       mStatLastByte, mStatRunLength: Byte;
+      mLiteralSample: array [0..127] of AnsiChar;
+      mLiteralSampleLength: Integer;
+      mStatSamplingStarted: Boolean;
 
 		  procedure Report(aCharsetID: eInternalCharsetID);
       function ReportWithConfidence(aCharsetID: eInternalCharsetID; Confidence: float): Boolean;
@@ -246,6 +261,92 @@ end;
 
 { TObservedByteStats }
 
+procedure TOemBoxState.Feed(Value: Byte);
+begin
+  if Value in [10, 13] then
+  begin
+    if (Value <> 10) or not PreviousCR then FinishLine;
+    PreviousCR := Value = 13;
+    Exit;
+  end;
+  PreviousCR := False;
+  Inc(Column);
+  if Value in [9, 32] then Exit;
+  if LeftColumn = 0 then
+  begin
+    LeftColumn := Column;
+    FirstByte := Value;
+    InteriorIsHorizontal := True;
+    if Value in [$C9, $C8] then HorizontalByte := $CD
+    else HorizontalByte := $C4;
+  end
+  else
+  begin
+    InteriorIsHorizontal := InteriorIsHorizontal and
+      (Column = LastColumn + 1);
+    if LastColumn <> LeftColumn then
+    begin
+      InteriorIsHorizontal := InteriorIsHorizontal and (LastByte = HorizontalByte);
+      Inc(HorizontalCount);
+    end;
+  end;
+  LastColumn := Column;
+  LastByte := Value;
+end;
+
+procedure TOemBoxState.FinishLine;
+var
+  Style: Byte;
+  IsTop, IsBottom: Boolean;
+begin
+  Style := 0;
+  IsTop := False;
+  IsBottom := False;
+  if InteriorIsHorizontal and (HorizontalCount >= 8) then
+  begin
+    if (FirstByte = $C9) and (LastByte = $BB) then
+    begin Style := $BA; IsTop := True end;
+    if (FirstByte = $DA) and (LastByte = $BF) then
+    begin Style := $B3; IsTop := True end;
+    if (FirstByte = $C8) and (LastByte = $BC) then
+    begin Style := $BA; IsBottom := True end;
+    if (FirstByte = $C0) and (LastByte = $D9) then
+    begin Style := $B3; IsBottom := True end;
+  end;
+  if IsTop then
+  begin
+    OpenStyle := Style;
+    OpenLeft := LeftColumn;
+    OpenRight := LastColumn;
+    HasSide := False;
+  end
+  else if (OpenStyle <> 0) and (LeftColumn = OpenLeft) and
+    (LastColumn = OpenRight) then
+  begin
+    if (FirstByte = OpenStyle) and (LastByte = OpenStyle) then HasSide := True
+    else
+    begin
+      if IsBottom and (Style = OpenStyle) and HasSide then Complete := True;
+      OpenStyle := 0;
+    end;
+  end
+  else OpenStyle := 0;
+  Column := 0;
+  LeftColumn := 0;
+  LastColumn := 0;
+  HorizontalCount := 0;
+  InteriorIsHorizontal := False;
+end;
+
+function TOemBoxState.HasFrame: Boolean;
+var
+  FinalState: TOemBoxState;
+begin
+  FinalState := Self;
+  FinalState.FinishLine;
+  Result := FinalState.Complete;
+end;
+
 procedure TObservedByteStats.Reset;
 begin
   TotalByteCount := 0;
@@ -258,9 +359,7 @@ begin
   PreviousByte := 0;
   BeforePreviousByte := 0;
   WesternPunctuationSeen := False;
-  OemBoxStartSeen := False;
-  OemBoxEndSeen := False;
-  OemBoxSideSeen := False;
+  FillChar(OemBox, SizeOf(OemBox), 0);
   Oem850WordCount := 0;
   Oem852WordCount := 0;
   OemArtRunLength := 0;
@@ -297,15 +396,7 @@ begin
   Inc(TotalByteCount);
   ByteIndex := TotalByteCount - 1;
 
-  // Require the matching corner/horizontal triplets and a vertical side,
-  // rather than interpreting any repeated Cyrillic-compatible byte as a frame.
-  if ((BeforePreviousByte = $C9) and (PreviousByte = $CD) and (Value = $CD)) or
-     ((BeforePreviousByte = $DA) and (PreviousByte = $C4) and (Value = $C4)) then
-    OemBoxStartSeen := True;
-  if ((BeforePreviousByte = $CD) and (PreviousByte = $CD) and (Value = $BB)) or
-     ((BeforePreviousByte = $C4) and (PreviousByte = $C4) and (Value = $BF)) then
-    OemBoxEndSeen := True;
-  if Value in [$BA, $B3] then OemBoxSideSeen := True;
+  OemBox.Feed(Value);
 
   if (PreviousByte in [$80, $91..$94, $96, $97]) and
      not (BeforePreviousByte in [Ord('A')..Ord('Z'), Ord('a')..Ord('z')]) and
@@ -551,7 +642,7 @@ end;
 
 function TObservedByteStats.HasOemBoxFrame: Boolean;
 begin
-  Result := OemBoxStartSeen and OemBoxEndSeen and OemBoxSideSeen and HasOemArtLayout;
+  Result := OemBox.HasFrame and HasOemArtLayout;
 end;
 
 function TObservedByteStats.LooksLikeOemArt: Boolean;
@@ -889,6 +980,29 @@ var
     mStatRunLength := 0;
   end;
 begin
+  // Preserve all evidence in short inputs; the literal prefix is strictly bounded.
+  if not mStatSamplingStarted then
+  begin
+    if EndOfInput then
+    begin
+      if mLiteralSampleLength > 0 then
+      begin
+        mCharSetProbers[1].HandleData(@mLiteralSample[0], mLiteralSampleLength);
+        mCharSetProbers[2].HandleData(@mLiteralSample[0], mLiteralSampleLength);
+        mLiteralSampleLength := 0;
+      end;
+      Exit;
+    end;
+    if Count <= Length(mLiteralSample) - mLiteralSampleLength then
+    begin
+      if Count > 0 then Move(Data^, mLiteralSample[mLiteralSampleLength], Count);
+      Inc(mLiteralSampleLength, Count);
+      Exit;
+    end;
+    mStatSamplingStarted := True;
+    FeedSingleByteStatistics(@mLiteralSample[0], mLiteralSampleLength);
+    mLiteralSampleLength := 0;
+  end;
   Used := 0;
   for I := 0 to Count - 1 do
   begin
@@ -1129,6 +1243,8 @@ begin
   mObservedBytes.Reset;
   mStatLastByte := 0;
   mStatRunLength := 0;
+  mLiteralSampleLength := 0;
+  mStatSamplingStarted := False;
   mInputState := ePureAscii;
   mLastChar := #0; (*illegal value as signal*)
   mEscCharSetProber.Reset;
