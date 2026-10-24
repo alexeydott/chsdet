@@ -87,6 +87,7 @@ type nsInputState = (
       mInputState: nsInputState;
       mDone: Boolean;
       mStart: Boolean;
+      mPrefix: RawByteString;
       mGotData: Boolean;
       mSeenZeroByte: Boolean;
       mSeenC1Byte: Boolean;
@@ -552,6 +553,14 @@ var
   maxProber: PRInt32;
   i: integer;
 begin
+  if mStart and (Length(mPrefix) > 0) then
+  begin
+    mStart := False;
+    CheckBOM(PAnsiChar(mPrefix), Length(mPrefix));
+    if not ReportWithConfidence(CharsetFromBOM(mDetectedBOM), SURE_YES) then
+      HandleData(PAnsiChar(mPrefix), Length(mPrefix));
+    mPrefix := '';
+  end;
   if not mGotData then
     (* we haven't got any data yet, return immediately *)
     (* caller program sometimes call DataEnd before anything has been sent to detector*)
@@ -565,6 +574,9 @@ begin
   case mInputState of
     eHighbyte:
       begin
+        if (mCharSetProbers[3].GetConfidence > MINIMUM_THRESHOLD) and
+           ReportWithConfidence(UTF8_CHARSET, mCharSetProbers[3].GetConfidence) then
+          Exit;
         StructuredMultiByteText := mObservedBytes.LooksLikeStructuredMultiByteText;
 
         if mObservedBytes.LooksLikeUtf16Text then
@@ -634,6 +646,9 @@ var
   st: eProbingState;
   DetectedCharset: eInternalCharsetID;
   DetectedConfidence: float;
+  PrefixCount: Integer;
+  PrefixPart: RawByteString;
+  ReplayTilde: Boolean;
 //  startAt: integer;
 //newBuf: pChar;
 //BufPtr: pChar;
@@ -646,22 +661,40 @@ begin
       Result := NS_OK;
       exit;
     end;
+  if aLen <= 0 then
+    Exit(NS_OK);
   if aLen > 0 then
 	  mGotData := TRUE;
 
   (*If the data starts with BOM, we know it is Unicode*)
   if mStart then
     begin
+      PrefixCount := 4 - Length(mPrefix);
+      if PrefixCount > aLen then
+        PrefixCount := aLen;
+      SetString(PrefixPart, aBuf, PrefixCount);
+      mPrefix := mPrefix + PrefixPart;
+      Inc(aBuf, PrefixCount);
+      Dec(aLen, PrefixCount);
+      if Length(mPrefix) < 4 then
+        Exit(NS_OK);
       mStart := FALSE;
-      CheckBOM(aBuf, aLen);
+      CheckBOM(PAnsiChar(mPrefix), Length(mPrefix));
       if ReportWithConfidence(CharsetFromBOM(mDetectedBOM), SURE_YES) then
         begin
           mDone := TRUE;
           Result := NS_OK;
           exit;
         end;
+      SetString(PrefixPart, aBuf, aLen);
+      mPrefix := mPrefix + PrefixPart;
+      Result := HandleData(PAnsiChar(mPrefix), Length(mPrefix));
+      mPrefix := '';
+      Exit;
     end; {if mStart}
 
+  ReplayTilde := (mInputState = ePureAscii) and (mLastChar = '~') and
+    (aBuf[0] = '{');
   for i := 0 to Pred(aLen) do
     begin
       mObservedBytes.Feed(Byte(aBuf[i]));
@@ -708,6 +741,8 @@ begin
         {$ifdef DEBUG_chardet}
         AddDump('Universal detector - Escape Detector started');
         {$endif}
+        if ReplayTilde then
+          mEscCharSetProber.HandleData('~', 1);
         st := mEscCharSetProber.HandleData(aBuf,aLen);
         if st = psFoundIt then
           begin
@@ -753,17 +788,24 @@ begin
 //BufPtr^ := aBuf[b];
 //inc(BufPtr);
 //end;
+          // Validate UTF-8 first so a pending sequence cannot lose to a CJK guess.
+          if i = 0 then
+            mCharSetProbers[3].HandleData(aBuf, aLen);
+          if i = 3 then
+            Continue;
           st := mCharSetProbers[i].HandleData(aBuf,aLen);
 //          st := mCharSetProbers[i].HandleData(newBuf,aLen+startAt);
           if st = psFoundIt then
-            begin
-              DetectedCharset := mCharSetProbers[i].GetDetectedCharset;
-              DetectedConfidence := mCharSetProbers[i].GetConfidence;
-              if ReportWithConfidence(DetectedCharset, DetectedConfidence) then
-                mDone:= TRUE;
-//              Result := NS_OK;
-              break;
-            end;
+          begin
+            DetectedCharset := mCharSetProbers[i].GetDetectedCharset;
+            if (DetectedCharset = UTF8_CHARSET) or
+               (mCharSetProbers[3].GetState <> psNotMe) then
+              Continue;
+            DetectedConfidence := mCharSetProbers[i].GetConfidence;
+            if ReportWithConfidence(DetectedCharset, DetectedConfidence) then
+              mDone := True;
+            Break;
+          end;
 //finally
 //FreeMem(newBuf, aLen);
 //end;
@@ -794,6 +836,10 @@ begin
     Exit;
 
   NormalizedCharset := NormalizeCharsetByObservedBytes(aCharsetID);
+  if (NormalizedCharset = UTF8_CHARSET) and
+     (mDetectedBOM = BOM_Not_Found) and
+     (mCharSetProbers[3].GetConfidence <= SURE_NO) then
+    Exit(False);
   if not IsCharsetEnabled(NormalizedCharset) then
     Exit;
 
@@ -808,6 +854,7 @@ var
 begin
   mDone := FALSE;
   mStart := TRUE;
+  mPrefix := '';
   mDetectedCharset := UNKNOWN_CHARSET;
   mDetectedConfidence := 0.0;
   mGotData := FALSE;

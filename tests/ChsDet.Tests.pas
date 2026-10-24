@@ -29,6 +29,9 @@ type
     class function MixedUnicodeBatchText: string; static;
     class function JapaneseText: string; static;
   public
+    [Test] procedure BomAndEscapeSplitsMatchWholeInput;
+    [Test] procedure Utf8TailMustBeValidated;
+    [Test] procedure ShortPrefixesAndStreamTailAreHandled;
     [Test] procedure DetectsAsciiFromBytes;
     [Test] procedure DetectsUtf8BomFromBytesAndResolvesEncoding;
     [Test] procedure DetectsUtf16LeFromBytes;
@@ -83,6 +86,118 @@ implementation
 uses nsEscCharsetProber;
 
 { TChsDetectorTests }
+
+procedure TChsDetectorTests.BomAndEscapeSplitsMatchWholeInput;
+const
+  Files: array[0..9] of string = ('utf8-bom.txt', 'utf16le-bom.bin',
+    'utf16be-bom.bin', 'utf32le-bom.bin', 'utf32be-bom.bin',
+    'ucs4-2143-bom.bin', 'ucs4-3412-bom.bin', 'hz-gb-2312.txt',
+    'iso-2022-jp.txt', 'iso-2022-kr.txt');
+var
+  FileName: string;
+  Bytes: TBytes;
+  Expected, Actual: TChsDetectionResult;
+  Detector: IChsEncodingDetector;
+  Split, I: Integer;
+begin
+  for FileName in Files do
+  begin
+    Bytes := LoadCorpusFixtureBytes(FileName);
+    Expected := TChsEncodingDetector.Detect(Bytes);
+    Detector := TChsEncodingDetector.New;
+    for Split := 1 to Min(24, Length(Bytes) - 1) do
+    begin
+      Detector.Reset;
+      Detector.Feed(Bytes, 0, Split);
+      Detector.Feed(Bytes, Split, Length(Bytes) - Split);
+      Actual := Detector.Finish;
+      Assert.AreEqual(Expected.Name, Actual.Name, FileName + ' split ' + IntToStr(Split));
+      Assert.AreEqual<Integer>(Ord(Expected.BomKind), Ord(Actual.BomKind), FileName);
+    end;
+    Detector.Reset;
+    for I := 0 to High(Bytes) do
+      Detector.Feed(Bytes, I, 1);
+    Actual := Detector.Finish;
+    Assert.AreEqual(Expected.Name, Actual.Name, FileName + ' single-byte chunks');
+  end;
+end;
+
+procedure TChsDetectorTests.ShortPrefixesAndStreamTailAreHandled;
+var
+  Detector: IChsEncodingDetector;
+  Detection: TChsDetectionResult;
+  Bytes: TBytes;
+  Stream: TBytesStream;
+  I: Integer;
+begin
+  Detector := TChsEncodingDetector.New;
+  Detection := Detector.Finish;
+  Assert.IsTrue(Detection.IsUnknown);
+  for I := 1 to 3 do
+  begin
+    Detector.Reset;
+    Detector.Feed(TEncoding.ASCII.GetBytes(StringOfChar('A', I)));
+    Detection := Detector.Finish;
+    Assert.AreEqual('ASCII', Detection.Name);
+  end;
+  Detector.Reset;
+  Detector.Feed(TBytes.Create($FF, $FE));
+  Detection := Detector.Finish;
+  Assert.AreEqual<Integer>(1200, Detection.CodePage);
+  Assert.IsTrue(Detection.HasBom);
+  Detector.Reset;
+  Detector.Feed(TBytes.Create($EF, $BB, $BF));
+  Detection := Detector.Finish;
+  Assert.AreEqual<Integer>(65001, Detection.CodePage);
+  Bytes := CombineBytes(TEncoding.UTF8.GetBytes(RepeatText(#$0410#$0431#$0432 + ' ', 2000)), TBytes.Create($FF));
+  Stream := TBytesStream.Create(Bytes);
+  try
+    Detection := TChsEncodingDetector.Detect(Stream, 8192);
+    Assert.AreNotEqual<Integer>(65001, Detection.CodePage);
+    Assert.AreEqual<Int64>(Stream.Size, Stream.Position);
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure TChsDetectorTests.Utf8TailMustBeValidated;
+var
+  Bytes, Tail: TBytes;
+  Detector: IChsEncodingDetector;
+  Detection: TChsDetectionResult;
+  I, Split: Integer;
+begin
+  Bytes := TEncoding.UTF8.GetBytes(RepeatText(#$0410#$0431#$0432 + ' ', 100));
+  Detector := TChsEncodingDetector.New;
+  for I := 0 to High(Bytes) do
+    Detector.Feed(Bytes, I, 1);
+  Detection := Detector.Finish;
+  Assert.AreEqual<Integer>(65001, Detection.CodePage, 'Single-byte UTF-8 chunks');
+  for I := 0 to 5 do
+  begin
+    case I of
+      0: Tail := TBytes.Create($FF);
+      1: Tail := TBytes.Create($E2, $82);
+      2: Tail := TBytes.Create($C0, $AF);
+      3: Tail := TBytes.Create($ED, $A0, $80);
+      4: Tail := TBytes.Create($F4, $90, $80, $80);
+      5: Tail := TBytes.Create($F0, $9F, $98, $80);
+    end;
+    for Split := 0 to Length(Tail) do
+    begin
+      Detector := TChsEncodingDetector.New;
+      Detector.Feed(Bytes);
+      Assert.IsFalse(Detector.IsDone, 'UTF-8 prefix must stay provisional');
+      Detector.Feed(Tail, 0, Split);
+      Detector.Feed(Tail, Split, Length(Tail) - Split);
+      Detection := Detector.Finish;
+      if I = 5 then
+        Assert.AreEqual<Integer>(65001, Detection.CodePage)
+      else
+        Assert.AreNotEqual<Integer>(65001, Detection.CodePage, 'Invalid UTF-8 tail ' + IntToStr(I));
+    end;
+  end;
+end;
 
 class function TChsDetectorTests.RepeatText(const Value: string; Count: Integer): string;
 var
