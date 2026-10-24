@@ -146,14 +146,10 @@ end;
 
 function TnsMBCSMultiProber.HandleData(aBuf: PAnsiChar; aLen: integer): eProbingState;
 var
-  i: integer; (*do filtering to reduce load to probers*)
+  i: integer;
   j: integer;
-  filteredLen: Integer;
   charLen: PRUint32;
   codingState: nsSMState;
-  highbyteBuf: PAnsiChar;
-  hptr: PAnsiChar;
-  keepNext: Boolean;
 begin
   if aLen <= 0 then
   begin
@@ -161,41 +157,13 @@ begin
     Exit;
   end;
 
-	keepNext := TRUE;
-  (*assume previous is not ascii, it will do no harm except add some noise*)
-  highbyteBuf := AllocMem(aLen);
-  try
-    hptr:= highbyteBuf;
-    if hptr = nil  then
-      begin
-        Result := mState;
-        exit;
-      end;
-    for i:=0 to Pred(aLen) do
-      begin
-        if (Byte(aBuf[i]) >= $80) then
-          begin
-            hptr^ := aBuf[i];
-            inc(hptr);
-            keepNext:= TRUE;
-          end
-        else
-          begin
-            (*if previous is highbyte, keep this even it is a ASCII*)
-            if keepNext = TRUE then
-              begin
-                hptr^ := aBuf[i];
-                inc(hptr);
-                keepNext:= FALSE;
-              end;
-          end;
-      end;
-    filteredLen := hptr - highbyteBuf;
+  // State machines must see the original stream. Removing ASCII can join
+  // unrelated bytes into a valid-looking multibyte character.
     {$IFDEF DEBUG_chardet}
      AddDump('MultiByte - HandleData - start');
     {$endif}
 
-    for i := 0 to Pred(filteredLen) do
+    for i := 0 to Pred(aLen) do
       begin
         for j := mCharsetsCount - 1 downto 0 do
         begin
@@ -203,12 +171,15 @@ begin
              (mSMState[j] = psNotMe) then
             continue;
 
-          codingState := mCodingSM[j].NextState(highbyteBuf[i]);
+          codingState := mCodingSM[j].NextState(aBuf[i]);
           if codingState = eError then
             begin
               mSMState[j] := psNotMe;
-              if mDetectedCharset = mCodingSM[j].GetCharsetID then
+              if (mStructuralWinner = j) or
+                 (mDetectedCharset = mCodingSM[j].GetCharsetID) then
               begin
+                if mStructuralWinner = j then
+                  mStructuralWinner := -1;
                 mState := psDetecting;
                 mDetectedCharset := UNKNOWN_CHARSET;
               end;
@@ -228,8 +199,11 @@ begin
               mSMState[j] := psFoundIt;
               mState := psFoundIt;
               mDetectedCharset := mCodingSM[j].GetCharsetID;
-              Result := mState;
-              Exit;
+              // A complete GB18030 character identifies the family, not the
+              // validity of its remaining input. Leave the absorbing eItsMe
+              // state and validate the next character, even in this block.
+              mCodingSM[j].Reset;
+              Continue;
             end;
 
           if codingState = eStart then
@@ -239,7 +213,7 @@ begin
                 begin
                   if i = 0 then
                     begin
-                      mLastChar[j][1] := highbyteBuf[0];
+                      mLastChar[j][1] := aBuf[0];
                       if mContextAnalysis[j] <> nil then
                         mContextAnalysis[j].HandleOneChar(@mLastChar[j][0], charLen);
                       mDistributionAnalysis[j].HandleOneChar(@mLastChar[j][0], charLen);
@@ -247,8 +221,8 @@ begin
                   else
                     begin
                       if mContextAnalysis[j] <> nil then
-                        mContextAnalysis[j].HandleOneChar(highbyteBuf + i - 1, charLen);
-                      mDistributionAnalysis[j].HandleOneChar(highbyteBuf + i - 1, charLen);
+                        mContextAnalysis[j].HandleOneChar(aBuf + i - 1, charLen);
+                      mDistributionAnalysis[j].HandleOneChar(aBuf + i - 1, charLen);
                     end;
                 end;
 
@@ -266,9 +240,8 @@ begin
         end;
       end;
 
-    if filteredLen > 0 then
-      for i := 0 to Pred(mCharsetsCount) do
-        mLastChar[i][0] := highbyteBuf[filteredLen - 1];
+    for i := 0 to Pred(mCharsetsCount) do
+      mLastChar[i][0] := aBuf[aLen - 1];
 
     if mActiveSM = 1 then
       begin
@@ -288,9 +261,6 @@ begin
     {$IFDEF DEBUG_chardet}
      AddDump('MultiByte - HandleData - end');
     {$endif}
-  finally
-	  FreeMem(highbyteBuf, aLen);
-  end;
 
   Result := mState;
 end;
@@ -300,6 +270,8 @@ var
   contxtCf: double;
   distribCf: double;
 begin
+  if not mCodingSM[index].IsAtCharacterBoundary then
+    Exit(SURE_NO);
   if mContextAnalysis[index] <> nil then
     contxtCf := mContextAnalysis[index].GetConfidence
   else
@@ -321,8 +293,12 @@ var
 begin
   // A confidence query must preserve a completed structural detection.
   if (mStructuralWinner >= 0) and
-     (mSMState[mStructuralWinner] <> psNotMe) then
+     (mSMState[mStructuralWinner] <> psNotMe) and
+     mCodingSM[mStructuralWinner].IsAtCharacterBoundary then
+  begin
+    mDetectedCharset := mCodingSM[mStructuralWinner].GetCharsetID;
     Exit(SURE_YES);
+  end;
   if mState = psNotMe then
   begin
     mDetectedCharset := UNKNOWN_CHARSET;

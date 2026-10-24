@@ -57,6 +57,7 @@ type
       destructor Destroy; override;
 			function NextState(c: AnsiChar): nsSMState;
 			function GetCurrentCharLen: PRUint32;
+      function IsAtCharacterBoundary: Boolean;
 		  procedure Reset;
 			function GetCharsetID: eInternalCharsetID;
 
@@ -112,6 +113,11 @@ end;
 function TnsCodingStateMachine.GetCurrentCharLen: PRUint32;
 begin
   Result:= mCurrentCharLen;
+end;
+
+function TnsCodingStateMachine.IsAtCharacterBoundary: Boolean;
+begin
+  Result := mCurrentState = eStart;
 end;
 
 procedure TnsCodingStateMachine.Reset;

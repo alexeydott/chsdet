@@ -6,7 +6,7 @@ Use [ChsDet.EncodingDetector.pas](ChsDet.EncodingDetector.pas) or [ChsDet.Fluent
 ## Features
 - Byte-oriented core using `AnsiChar` and `PAnsiChar`, with direct and fluent APIs for modern Delphi.
 - Incremental BOM and escape-designator handling, malformed UTF-8 tail checks, and BOM-less UTF-16 alignment and surrogate validation.
-- Provisional statistical detection until end of input, allowing late GB18030 evidence and rejected MBCS candidates to change the result.
+- Provisional statistical detection until end of input, allowing late GB18030 evidence and rejected MBCS candidates to change the result. MBCS checks retain all original bytes and reject malformed or incomplete suffixes after a strong prefix.
 - Chunk-independent SBCS mixed-word statistics with fixed-size ASCII-prefix summaries below 1 KiB and 64-bit sequence counters.
 - Conservative OEM discrimination and explicit handling of ambiguous single-byte families.
 - Native DUnitX regressions, a reproducible charset corpus, and an eight-configuration Delphi range/overflow gate.
@@ -100,7 +100,7 @@ end;
 `GetEncoding` returns `False` when the result cannot be resolved by the RTL, including the `ASCII` pseudo code page `0`. `GetEncodingDef` returns the resolved encoding, or your explicit fallback, or `TEncoding.Default` when no fallback is supplied. A caller-supplied fallback remains caller-owned.
 
 ## Validation and Documentation
-The current suite passes **89/89 tests** on Delphi 12 Win32 and Win64 in each of the four `R+/R-` and `Q+/Q-` combinations. Recognition snapshots match across directive modes within each platform. The bounded-prefix memory regression also fails on the previous byte-buffer implementation, confirming that it protects the resource limit.
+The current suite passes **92/92 tests** on Delphi 12 Win32 and Win64 in each of the four `R+/R-` and `Q+/Q-` combinations. Recognition snapshots match across directive modes within each platform. The bounded-prefix memory regression also fails on the previous byte-buffer implementation, confirming that it protects the resource limit.
 
 Run the complete native matrix:
 

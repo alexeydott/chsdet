@@ -20,6 +20,9 @@ type
     [Test] procedure JapaneseContextDoesNotReadBeyondTheSuppliedBlock;
     [Test] procedure SequenceSummariesPreserveCountersAndBoundaryPairs;
     [Test] procedure SequenceSummariesAndLiveCountersExceed32Bits;
+    [Test] procedure Gb18030SignatureDoesNotHideMalformedOrIncompleteTails;
+    [Test] procedure MbcsAsciiFilteringMustNotInventGb18030Characters;
+    [Test] procedure SjisIncompleteTailCannotKeepHighConfidence;
   end;
 
 implementation
@@ -55,6 +58,117 @@ type
 function TInspectableMbcsProber.SjisState: eProbingState;
 begin
   Result := mSMState[0];
+end;
+
+procedure TChsProberTests.Gb18030SignatureDoesNotHideMalformedOrIncompleteTails;
+var
+  Probe: TnsMBCSMultiProber;
+  Cases: array [0..5] of TBytes;
+  Data: TBytes;
+  Detector: IChsEncodingDetector;
+  Kind, Split: Integer;
+begin
+  Cases[0] := TBytes.Create($81, $30, $81, $30, $FF);
+  Cases[1] := TBytes.Create($81, $30, $81, $30, $81);
+  Cases[2] := TBytes.Create($81, $30, $81, $30, $81, $30);
+  Cases[3] := TBytes.Create($81, $30, $81, $30, $81, $30, $81);
+  Cases[4] := TBytes.Create($81, $30, $81, $30, $81, $20);
+  Cases[5] := TBytes.Create($81, $30, $81, $30, $81, $30, $20, $30);
+  Probe := TnsMBCSMultiProber.Create;
+  try
+    for Kind := Low(Cases) to High(Cases) do
+    begin
+      Data := Cases[Kind];
+      for Split := 0 to Length(Data) do
+      begin
+        Probe.Reset;
+        Probe.HandleData(PAnsiChar(@Data[0]), Split);
+        Probe.GetConfidence;
+        Probe.HandleData(PAnsiChar(@Data[0]) + Split, Length(Data) - Split);
+        Probe.GetConfidence;
+        Assert.IsTrue(Probe.GetDetectedCharset <> GB18030_CHARSET,
+          Format('Malformed/incomplete GB18030: case=%d split=%d', [Kind, Split]));
+        Detector := TChsEncodingDetector.New;
+        Detector.Feed(Data, 0, Split);
+        Detector.Feed(Data, Split, Length(Data) - Split);
+        Assert.IsTrue(Detector.Finish.CodePage <> 54936,
+          Format('Public GB18030: case=%d split=%d', [Kind, Split]));
+      end;
+    end;
+    // A provisional incomplete suffix must recover after its final byte.
+    Probe.Reset;
+    Data := Cases[3];
+    Probe.HandleData(PAnsiChar(@Data[0]), Length(Data));
+    Assert.AreEqual<Double>(SURE_NO, Probe.GetConfidence);
+    Probe.HandleData('0', 1);
+    Assert.AreEqual<Double>(SURE_YES, Probe.GetConfidence);
+    Assert.AreEqual<Integer>(Ord(GB18030_CHARSET), Ord(Probe.GetDetectedCharset));
+  finally
+    Probe.Free;
+  end;
+end;
+
+procedure TChsProberTests.MbcsAsciiFilteringMustNotInventGb18030Characters;
+var
+  Probe: TnsMBCSMultiProber;
+  Data: TBytes;
+  Detector: IChsEncodingDetector;
+  Split: Integer;
+begin
+  // Space invalidates 81 30 ...; deleting it invents the valid 81 30 81 30.
+  Data := TBytes.Create($81, $30, $20, $81, $30);
+  Probe := TnsMBCSMultiProber.Create;
+  try
+    for Split := 0 to Length(Data) do
+    begin
+      Probe.Reset;
+      Probe.HandleData(PAnsiChar(@Data[0]), Split);
+      Probe.HandleData(PAnsiChar(@Data[0]) + Split, Length(Data) - Split);
+      Probe.GetConfidence;
+      Assert.IsTrue(Probe.GetDetectedCharset <> GB18030_CHARSET,
+        'ASCII removal must not repair invalid data, split=' + IntToStr(Split));
+      Detector := TChsEncodingDetector.New;
+      Detector.Feed(Data, 0, Split);
+      Detector.Feed(Data, Split, Length(Data) - Split);
+      Assert.IsTrue(Detector.Finish.CodePage <> 54936,
+        'Public API must not invent GB18030, split=' + IntToStr(Split));
+    end;
+  finally
+    Probe.Free;
+  end;
+end;
+
+procedure TChsProberTests.SjisIncompleteTailCannotKeepHighConfidence;
+var
+  Probe: TnsMBCSMultiProber;
+  Data: TBytes;
+  Detector: IChsEncodingDetector;
+  I: Integer;
+begin
+  SetLength(Data, 1201);
+  for I := 0 to 599 do
+  begin
+    Data[I * 2] := $82;
+    Data[I * 2 + 1] := $A0;
+  end;
+  Data[1200] := $82;
+  Probe := TnsMBCSMultiProber.Create;
+  try
+    Probe.HandleData(PAnsiChar(@Data[0]), 1200);
+    Assert.IsTrue(Probe.GetConfidence > SHORTCUT_THRESHOLD);
+    Probe.HandleData(PAnsiChar(@Data[1200]), 1);
+    Probe.GetConfidence;
+    Assert.IsTrue(Probe.GetDetectedCharset <> SHIFT_JIS_CHARSET);
+    Detector := TChsEncodingDetector.New;
+    Detector.Feed(Data);
+    Assert.IsTrue(Detector.Finish.CodePage <> 932,
+      'The public API must not finalize incomplete Shift_JIS');
+    Probe.HandleData(PAnsiChar(@Data[1]), 1);
+    Assert.IsTrue(Probe.GetConfidence > SHORTCUT_THRESHOLD);
+    Assert.AreEqual<Integer>(Ord(SHIFT_JIS_CHARSET), Ord(Probe.GetDetectedCharset));
+  finally
+    Probe.Free;
+  end;
 end;
 
 procedure TSingleByteConfidenceProbe.CheckCountersAgainst(Expected: TSingleByteConfidenceProbe);

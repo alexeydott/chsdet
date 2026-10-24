@@ -2,12 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The current recognition and streaming regressions comprise 35 DUnitX methods in
+The current recognition and streaming regressions comprise 38 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
 model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
 byte filtering, reset and guard-page memory boundaries. They are explicitly
-registered and linked by the runner; the full suite currently contains 89 tests.
+registered and linked by the runner; the full suite currently contains 92 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests
@@ -133,8 +133,27 @@ the representable count remains finite; this is not arbitrary-precision input
 accounting. Three additional regressions enforce bounded allocation while
 streaming 2 MiB, exact model-summary joins, and counts beyond `2^32`.
 
-Delphi 12 Win32 and Win64 validation passes all 89 tests in every R/Q combination,
+Delphi 12 Win32 and Win64 validation passes all 92 tests in every R/Q combination,
 with matching recognition snapshots across R/Q modes within each platform.
+
+### MBCS Syntax and End-of-Input Audit
+
+MBCS state machines now consume all original bytes, including ASCII. Previously,
+filtering `81 30 20 81 30` removed the space and invented the valid-looking
+GB18030 sequence `81 30 81 30`; results could also vary with chunk boundaries.
+
+A GB18030 four-byte signature preserves family evidence but does not stop syntax
+validation. The machine resumes at a character boundary and can reject a later
+invalid suffix. An incomplete character is temporarily ineligible for candidate
+selection, including after a strong statistical Shift_JIS prefix. Querying
+confidence does not finalize the stream, and completing the pending character
+restores an otherwise valid candidate.
+
+Three native regressions failed on the previous implementation and pass after
+these changes. They cover every two-block split of six malformed/incomplete
+GB18030 suffix cases, artificial signatures caused by ASCII deletion, public API
+results, and successful resumption after an incomplete tail. The original strict
+corpus and valid structural-signature/reset checks remain enforced.
 
 ### General Notes
 
@@ -163,4 +182,6 @@ with matching recognition snapshots across R/Q modes within each platform.
 - Greek byte streams without C1 bytes and without non-C1 discriminator bytes remain ambiguous between `windows-1253` and `ISO-8859-7`
 - Latin-1-like Western text remains collapsed into `windows-1252`, because `ISO-8859-1` is not currently exposed as a separate detector result
 - Very short or highly ambiguous UTF-8 without BOM samples can still remain `Unknown`
+- BOM and escape-designator results can still terminate early; they identify an encoding family rather than validate the entire decoded payload.
+- MBCS checks follow the bundled byte-syntax models, not every assigned-code-point or platform-specific extension rule of a strict decoder.
 - The small generated corpus measures regressions, not population-wide accuracy.
