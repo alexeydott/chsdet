@@ -18,6 +18,8 @@ type
     [Test] procedure SingleByteConfidenceSaturationIsMonotonic;
     [Test] procedure JapaneseContextConsumesIncompleteTailsExactlyOnce;
     [Test] procedure JapaneseContextDoesNotReadBeyondTheSuppliedBlock;
+    [Test] procedure SequenceSummariesPreserveCountersAndBoundaryPairs;
+    [Test] procedure SequenceSummariesAndLiveCountersExceed32Bits;
   end;
 
 implementation
@@ -26,7 +28,7 @@ uses
   System.SysUtils, System.IOUtils, nsCore, nsCodingStateMachine, MultiModelProber,
   nsMBCSMultiProber, MBUnicodeMultiProber, nsSBCSGroupProber, ChsDet.Corpus,
   nsSBCharSetProber, LangCyrillicModel, JpCntx, Winapi.Windows,
-  ChsDet.EncodingDetector;
+  ChsDet.EncodingDetector, LangGreekModel, LangHebrewModel, LangBulgarianModel;
 
 {$I '../UTF8LangModel.inc'}
 {$I '../UCS2LELangModel.inc'}
@@ -41,6 +43,8 @@ type
   TSingleByteConfidenceProbe = class(TnsSingleByteCharSetProber)
   public
     procedure SetSequenceCounts(PositivePairs, TotalPairs: Cardinal);
+    procedure CheckCountersAgainst(Expected: TSingleByteConfidenceProbe);
+    procedure CheckWideCounts(ExpectedChars, ExpectedPairs: UInt64);
   end;
 
   TInspectableMbcsProber = class(TnsMBCSMultiProber)
@@ -51,6 +55,92 @@ type
 function TInspectableMbcsProber.SjisState: eProbingState;
 begin
   Result := mSMState[0];
+end;
+
+procedure TSingleByteConfidenceProbe.CheckCountersAgainst(Expected: TSingleByteConfidenceProbe);
+var
+  I: Integer;
+begin
+  Assert.AreEqual<UInt64>(Expected.mTotalChar, mTotalChar);
+  Assert.AreEqual<UInt64>(Expected.mFreqChar, mFreqChar);
+  Assert.AreEqual<UInt64>(Expected.mTotalSeqs, mTotalSeqs);
+  Assert.AreEqual<Integer>(Expected.mLastOrder, mLastOrder);
+  for I := Low(mSeqCounters) to High(mSeqCounters) do
+    Assert.AreEqual<UInt64>(Expected.mSeqCounters[I], mSeqCounters[I]);
+end;
+
+procedure TSingleByteConfidenceProbe.CheckWideCounts(ExpectedChars, ExpectedPairs: UInt64);
+begin
+  Assert.AreEqual<UInt64>(ExpectedChars, mTotalChar);
+  Assert.AreEqual<UInt64>(ExpectedChars, mFreqChar);
+  Assert.AreEqual<UInt64>(ExpectedPairs, mTotalSeqs);
+end;
+
+procedure TChsProberTests.SequenceSummariesPreserveCountersAndBoundaryPairs;
+var
+  Models: array [0..3] of SequenceModel;
+  Expected, Actual: TSingleByteConfidenceProbe;
+  Summary: TSequenceSummary;
+  Data: AnsiString;
+  Kind, Direction, Split: Integer;
+begin
+  Models[0] := Win1251Model;
+  Models[1] := Win1253Model;
+  Models[2] := Win1255Model;
+  Models[3] := Latin5BulgarianModel;
+  Data := 'eotaSU' + AnsiChar($E0) + 'efin' + AnsiChar($ED) + 'a';
+  for Kind := Low(Models) to High(Models) do
+    for Direction := 0 to 1 do
+    begin
+      Expected := TSingleByteConfidenceProbe.Create(Models[Kind], Direction = 1);
+      Actual := TSingleByteConfidenceProbe.Create(Models[Kind], Direction = 1);
+      try
+        Expected.HandleData(PAnsiChar(Data), Length(Data));
+        for Split := 0 to Length(Data) do
+        begin
+          Actual.Reset;
+          Summary := Default(TSequenceSummary);
+          // A nonempty live prefix checks the sequence at the summary join.
+          Actual.HandleData(PAnsiChar(Data), Split);
+          Actual.AccumulateSummary(Summary, PAnsiChar(Data) + Split, Length(Data) - Split);
+          Actual.ApplySummary(Summary);
+          Actual.CheckCountersAgainst(Expected);
+          Assert.AreEqual<Double>(Expected.GetConfidence, Actual.GetConfidence);
+        end;
+      finally
+        Actual.Free;
+        Expected.Free;
+      end;
+    end;
+end;
+
+procedure TChsProberTests.SequenceSummariesAndLiveCountersExceed32Bits;
+const
+  WideCount: UInt64 = UInt64(1) shl 32;
+var
+  Probe: TSingleByteConfidenceProbe;
+  Summary: TSequenceSummary;
+  I: Integer;
+begin
+  Probe := TSingleByteConfidenceProbe.Create(Win1253Model);
+  try
+    Summary := Default(TSequenceSummary);
+    Probe.AccumulateSummary(Summary, 'ee', 2);
+    Assert.AreEqual<UInt64>(2, Summary.FreqChar);
+    // Seed attainable repeated-'e' statistics at the old 32-bit boundary.
+    Summary.TotalChar := WideCount;
+    Summary.FreqChar := WideCount;
+    Summary.TotalSeqs := WideCount - 1;
+    for I := Low(Summary.SeqCounters) to High(Summary.SeqCounters) do
+      if Summary.SeqCounters[I] <> 0 then
+        Summary.SeqCounters[I] := WideCount - 1;
+    Probe.AccumulateSummary(Summary, 'e', 1);
+    Probe.ApplySummary(Summary);
+    Probe.HandleData('e', 1);
+    Probe.CheckWideCounts(WideCount + 2, WideCount + 1);
+  finally
+    Probe.Free;
+  end;
 end;
 
 procedure TChsProberTests.RejectedSjisWinnerDoesNotSurviveMalformedTail;

@@ -98,7 +98,7 @@ end;
 - Statistical decisions remain provisional until `Finish` / `DataEnd`; stream helpers therefore read to EOF unless a BOM or a recognized escape designator provides an early result. A late GB18030 character or malformed Unicode tail can change a prefix guess.
 - `Finish` closes the current detection, including an empty or unknown result. Repeated `Finish` is idempotent; call `Reset` before feeding a new input. Disabled code pages remain disabled after `Reset`.
 - `Confidence` is a heuristic score, not a calibrated probability of correct detection.
-- SBCS mixed words preserve their ASCII prefixes across `Feed` boundaries; ASCII-only words are discarded consistently, including at EOF. The filter retains an unfinished ASCII prefix until a high byte or delimiter resolves it.
+- SBCS mixed words preserve their ASCII-prefix statistics across `Feed` boundaries; ASCII-only words are discarded consistently, including at EOF. Fixed-size model summaries replace prefix byte buffers, keeping pending memory below 1 KiB regardless of word length.
 - `GetEncoding` refuses the unusual UCS-4 byte orders 2143 and 3412: their legacy numeric aliases 12000/12001 must not select an ordinary UTF-32 decoder. `GetEncodingDef` still returns the caller's explicit fallback when resolution is unavailable.
 - See the [October 2026 detection review](tests/review-2026-10-24/REPORT.ru.md) for fixes, reproducible tests, remaining limitations and research-based development ideas. Supplementary Free Pascal results do not replace the Delphi Win32/Win64 validation matrix.
 
