@@ -2,11 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The October 2026 detection review adds 27 substantive DUnitX methods in
+The current recognition and streaming regressions comprise 35 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
-model scores, state transitions, byte filtering, reset and guard-page memory
-boundaries. They are explicitly registered and linked by the runner.
+model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
+byte filtering, reset and guard-page memory boundaries. They are explicitly
+registered and linked by the runner; the full suite currently contains 89 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests

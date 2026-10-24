@@ -1,15 +1,18 @@
 # chsdet
-chsdet is a Delphi port of the Mozilla-based charset detector, updated for modern Delphi versions. It detects text encodings from raw bytes, streams, or files and returns a compact result record with the detected charset name, Windows code page, language hint, confidence, and BOM information (see `Supported Charsets` section in this file).
+chsdet is a Mozilla-based charset detector for Delphi. It detects text encodings from original bytes, streams, or files and returns the charset name, Windows code page, language hint, heuristic confidence, and BOM information. The current native validation target is Delphi 12 on Windows Win32 and Win64.
 
-The source code for chsdet is available at: https://sourceforge.net/projects/chsdet/files/. 
-The public API (DLL) has not been modified, but modern wrappers have been added to allow direct use of the detector core (see `ChsDet.EncodingDetector.pas` and `ChsDet.Fluent.pas`)
+Use [ChsDet.EncodingDetector.pas](ChsDet.EncodingDetector.pas) or [ChsDet.Fluent.pas](ChsDet.Fluent.pas) directly in your application; no DLL is required. The legacy DLL interface remains available. This repository develops the original [SourceForge project](https://sourceforge.net/projects/chsdet/files/).
 
-## What Changed
-- the detector core was kept byte-oriented with `AnsiChar` and `PAnsiChar` so modern Unicode `Char` semantics do not corrupt the original algorithms
-- legacy include paths and RTL references were updated for current Delphi compilers
-- The source tree structure has been reorganized, to make it easier (in my opinion) to integrate chsdet into other projects.
-- a guard was added to reduce false Unicode positives for single-byte text that contains high-byte characters but no BOM or zero-byte evidence
-- DUnitX coverage was added for representative encodings and API entry points
+## Features
+- Byte-oriented core using `AnsiChar` and `PAnsiChar`, with direct and fluent APIs for modern Delphi.
+- Incremental BOM and escape-designator handling, malformed UTF-8 tail checks, and BOM-less UTF-16 alignment and surrogate validation.
+- Provisional statistical detection until end of input, allowing late GB18030 evidence and rejected MBCS candidates to change the result.
+- Chunk-independent SBCS mixed-word statistics with fixed-size ASCII-prefix summaries below 1 KiB and 64-bit sequence counters.
+- Conservative OEM discrimination and explicit handling of ambiguous single-byte families.
+- Native DUnitX regressions, a reproducible charset corpus, and an eight-configuration Delphi range/overflow gate.
+
+## Integration
+Add the repository root to your Delphi project's search path and include `ChsDet.Fluent` or `ChsDet.EncodingDetector` in `uses`. Keep the Pascal units and their `.inc` model files together. DUnitX is needed only to build the tests, not to use the library.
   
 ## Supported Charsets
 The table below is copied from the original [ReadMe.txt](ReadMe.txt) and updated to match the current public detector outputs in this port.
@@ -46,8 +49,8 @@ The table below is copied from the original [ReadMe.txt](ReadMe.txt) and updated
 | 50225 | `ISO-2022-KR` | Escape-based Korean encoding. |
 | 50227 | `ISO-2022-CN` | Escape-based Chinese encoding. |
 | 51932 | `EUC-JP` | Japanese multibyte encoding. |
-| 51950 | `x-euc-tw` | EUC Traditional Chinese; 51936 identifies EUC-CN, not EUC-TW. |
 | 51949 | `EUC-KR` | Korean multibyte encoding. |
+| 51950 | `x-euc-tw` | EUC Traditional Chinese; 51936 identifies EUC-CN, not EUC-TW. |
 | 52936 | `HZ-GB-2312` | 7-bit Chinese encoding. |
 | 54936 | `GB18030` | Simplified Chinese multibyte encoding. |
 | 65001 | `UTF-8` | BOM and no-BOM UTF-8 are supported. |
@@ -80,16 +83,34 @@ var
 begin
   Detection := TChsDetect.DetectFile('sample.txt');
 
-  if Detection.GetEncoding(Encoding) then begin
-    Writeln(Encoding.EncodingName);
-    if not TEncoding.IsStandardEncoding(Encoding) then
-      Encoding.Free; // dont forget to release it if needed.
+  if Detection.GetEncoding(Encoding) then
+  begin
+    try
+      Writeln(Encoding.EncodingName);
+    finally
+      if not TEncoding.IsStandardEncoding(Encoding) then
+        Encoding.Free;
+    end;
   end
   else
     Writeln('No RTL TEncoding is available for this result.');
 end;
 ```
 
+`GetEncoding` returns `False` when the result cannot be resolved by the RTL, including the `ASCII` pseudo code page `0`. `GetEncodingDef` returns the resolved encoding, or your explicit fallback, or `TEncoding.Default` when no fallback is supplied. A caller-supplied fallback remains caller-owned.
+
+## Validation and Documentation
+The current suite passes **89/89 tests** on Delphi 12 Win32 and Win64 in each of the four `R+/R-` and `Q+/Q-` combinations. Recognition snapshots match across directive modes within each platform. The bounded-prefix memory regression also fails on the previous byte-buffer implementation, confirming that it protects the resource limit.
+
+Run the complete native matrix:
+
+```powershell
+./tests/run-range-matrix.ps1 `
+  -Compiler32 'D:\Embarcadero RAD Studio\23.0\bin\dcc32.exe' `
+  -Compiler64 'D:\Embarcadero RAD Studio\23.0\bin\dcc64.exe'
+```
+
+See [testing and limitations](testing.md), [test workflow](tests/README.md), and [corpus expectations](tests/corpus/README.md). The curated fixtures establish regressions, not accuracy on unseen documents or calibrated probabilities.
 
 ## Notes
 
