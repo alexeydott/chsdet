@@ -32,6 +32,16 @@ const
   NUMBER_OF_SEQ_CAT = 4;
 
 type
+  TSequenceCounters = array [0..Pred(NUMBER_OF_SEQ_CAT)] of UInt64;
+
+  // Model-specific statistics; zero-initialize before accumulating a new run.
+  TSequenceSummary = record
+    TotalChar, FreqChar, TotalSeqs: UInt64;
+    SeqCounters: TSequenceCounters;
+    FirstOrder, LastOrder: Byte;
+    HasData: Boolean;
+  end;
+
   SequenceModel = record
     charToOrderMap: PAnsiChar; (* [256] table use to find a char's order*)
     precedenceMatrix: PAnsiChar; (* [SAMPLE_SIZE][SAMPLE_SIZE]; table to find a 2-char sequence's frequency*)
@@ -45,10 +55,10 @@ type
       mModel: SequenceModel;
       mReversed: Boolean; (* TRUE if we need to reverse every pair in the model lookup*)
       mLastOrder: byte;   (*char order of last character*)
-      mTotalSeqs: PRUint32;
-      mSeqCounters: array [0..Pred(NUMBER_OF_SEQ_CAT)] of PRUint32;
-      mTotalChar: PRUint32; (*characters that fall in our sampling range*)
-      mFreqChar: PRUint32; (* Optional auxiliary prober for name decision. created and destroyed by the GroupProber*)
+      mTotalSeqs: UInt64;
+      mSeqCounters: TSequenceCounters;
+      mTotalChar: UInt64; (*characters that fall in our sampling range*)
+      mFreqChar: UInt64; (* Optional auxiliary prober for name decision. created and destroyed by the GroupProber*)
       mNameProber: TCustomDetector;
 
 		public
@@ -59,6 +69,9 @@ type
 		  procedure Reset; override;
 
 		  function GetConfidence: float; override;
+      procedure AccumulateSummary(var Summary: TSequenceSummary;
+        Data: PAnsiChar; Count: Integer);
+      procedure ApplySummary(const Summary: TSequenceSummary);
       (* This feature is not implemented yet. any current language model*)
       (* contain this parameter as PR_FALSE. No one is looking at this*)
       (* parameter or calling this method.*)
@@ -144,6 +157,77 @@ begin
 {$endif}
 end;
 
+procedure CountSequenceOrder(const Model: SequenceModel; Reversed: Boolean;
+  Order: Byte; var LastOrder: Byte; var TotalChar, FreqChar, TotalSeqs: UInt64;
+  var Counters: TSequenceCounters);
+var
+  Category: Byte;
+begin
+  if Order < SYMBOL_CAT_ORDER then
+    Inc(TotalChar);
+  if Order < SAMPLE_SIZE then
+  begin
+    Inc(FreqChar);
+    if LastOrder < SAMPLE_SIZE then
+    begin
+      Inc(TotalSeqs);
+      if Reversed then
+        Category := Byte(Model.precedenceMatrix[Order * SAMPLE_SIZE + LastOrder])
+      else
+        Category := Byte(Model.precedenceMatrix[LastOrder * SAMPLE_SIZE + Order]);
+      Inc(Counters[Category]);
+    end;
+  end;
+  LastOrder := Order;
+end;
+
+procedure TnsSingleByteCharSetProber.AccumulateSummary(var Summary: TSequenceSummary;
+  Data: PAnsiChar; Count: Integer);
+var
+  I: Integer;
+  Order: Byte;
+begin
+  if Count <= 0 then
+    Exit;
+  for I := 0 to Count - 1 do
+  begin
+    Order := Byte(mModel.charToOrderMap[Byte(Data[I])]);
+    if not Summary.HasData then
+    begin
+      Summary.FirstOrder := Order;
+      Summary.LastOrder := 255;
+      Summary.HasData := True;
+    end;
+    CountSequenceOrder(mModel, mReversed, Order, Summary.LastOrder,
+      Summary.TotalChar, Summary.FreqChar, Summary.TotalSeqs, Summary.SeqCounters);
+  end;
+end;
+
+procedure TnsSingleByteCharSetProber.ApplySummary(const Summary: TSequenceSummary);
+var
+  I: Integer;
+  Category: Byte;
+begin
+  if not Summary.HasData or not mEnabled or (mState = psNotMe) then
+    Exit;
+  // Internal pairs are already counted; add the single pair at the join.
+  if (mLastOrder < SAMPLE_SIZE) and (Summary.FirstOrder < SAMPLE_SIZE) then
+  begin
+    if mReversed then
+      Category := Byte(mModel.precedenceMatrix[Summary.FirstOrder * SAMPLE_SIZE + mLastOrder])
+    else
+      Category := Byte(mModel.precedenceMatrix[mLastOrder * SAMPLE_SIZE + Summary.FirstOrder]);
+    Inc(mTotalSeqs);
+    Inc(mSeqCounters[Category]);
+  end;
+  Inc(mTotalChar, Summary.TotalChar);
+  Inc(mFreqChar, Summary.FreqChar);
+  Inc(mTotalSeqs, Summary.TotalSeqs);
+  for I := Low(mSeqCounters) to High(mSeqCounters) do
+    Inc(mSeqCounters[I], Summary.SeqCounters[I]);
+  mLastOrder := Summary.LastOrder;
+end;
+
 function TnsSingleByteCharSetProber.HandleData(aBuf: PAnsiChar; aLen: integer): eProbingState;
 var
   order: byte;
@@ -158,31 +242,8 @@ begin
   for i := 0 to Pred(aLen) do
     begin
       order := byte(mModel.charToOrderMap[byte(aBuf[i])]);
-      if order < SYMBOL_CAT_ORDER then
-	      inc(mTotalChar);
-      if order < SAMPLE_SIZE then
-        begin
-          inc(mFreqChar);
-          if mLastOrder < SAMPLE_SIZE then
-            begin
-              inc(mTotalSeqs);
-      {$ifdef DEBUG_chardet}
-      //if ((mLastOrder * SAMPLE_SIZE + order) >= 4096) then
-      AddDump(Format('oredr %4d for byte %4d last order %4d'+#10#13+
-                  'array index %4d array high %8d'+#10#13+
-                  'LangModel %s',
-                  [order,byte(aBuf[i]),mLastOrder,
-                     (mLastOrder * SAMPLE_SIZE + order),4096,
-                     getEnumName(TypeInfo(eInternalCharsetID), integer(mModel.CharsetID))]));
-      {$endif}
-              if not mReversed then
-	              inc(mSeqCounters[cardinal(mModel.precedenceMatrix[mLastOrder * SAMPLE_SIZE + order])])
-              else
-	              inc(mSeqCounters[cardinal(mModel.precedenceMatrix[order * SAMPLE_SIZE + mLastOrder])]);
-              (* reverse the order of the letters in the lookup*)
-            end;
-        end;
-      mLastOrder:= order;
+      CountSequenceOrder(mModel, mReversed, order, mLastOrder,
+        mTotalChar, mFreqChar, mTotalSeqs, mSeqCounters);
     end;
   // Statistical confidence is evidence, not a terminal encoding signature.
   // Keep counting all blocks so an early prefix cannot freeze the group on

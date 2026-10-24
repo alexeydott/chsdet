@@ -36,9 +36,22 @@ type
     [Test] procedure SbcsPendingAsciiIsDiscardedAtDelimiterAndReset;
     [Test] procedure SbcsLongAsciiPrefixSurvivesSmallChunks;
     [Test] procedure PublicMixedWordResultsSurviveEverySplit;
+    [Test] procedure SbcsAsciiPrefixMemoryIsBounded;
   end;
 
 implementation
+
+function AllocatedBytes: UInt64;
+var
+  State: TMemoryManagerState;
+  I: Integer;
+begin
+  GetMemoryManagerState(State);
+  Result := UInt64(State.TotalAllocatedMediumBlockSize) + State.TotalAllocatedLargeBlockSize;
+  for I := Low(State.SmallBlockTypeStates) to High(State.SmallBlockTypeStates) do
+    Inc(Result, UInt64(State.SmallBlockTypeStates[I].UseableBlockSize) *
+      State.SmallBlockTypeStates[I].AllocatedBlockCount);
+end;
 
 type
   TInspectableSbcsProber = class(TnsSBCSGroupProber)
@@ -57,6 +70,37 @@ begin
       Format('%s model=%d: confidence differs', [Context, I]));
     Assert.AreEqual<Integer>(Ord(Expected.mProbers[I].GetDetectedCharset),
       Ord(mProbers[I].GetDetectedCharset), Format('%s model=%d: charset differs', [Context, I]));
+  end;
+end;
+
+procedure TChsStreamingTests.SbcsAsciiPrefixMemoryIsBounded;
+var
+  Probe, Expected: TInspectableSbcsProber;
+  Block, Tail: RawByteString;
+  BeforeBytes, AfterBytes: UInt64;
+  I: Integer;
+begin
+  Block := RawByteString(StringOfChar('e', 4096));
+  Probe := TInspectableSbcsProber.Create;
+  Expected := TInspectableSbcsProber.Create;
+  try
+    // Warm up once, then stream 2 MiB without constructing a large input.
+    Probe.HandleData(PAnsiChar(Block), Length(Block));
+    BeforeBytes := AllocatedBytes;
+    for I := 1 to 512 do
+      Probe.HandleData(PAnsiChar(Block), Length(Block));
+    AfterBytes := AllocatedBytes;
+    Assert.IsTrue(AfterBytes <= BeforeBytes + 65536,
+      'Pending ASCII prefixes must not retain input-sized allocations');
+    Probe.CheckModelsAgainst(Expected, 'Pending ASCII must not change live scores');
+    Probe.HandleData(' ', 1);
+    Tail := ByteString([$CE, $F1, $F2, $E0, $ED, $EE, $E2, $EA, $E0]);
+    Probe.HandleData(PAnsiChar(Tail), Length(Tail));
+    Expected.HandleData(PAnsiChar(Tail), Length(Tail));
+    Probe.CheckModelsAgainst(Expected, 'A discarded summary must leave no evidence');
+  finally
+    Expected.Free;
+    Probe.Free;
   end;
 end;
 
@@ -110,6 +154,8 @@ begin
   Mixed := 'test' + ByteString([$CE, $F1, $F2, $E0, $ED, $EE, $E2, $EA, $E0]) + 'tail';
   CheckMixedWordSplits(Mixed);
   CheckMixedWordSplits(Mixed + ' trailingAsciiOnlyWord');
+  CheckMixedWordSplits('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' +
+    ByteString([$E0, $E1, $EE, $ED]) + 'eoat');
   CheckMixedWordSplits('ASCII only ' + Mixed + #0 + 'end' + ByteString([$E0, $E2, $F2, $EE]));
   CheckMixedWordSplits('prefix' + ByteString([$E1, $EB, $EE, $ED]) + 'suffix ' +
     'english!prefix' + ByteString([$E0, $E1, $E2, $E3]) + #13#10);

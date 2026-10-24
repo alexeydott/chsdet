@@ -2,11 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The October 2026 detection review adds 27 substantive DUnitX methods in
+The current recognition and streaming regressions comprise 35 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
-model scores, state transitions, byte filtering, reset and guard-page memory
-boundaries. They are explicitly registered and linked by the runner.
+model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
+byte filtering, reset and guard-page memory boundaries. They are explicitly
+registered and linked by the runner; the full suite currently contains 89 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests
@@ -106,8 +107,8 @@ Reproduce the complete native matrix:
 ### Mixed SBCS Word Streaming
 
 The SBCS filter preserves unfinished ASCII prefixes across input blocks. Once a
-word contains a byte at or above `0x80`, its saved prefix and remaining bytes
-reach the models in their original order. Delimiters discard ASCII-only words
+word contains a byte at or above `0x80`, its exact prefix statistics are committed
+before the remaining bytes. Delimiters discard ASCII-only words
 and normalize the end of a retained word to a single space. `Reset` clears all
 pending filter state; confidence queries do not flush an unfinished word.
 The universal detector forwards ASCII-only blocks to the SBCS filter too.
@@ -118,12 +119,21 @@ check delimiter/reset behavior, and require the independently labelled CP1251
 public-API sample to retain its code page and confidence across every split.
 They also cover an unterminated word at EOF and trailing ASCII-only words.
 
-The filter buffers only an unfinished ASCII prefix, not the entire document or
-the non-ASCII part of a word. Capacity grows geometrically and is reused until
-`Reset`; memory is proportional to the longest pending ASCII prefix. Arbitrarily
-long delimiter-free words are not subject to an artificial truncation limit.
+The filter retains no variable-length prefix buffer. Each language model has a
+fixed-size summary of character/frequency counts, bigram categories and the
+first/last character orders. Committing adds the single bigram at the join,
+including reversed models. The Hebrew final-letter analyzer needs only the last
+two ASCII letters: ASCII contains no Hebrew final forms. Pending summaries take
+less than 1 KiB in total, independent of word length. No truncation or confidence
+correction is applied, and queries do not commit pending statistics.
 
-Delphi 12 Win32 and Win64 validation passes all 86 tests in every R/Q combination,
+Sequence counters use `UInt64`, including live model counters, so a long prefix
+does not hit the former 32-bit counting limit. As with any fixed-width counter,
+the representable count remains finite; this is not arbitrary-precision input
+accounting. Three additional regressions enforce bounded allocation while
+streaming 2 MiB, exact model-summary joins, and counts beyond `2^32`.
+
+Delphi 12 Win32 and Win64 validation passes all 89 tests in every R/Q combination,
 with matching recognition snapshots across R/Q modes within each platform.
 
 ### General Notes

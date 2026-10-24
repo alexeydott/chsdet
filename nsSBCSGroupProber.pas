@@ -23,15 +23,19 @@ unit nsSBCSGroupProber;
 interface
 uses
 	nsCore,
+  nsSBCharSetProber,
   nsGroupProber;
 
 type
 	TnsSBCSGroupProber = class(TnsGroupProber)
     private
       mInInternationalWord: Boolean;
-      mAsciiPrefix: RawByteString;
-      mAsciiPrefixLength: Integer;
+      mAsciiPrefix: array [0..12] of TSequenceSummary;
+      mAsciiTail: array [0..1] of AnsiChar;
+      mAsciiTailLength: Integer;
       procedure AppendAsciiPrefix(Data: PAnsiChar; Count: Integer);
+      procedure ApplyAsciiPrefix;
+      procedure ClearAsciiPrefix;
 		public
       constructor Create; reintroduce;
       procedure Reset; override;
@@ -45,7 +49,6 @@ implementation
 uses
 	System.SysUtils,
 	nsHebrewProber,
-  nsSBCharSetProber,
   LangCyrillicModel,
   LangGreekModel,
   LangBulgarianModel,
@@ -104,34 +107,63 @@ procedure TnsSBCSGroupProber.Reset;
 begin
   inherited Reset;
   mInInternationalWord := False;
-  mAsciiPrefix := '';
-  mAsciiPrefixLength := 0;
+  FillChar(mAsciiPrefix, SizeOf(mAsciiPrefix), 0);
+  mAsciiTailLength := 0;
+end;
+
+procedure TnsSBCSGroupProber.ClearAsciiPrefix;
+begin
+  if mAsciiTailLength = 0 then
+    Exit;
+  FillChar(mAsciiPrefix, SizeOf(mAsciiPrefix), 0);
+  mAsciiTailLength := 0;
 end;
 
 procedure TnsSBCSGroupProber.AppendAsciiPrefix(Data: PAnsiChar; Count: Integer);
 var
-  Required, Capacity: Integer;
+  I: Integer;
 begin
   if Count <= 0 then
     Exit;
-  if Count > MaxInt - 1 - mAsciiPrefixLength then
-    raise EOutOfMemory.Create('SBCS ASCII prefix is too long');
-  Required := mAsciiPrefixLength + Count;
-  Capacity := Length(mAsciiPrefix);
-  if Capacity < Required then
+  for I := 0 to mNumOfProbers - 1 do
+    if mIsActive[I] and (mProbers[I] is TnsSingleByteCharSetProber) then
+      TnsSingleByteCharSetProber(mProbers[I]).AccumulateSummary(mAsciiPrefix[I], Data, Count);
+
+  // ASCII has no Hebrew final letters. Only the last two characters can
+  // influence the final-letter analyzer when a later high byte arrives.
+  if Count >= 2 then
   begin
-    // Geometric growth keeps one-byte feeds linear in the prefix length.
-    if Capacity < 64 then
-      Capacity := 64;
-    while Capacity < Required do
-      if Capacity > (MaxInt - 1) div 2 then
-        Capacity := Required
-      else
-        Capacity := Capacity * 2;
-    SetLength(mAsciiPrefix, Capacity);
+    mAsciiTail[0] := Data[Count - 2];
+    mAsciiTail[1] := Data[Count - 1];
+    mAsciiTailLength := 2;
+  end
+  else if mAsciiTailLength = 0 then
+  begin
+    mAsciiTail[0] := Data[0];
+    mAsciiTailLength := 1;
+  end
+  else
+  begin
+    mAsciiTail[0] := mAsciiTail[mAsciiTailLength - 1];
+    mAsciiTail[1] := Data[0];
+    mAsciiTailLength := 2;
   end;
-  Move(Data^, mAsciiPrefix[mAsciiPrefixLength + 1], Count);
-  mAsciiPrefixLength := Required;
+end;
+
+procedure TnsSBCSGroupProber.ApplyAsciiPrefix;
+var
+  I: Integer;
+begin
+  for I := 0 to mNumOfProbers - 1 do
+  begin
+    if mProberStates[I] in [psNotMe, psFoundIt] then
+      Continue;
+    if mProbers[I] is TnsSingleByteCharSetProber then
+      TnsSingleByteCharSetProber(mProbers[I]).ApplySummary(mAsciiPrefix[I])
+    else
+      mProbers[I].HandleData(@mAsciiTail[0], mAsciiTailLength);
+  end;
+  ClearAsciiPrefix;
 end;
 
 function TnsSBCSGroupProber.HandleData(aBuf: PAnsiChar; aLen: integer): eProbingState;
@@ -160,13 +192,10 @@ begin
     Count := Current - Segment;
     if mInInternationalWord then
     begin
-      // Replay an earlier ASCII-only block only after this word qualifies.
+      // Commit an earlier ASCII-only block only after this word qualifies.
       // Confidence queries and chunk boundaries must not commit or discard it.
-      if mAsciiPrefixLength > 0 then
-      begin
-        inherited HandleData(PAnsiChar(mAsciiPrefix), mAsciiPrefixLength);
-        mAsciiPrefixLength := 0;
-      end;
+      if mAsciiTailLength > 0 then
+        ApplyAsciiPrefix;
       if Count > 0 then
         inherited HandleData(Segment, Count);
     end
@@ -178,7 +207,7 @@ begin
       if mInInternationalWord then
         inherited HandleData(' ', 1);
       mInInternationalWord := False;
-      mAsciiPrefixLength := 0;
+      ClearAsciiPrefix;
       Inc(Current);
     end;
   end;
