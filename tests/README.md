@@ -124,18 +124,18 @@ compile or execute Delphi and cannot establish a runtime PASS.
 
 The runner also links three new fixtures with explicit registration:
 
-- `ChsDet.RegressionTests.pas`: 12 public API / Unicode / mapping scenarios.
+- `ChsDet.RegressionTests.pas`: 15 public API / Unicode / mapping / false-positive scenarios.
 - `ChsDet.ProberTests.pas`: 15 low-level model, state, confidence and memory-boundary scenarios, including malformed/incomplete MBCS tails, exact summary joins and 64-bit sequence counters.
 - `ChsDet.StreamingTests.pas`: 11 word/tag boundary, mixed ASCII/non-ASCII word, bounded-prefix memory and chunked corpus scenarios.
 
-The range matrix requires at least 12/15/11 tests in these fixtures, rejects empty
+The range matrix requires at least 15/15/11 tests in these fixtures, rejects empty
 execution and retains the original raw-table checks. The Japanese-context
 memory-boundary test uses Windows `VirtualAlloc` / `VirtualProtect` guard pages.
 It checks a meaningful postcondition after the protected single-byte read;
 an unexpected access violation is not swallowed.
 
-The current native Delphi 12 matrix executes 92 tests per configuration on
-Win32 and Win64 with all four R/Q combinations. All 92 pass with no ignored
+The current native Delphi 12 matrix executes 95 tests per configuration on
+Win32 and Win64 with all four R/Q combinations. All 95 pass with no ignored
 tests, failures or errors; recognition snapshots match across R/Q modes within
 each platform. These native results are separate from the historical Free Pascal
 evidence linked below.
@@ -153,6 +153,11 @@ inventing a valid-looking four-byte character, and a high-confidence Shift_JIS
 prefix followed by a lone lead byte. Both direct probers and the public wrapper
 are checked. Valid partial tails can resume after confidence queries; no
 alternative encoding is declared uniquely correct for malformed samples.
+
+False-positive coverage includes LE/BE binary arrays of C0/C1 controls without
+BOM, preservation of ordinary UTF-16 whitespace/NEL and an isolated ESC, and
+repeated CP1252 double-dagger/NBSP/degree bytes among ASCII labels. These run at
+chunk sizes 1, 3, 64 and 8192; the original Unicode and OEM corpus stays enforced.
 
 See [the review](review-2026-10-24/REPORT.ru.md),
 [actual supplementary execution evidence](review-2026-10-24/SUMMARY.md), and

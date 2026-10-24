@@ -2,12 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The current recognition and streaming regressions comprise 38 DUnitX methods in
+The current recognition and streaming regressions comprise 41 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
 model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
 byte filtering, reset and guard-page memory boundaries. They are explicitly
-registered and linked by the runner; the full suite currently contains 92 tests.
+registered and linked by the runner; the full suite currently contains 95 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests
@@ -133,7 +133,7 @@ the representable count remains finite; this is not arbitrary-precision input
 accounting. Three additional regressions enforce bounded allocation while
 streaming 2 MiB, exact model-summary joins, and counts beyond `2^32`.
 
-Delphi 12 Win32 and Win64 validation passes all 92 tests in every R/Q combination,
+Delphi 12 Win32 and Win64 validation passes all 95 tests in every R/Q combination,
 with matching recognition snapshots across R/Q modes within each platform.
 
 ### MBCS Syntax and End-of-Input Audit
@@ -154,6 +154,28 @@ these changes. They cover every two-block split of six malformed/incomplete
 GB18030 suffix cases, artificial signatures caused by ASCII deletion, public API
 results, and successful resumption after an incomplete tail. The original strict
 corpus and valid structural-signature/reset checks remain enforced.
+
+### BOM-less Unicode and OEM False Positives
+
+BOM-less UTF-16 needs text plausibility in addition to alignment and surrogate
+validity. Both the zero-parity heuristic and Unicode-prober result selection
+reject a candidate when more than 2% of decoded code units are C0/C1 controls.
+TAB through CR and Unicode NEL are treated as text whitespace. Sparse controls,
+such as an isolated terminal ESC in an otherwise textual input, remain allowed.
+This explicit conservative policy is not an empirically calibrated probability;
+BOM-based detection remains unchanged, and this is not a general binary filter.
+
+OEM850/858 and OEM852 signatures must include at least two different supporting
+byte values, and OEM art likewise needs two distinct art bytes. Repeating a
+single byte no longer manufactures additional kinds of evidence. Very repetitive
+one-symbol OEM motifs are intentionally left ambiguous; diversity alone is still
+not proof of an encoding or a substitute for language models.
+
+Before correction, native regressions reproduced a binary small-integer array
+reported as UTF-16 and repeated CP1252 `0x87` reported as OEM. The resulting
+negative tests cover both endian orders, C0/C1 arrays, and CP1252 `0x87`, `0xA0`,
+and `0xB0`. Positive UTF-16 control handling and the existing strict OEM/NFO corpus
+also pass in all eight native build modes.
 
 ### General Notes
 

@@ -47,6 +47,8 @@ type nsInputState = (
     TotalByteCount: Integer;
     HighByteCount: Integer;
     OemArtByteCount: Integer;
+    SeenBytes: set of Byte;
+    OemArtDistinctCount, Oem850DistinctCount, Oem852DistinctCount: Integer;
     Oem850ByteCount: Integer;
     Oem852ByteCount: Integer;
     Oem858ByteCount: Integer;
@@ -66,6 +68,7 @@ type nsInputState = (
     Utf16FirstByte: Byte;
     Utf16LEHighSurrogate, Utf16BEHighSurrogate: Boolean;
     Utf16LEInvalid, Utf16BEInvalid: Boolean;
+    Utf16LEControlCount, Utf16BEControlCount: Integer;
 
     procedure Reset;
     procedure Feed(Value: Byte);
@@ -73,6 +76,7 @@ type nsInputState = (
     procedure FeedUtf8Byte(Value: Byte);
     procedure FeedUtf16Byte(Value: Byte);
     function IsValidUtf16(Charset: eInternalCharsetID): Boolean;
+    function IsPlausibleUtf16Text(Charset: eInternalCharsetID): Boolean;
     function LooksLikeOemArt: Boolean;
     function DetectOemTextSignature: eInternalCharsetID;
     function LooksLikeDbcsText: Boolean;
@@ -171,6 +175,7 @@ const
   UTF8_MAX_INVALID_HIGH_RATIO: float = 0.02;
   UTF16_MIN_ZERO_RATIO: float = 0.20;
   UTF16_MIN_ZERO_PARITY_RATIO: float = 0.85;
+  UTF16_MAX_CONTROL_RATIO: float = 0.02;
 
   AboutInfo: rAboutHolder = (
     MajorVersionNr: 0;
@@ -228,6 +233,10 @@ begin
   TotalByteCount := 0;
   HighByteCount := 0;
   OemArtByteCount := 0;
+  SeenBytes := [];
+  OemArtDistinctCount := 0;
+  Oem850DistinctCount := 0;
+  Oem852DistinctCount := 0;
   Oem850ByteCount := 0;
   Oem852ByteCount := 0;
   Oem858ByteCount := 0;
@@ -249,6 +258,8 @@ begin
   Utf16BEHighSurrogate := False;
   Utf16LEInvalid := False;
   Utf16BEInvalid := False;
+  Utf16LEControlCount := 0;
+  Utf16BEControlCount := 0;
 end;
 
 procedure TObservedByteStats.Feed(Value: Byte);
@@ -268,10 +279,18 @@ begin
       Inc(OddZeroByteCount);
 
   if Value in [$87, $89, $97, $A2] then
+  begin
+    if not (Value in SeenBytes) then
+      Inc(Oem850DistinctCount);
     Inc(Oem850ByteCount);
+  end;
   if Value in [$86, $88, $8B, $94, $98, $A0, $A1, $A3, $A5, $A7, $A9, $AB,
     $B5, $BE, $D4, $D8] then
+  begin
+    if not (Value in SeenBytes) then
+      Inc(Oem852DistinctCount);
     Inc(Oem852ByteCount);
+  end;
   if Value = $D5 then
     Inc(Oem858ByteCount);
   if Value in [$9A, $9C, $9D, $9E, $9F] then
@@ -285,8 +304,13 @@ begin
     $C0, $C1, $C2, $C3, $C4, $C5,
     $C8, $C9, $CA, $CB, $CC, $CD, $CE,
     $D9, $DA, $DB, $DC, $DD, $DE, $DF, $FE:
+    begin
+      if not (Value in SeenBytes) then
+        Inc(OemArtDistinctCount);
       Inc(OemArtByteCount);
+    end;
   end;
+  Include(SeenBytes, Value);
 
   FeedDbcsByte(Value);
   FeedUtf8Byte(Value);
@@ -406,15 +430,28 @@ begin
 end;
 
 procedure TObservedByteStats.FeedUtf16Byte(Value: Byte);
+var
+  LE, BE: Word;
+  function IsTextControl(UnitValue: Word): Boolean;
+  begin
+    Result := ((UnitValue < $20) and not (UnitValue in [$09..$0D])) or
+      ((UnitValue >= $7F) and (UnitValue <= $9F) and (UnitValue <> $85));
+  end;
 begin
   // TotalByteCount already includes this byte. Preserve alignment across Feed.
   if (TotalByteCount mod 2) <> 0 then
     Utf16FirstByte := Value
   else
   begin
-    ValidateUtf16Unit(Word(Utf16FirstByte) or (Word(Value) shl 8),
+    LE := Word(Utf16FirstByte) or (Word(Value) shl 8);
+    BE := (Word(Utf16FirstByte) shl 8) or Word(Value);
+    if IsTextControl(LE) then
+      Inc(Utf16LEControlCount);
+    if IsTextControl(BE) then
+      Inc(Utf16BEControlCount);
+    ValidateUtf16Unit(LE,
       Utf16LEHighSurrogate, Utf16LEInvalid);
-    ValidateUtf16Unit((Word(Utf16FirstByte) shl 8) or Word(Value),
+    ValidateUtf16Unit(BE,
       Utf16BEHighSurrogate, Utf16BEInvalid);
   end;
 end;
@@ -435,6 +472,7 @@ begin
   Result :=
     (TotalByteCount >= OEM_ART_MIN_BYTES) and
     (HighByteCount > 0) and
+    (OemArtDistinctCount >= 2) and
     (OemArtByteCount >= OEM_ART_MIN_BYTES) and
     (HighByteCount / TotalByteCount >= OEM_ART_MIN_HIGH_RATIO) and
     (OemArtByteCount / HighByteCount >= OEM_ART_MIN_ART_HIGH_RATIO);
@@ -458,13 +496,14 @@ begin
   if LooksLikeStructuredMultiByteText then
     Exit;
 
-  if (Oem858ByteCount >= 4) and (Oem850ByteCount >= 20) then
+  if (Oem858ByteCount >= 4) and (Oem850ByteCount >= 20) and
+     (Oem850DistinctCount >= 2) then
     Exit(IBM858_CHARSET);
 
-  if Oem852ByteCount >= 20 then
+  if (Oem852ByteCount >= 20) and (Oem852DistinctCount >= 2) then
     Exit(IBM852_CHARSET);
 
-  if Oem850ByteCount >= 20 then
+  if (Oem850ByteCount >= 20) and (Oem850DistinctCount >= 2) then
     Exit(IBM850_CHARSET);
 
   if Win1250ByteCount >= WINDOWS_1250_MIN_SIGNATURE_BYTES then
@@ -512,6 +551,21 @@ begin
     (InvalidHighRatio <= UTF8_MAX_INVALID_HIGH_RATIO);
 end;
 
+function TObservedByteStats.IsPlausibleUtf16Text(Charset: eInternalCharsetID): Boolean;
+var
+  Controls: Integer;
+begin
+  Result := False;
+  if not IsValidUtf16(Charset) then
+    Exit;
+  if Charset = UTF16_LE_CHARSET then
+    Controls := Utf16LEControlCount
+  else
+    Controls := Utf16BEControlCount;
+  // Valid code units and zero parity alone also describe binary integer arrays.
+  Result := Controls / (TotalByteCount div 2) <= UTF16_MAX_CONTROL_RATIO;
+end;
+
 function TObservedByteStats.LooksLikeUtf16Text: Boolean;
 var
   ZeroByteCount: Integer;
@@ -535,9 +589,9 @@ begin
     (ZeroRatio >= UTF16_MIN_ZERO_RATIO) and
     (ZeroParityRatio >= UTF16_MIN_ZERO_PARITY_RATIO);
   if OddZeroByteCount > EvenZeroByteCount then
-    Result := Result and IsValidUtf16(UTF16_LE_CHARSET)
+    Result := Result and IsPlausibleUtf16Text(UTF16_LE_CHARSET)
   else
-    Result := Result and IsValidUtf16(UTF16_BE_CHARSET);
+    Result := Result and IsPlausibleUtf16Text(UTF16_BE_CHARSET);
 end;
 
 function TObservedByteStats.LooksLikeStructuredMultiByteText: Boolean;
@@ -651,7 +705,7 @@ begin
             if not IsCharsetEnabled(Candidate) then
               Continue;
             if (Candidate in [UTF16_LE_CHARSET, UTF16_BE_CHARSET]) and
-               not mObservedBytes.IsValidUtf16(Candidate) then
+               not mObservedBytes.IsPlausibleUtf16Text(Candidate) then
               Continue;
             if (Candidate = UTF8_CHARSET) and
                (mCharSetProbers[3].GetConfidence <= SURE_NO) then
@@ -887,7 +941,7 @@ begin
     Exit(False);
   if (mDetectedBOM = BOM_Not_Found) and
      (NormalizedCharset in [UTF16_LE_CHARSET, UTF16_BE_CHARSET]) and
-     not mObservedBytes.IsValidUtf16(NormalizedCharset) then
+     not mObservedBytes.IsPlausibleUtf16Text(NormalizedCharset) then
     Exit;
   if not IsCharsetEnabled(NormalizedCharset) then
     Exit;

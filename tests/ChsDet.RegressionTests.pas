@@ -26,9 +26,95 @@ type
     [Test] procedure DisabledGbkKeepsTheCompatibleGb18030Candidate;
     [Test] procedure FinishIsTerminalAndResetStartsANewDetection;
     [Test] procedure WholeFeedPreservesTheAsciiPrefixOfAMixedWord;
+    [Test] procedure BomlessUtf16RejectsControlDominatedBinary;
+    [Test] procedure RepeatedWesternSymbolsDoNotSelectOemFamilies;
+    [Test] procedure BomlessUtf16TextControlsRemainSupported;
   end;
 
 implementation
+
+procedure TChsRegressionTests.BomlessUtf16TextControlsRemainSupported;
+const
+  Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+var
+  Data: TBytes;
+  Endian, Chunk: Integer;
+begin
+  for Endian := 0 to 1 do
+  begin
+    Data := Utf16AsciiBytes(Endian = 1);
+    // Text whitespace, Unicode NEL, and one isolated terminal escape are not
+    // a control-dominated binary payload. Include both byte orders without BOM.
+    if Endian = 0 then
+      Data := Append(Data, [$09, 0, $0A, 0, $0B, 0, $0C, 0, $0D, 0, $85, 0, $1B, 0])
+    else
+      Data := Append(Data, [0, $09, 0, $0A, 0, $0B, 0, $0C, 0, $0D, 0, $85, 0, $1B]);
+    for Chunk in Chunks do
+      Assert.AreEqual<Integer>(1200 + Endian, DetectChunks(Data, Chunk).CodePage,
+        Format('Text controls must remain supported: endian=%d chunk=%d', [Endian, Chunk]));
+  end;
+end;
+
+procedure TChsRegressionTests.BomlessUtf16RejectsControlDominatedBinary;
+const
+  Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+var
+  Data: TBytes;
+  Endian, Kind, I, Chunk: Integer;
+  Actual: TChsDetectionResult;
+begin
+  SetLength(Data, 256);
+  for Endian := 0 to 1 do
+    for Kind := 0 to 1 do
+    begin
+      for I := 0 to 127 do
+      begin
+        Data[I * 2 + Endian] := 0;
+        if Kind = 0 then
+          Data[I * 2 + 1 - Endian] := Byte(1 + I mod 4)
+        else
+          Data[I * 2 + 1 - Endian] := $80;
+      end;
+      for Chunk in Chunks do
+      begin
+        Actual := DetectChunks(Data, Chunk);
+        Assert.IsTrue((Actual.CodePage <> 1200) and (Actual.CodePage <> 1201),
+          Format('Small integer/control array is not text: endian=%d kind=%d chunk=%d',
+            [Endian, Kind, Chunk]));
+      end;
+    end;
+end;
+
+procedure TChsRegressionTests.RepeatedWesternSymbolsDoNotSelectOemFamilies;
+const
+  Symbols: array [0..2] of Byte = ($87, $A0, $B0);
+  Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+var
+  Data: TBytes;
+  Symbol: Byte;
+  I, Chunk: Integer;
+  Actual: TChsDetectionResult;
+begin
+  SetLength(Data, 384);
+  for Symbol in Symbols do
+  begin
+    // CP1252 dagger, nonbreaking space or degree sign among ASCII labels.
+    for I := 0 to 127 do
+    begin
+      Data[I * 3] := Ord('x');
+      Data[I * 3 + 1] := Symbol;
+      Data[I * 3 + 2] := Ord(' ');
+    end;
+    for Chunk in Chunks do
+    begin
+      Actual := DetectChunks(Data, Chunk);
+      Assert.IsTrue((Actual.CodePage <> 437) and (Actual.CodePage <> 850) and
+        (Actual.CodePage <> 852) and (Actual.CodePage <> 858),
+        Format('Repeated CP1252 symbol %.2x must not accumulate OEM certainty: chunk=%d',
+          [Symbol, Chunk]));
+    end;
+  end;
+end;
 
 class function TChsRegressionTests.Utf16AsciiBytes(BigEndian: Boolean): TBytes;
 const
