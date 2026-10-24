@@ -29,6 +29,9 @@ type
 	TnsSBCSGroupProber = class(TnsGroupProber)
     private
       mInInternationalWord: Boolean;
+      mAsciiPrefix: RawByteString;
+      mAsciiPrefixLength: Integer;
+      procedure AppendAsciiPrefix(Data: PAnsiChar; Count: Integer);
 		public
       constructor Create; reintroduce;
       procedure Reset; override;
@@ -101,62 +104,85 @@ procedure TnsSBCSGroupProber.Reset;
 begin
   inherited Reset;
   mInInternationalWord := False;
+  mAsciiPrefix := '';
+  mAsciiPrefixLength := 0;
+end;
+
+procedure TnsSBCSGroupProber.AppendAsciiPrefix(Data: PAnsiChar; Count: Integer);
+var
+  Required, Capacity: Integer;
+begin
+  if Count <= 0 then
+    Exit;
+  if Count > MaxInt - 1 - mAsciiPrefixLength then
+    raise EOutOfMemory.Create('SBCS ASCII prefix is too long');
+  Required := mAsciiPrefixLength + Count;
+  Capacity := Length(mAsciiPrefix);
+  if Capacity < Required then
+  begin
+    // Geometric growth keeps one-byte feeds linear in the prefix length.
+    if Capacity < 64 then
+      Capacity := 64;
+    while Capacity < Required do
+      if Capacity > (MaxInt - 1) div 2 then
+        Capacity := Required
+      else
+        Capacity := Capacity * 2;
+    SetLength(mAsciiPrefix, Capacity);
+  end;
+  Move(Data^, mAsciiPrefix[mAsciiPrefixLength + 1], Count);
+  mAsciiPrefixLength := Required;
 end;
 
 function TnsSBCSGroupProber.HandleData(aBuf: PAnsiChar; aLen: integer): eProbingState;
 var
-  Filtered: PAnsiChar;
-  Output: PAnsiChar;
   Segment: PAnsiChar;
   Current: PAnsiChar;
-  FilteredLength: Integer;
+  Limit: PAnsiChar;
+  Count: Integer;
 begin
   Result := mState;
   if aLen <= 0 then
     Exit;
 
-  Filtered := AllocMem(aLen);
-  try
-    Output := Filtered;
-    Segment := aBuf;
-    Current := aBuf;
-    while Current < aBuf + aLen do
+  Current := aBuf;
+  Limit := aBuf + aLen;
+  while Current < Limit do
+  begin
+    Segment := Current;
+    while (Current < Limit) and
+      ((Byte(Current^) >= $80) or (Current^ in ['A'..'Z', 'a'..'z'])) do
     begin
       if Byte(Current^) >= $80 then
-        mInInternationalWord := True
-      else if not (Current^ in ['A'..'Z', 'a'..'z']) then
-      begin
-        if mInInternationalWord then
-        begin
-          while Segment < Current do
-          begin
-            Output^ := Segment^;
-            Inc(Output);
-            Inc(Segment);
-          end;
-          // A delimiter in its own chunk still terminates the preceding word.
-          // Dropping it invents cross-word bigrams and breaks Hebrew word ends.
-          Output^ := ' ';
-          Inc(Output);
-        end;
-        mInInternationalWord := False;
-        Segment := Current + 1;
-      end;
+        mInInternationalWord := True;
       Inc(Current);
     end;
+    Count := Current - Segment;
     if mInInternationalWord then
-      while Segment < Current do
+    begin
+      // Replay an earlier ASCII-only block only after this word qualifies.
+      // Confidence queries and chunk boundaries must not commit or discard it.
+      if mAsciiPrefixLength > 0 then
       begin
-        Output^ := Segment^;
-        Inc(Output);
-        Inc(Segment);
+        inherited HandleData(PAnsiChar(mAsciiPrefix), mAsciiPrefixLength);
+        mAsciiPrefixLength := 0;
       end;
-    FilteredLength := Output - Filtered;
-    if FilteredLength > 0 then
-      Result := inherited HandleData(Filtered, FilteredLength);
-  finally
-    FreeMem(Filtered);
+      if Count > 0 then
+        inherited HandleData(Segment, Count);
+    end
+    else if Current = Limit then
+      AppendAsciiPrefix(Segment, Count);
+
+    if Current < Limit then
+    begin
+      if mInInternationalWord then
+        inherited HandleData(' ', 1);
+      mInInternationalWord := False;
+      mAsciiPrefixLength := 0;
+      Inc(Current);
+    end;
   end;
+  Result := mState;
 end;
 
 {$ifdef DEBUG_chardet}

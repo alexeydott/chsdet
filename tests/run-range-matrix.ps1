@@ -27,7 +27,7 @@ try {
       if ($tableCases.Count -lt 4) { throw "Table tests not discovered: $out" }
       if ($cases.Count -eq 0) { throw "No tests executed: $out" }
       foreach ($fixture in @(@('TChsRegressionTests', 12), @('TChsProberTests', 9),
-                              @('TChsStreamingTests', 6))) {
+                              @('TChsStreamingTests', 10))) {
         $required = @($xml.SelectNodes('//test-suite[@name="' + $fixture[0] + '"]//test-case'))
         if ($required.Count -lt $fixture[1]) { throw "Regression fixture not discovered: $($fixture[0]) in $out" }
       }
