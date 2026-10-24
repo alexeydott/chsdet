@@ -4,7 +4,7 @@ interface
 
 uses
   DUnitX.TestFramework, System.SysUtils, System.IOUtils, nsCore,
-  ChsDet.Corpus, ChsDet.EncodingDetector;
+  ChsDet.Corpus, ChsDet.EncodingDetector, nsUniversalDetector;
 
 type
   [TestFixture]
@@ -38,9 +38,122 @@ type
     [Test] procedure AccentedNfoFramesRemainChunkIndependent;
     [Test] procedure ShortSingleByteEmphasisRetainsLiteralEvidence;
     [Test] procedure UnrelatedCornerFragmentsAreNotAnNfoFrame;
+    [Test] procedure RepeatedShortEvidenceSurvivesPaddingThreshold;
+    [Test] procedure NfoFrameRequiresCompleteAlignedRows;
   end;
 
 implementation
+
+procedure TChsRegressionTests.RepeatedShortEvidenceSurvivesPaddingThreshold;
+const
+  Chunks: array [0..5] of Integer = (1, 2, 3, 7, 128, 8192);
+  Sizes: array [0..4] of Integer = (127, 128, 129, 256, 4096);
+var
+  Data: TBytes;
+  Size, I, Chunk, Kind: Integer;
+  Expected, Actual: TChsDetectionResult;
+begin
+  for Kind := 0 to 1 do
+    for Size in Sizes do
+    begin
+      SetLength(Data, Size);
+      Data[0] := $C4;
+      for I := 1 to 8 do Data[I] := $E0;
+      Data[9] := Ord('!');
+      if Kind = 0 then FillChar(Data[10], Size - 10, Ord(' '))
+      else
+      begin
+        FillChar(Data[1], Size - 2, $E0);
+        Data[Size - 1] := Ord('!');
+      end;
+      for Chunk in Chunks do
+        Assert.AreEqual<Integer>(-1, DetectChunks(Data, Chunk).CodePage,
+          Format('Padding must not manufacture a Western label: kind=%d size=%d chunk=%d',
+            [Kind, Size, Chunk]));
+    end;
+  // Exercise the actual evidence-buffer transition as well as raw length.
+  for Size := 127 to 129 do
+  begin
+    SetLength(Data, Size);
+    for I := 0 to Size - 1 do
+      if Odd(I) then Data[I] := 32 else Data[I] := $80;
+    FillChar(Data[8], 8, $E9);
+    Expected := TChsEncodingDetector.Detect(Data);
+    for Chunk in Chunks do
+    begin
+      Actual := DetectChunks(Data, Chunk);
+      Assert.AreEqual<Integer>(Expected.CodePage, Actual.CodePage);
+      Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+    end;
+  end;
+end;
+
+procedure TChsRegressionTests.NfoFrameRequiresCompleteAlignedRows;
+const
+  Chunks: array [0..4] of Integer = (1, 3, 7, 128, 8192);
+var
+  State: TOemBoxState;
+  Top, Side, Bottom, Data, Mixed, Prose: TBytes;
+  Kind, I, Offset, Line, EncodingKind, Chunk: Integer;
+begin
+  Top := TBytes.Create($C9, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BB, 13, 10);
+  Side := TBytes.Create($BA, 32, 32, 32, $82, 32, 32, 32, 32, $BA, 13, 10);
+  Bottom := TBytes.Create($C8, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BC);
+  for Kind := 0 to 6 do
+  begin
+    Data := Append(Top, Side);
+    if Kind <> 1 then Data := Append(Data, Bottom);
+    case Kind of
+      2: Data := Copy(Data, 0, Length(Data) - 1); // Missing closing corner.
+      3: Data[12] := 32; // Missing left side.
+      4: Data[21] := 32; // Missing right side.
+      5: Data := Append(Append(Top, TBytes.Create(9)), Append(Side, Bottom));
+      6: Data := Append(Append(Top, TBytes.Create(32)), Append(Side, Bottom));
+    end;
+    FillChar(State, SizeOf(State), 0);
+    for I := 0 to High(Data) do State.Feed(Data[I]);
+    Assert.AreEqual<Boolean>(Kind = 0, State.HasFrame, 'Frame variant=' + IntToStr(Kind));
+    for EncodingKind := 0 to 1 do
+    begin
+      Prose := Copy(TFile.ReadAllBytes(TPath.Combine(TChsCorpus.DataDir,
+        'windows-1251.txt')), 0, 256);
+      if EncodingKind = 1 then
+        for I := 0 to High(Prose) do
+          case I mod 4 of
+            0: Prose[I] := Ord('a');
+            1: Prose[I] := $E9;
+            2: Prose[I] := $80;
+            3: Prose[I] := 32;
+          end;
+      Mixed := Append(Append(Prose, TBytes.Create(13, 10)), Data);
+      Mixed := Append(Mixed, TBytes.Create(13, 10));
+      Offset := Length(Mixed);
+      SetLength(Mixed, Offset + 4 * 258);
+      for Line := 0 to 3 do
+      begin
+        FillChar(Mixed[Offset + Line * 258], 256, $DB);
+        Mixed[Offset + Line * 258 + 256] := 13;
+        Mixed[Offset + Line * 258 + 257] := 10;
+      end;
+      for Chunk in Chunks do
+        Assert.AreEqual<Boolean>(Kind = 0, DetectChunks(Mixed, Chunk).CodePage = 437,
+          Format('Frame exception: kind=%d encoding=%d chunk=%d',
+            [Kind, EncodingKind, Chunk]));
+    end;
+  end;
+  // A tab and eight spaces represent the same visual indentation.
+  Data := Append(Append(TBytes.Create(9), Top),
+    Append(Append(TBytes.Create(32,32,32,32,32,32,32,32), Side),
+      Append(TBytes.Create(9), Bottom)));
+  FillChar(State, SizeOf(State), 0);
+  for I := 0 to High(Data) do State.Feed(Data[I]);
+  Assert.IsTrue(State.HasFrame, 'Aligned tab/space indentation');
+  Data := Append(Append(TBytes.Create(9), Top),
+    Append(Append(TBytes.Create(32), Side), Append(TBytes.Create(9), Bottom)));
+  FillChar(State, SizeOf(State), 0);
+  for I := 0 to High(Data) do State.Feed(Data[I]);
+  Assert.IsFalse(State.HasFrame, 'One space must not align with a tab');
+end;
 
 procedure TChsRegressionTests.ShortSingleByteEmphasisRetainsLiteralEvidence;
 const

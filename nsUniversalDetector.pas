@@ -135,6 +135,7 @@ type nsInputState = (
       mStatLastByte, mStatRunLength: Byte;
       mLiteralSample: array [0..127] of AnsiChar;
       mLiteralSampleLength: Integer;
+      mLiteralRunLength: Byte;
       mStatSamplingStarted: Boolean;
 
 		  procedure Report(aCharsetID: eInternalCharsetID);
@@ -270,8 +271,13 @@ begin
     Exit;
   end;
   PreviousCR := False;
+  if Value = 9 then
+  begin
+    Column := Column + (8 - Column mod 8);
+    Exit;
+  end;
   Inc(Column);
-  if Value in [9, 32] then Exit;
+  if Value = 32 then Exit;
   if LeftColumn = 0 then
   begin
     LeftColumn := Column;
@@ -980,7 +986,8 @@ var
     mStatRunLength := 0;
   end;
 begin
-  // Preserve all evidence in short inputs; the literal prefix is strictly bounded.
+  // Count bounded run evidence, not physical length: extending padding must
+  // not switch the statistical policy. Unicode and OEM still see raw bytes.
   if not mStatSamplingStarted then
   begin
     if EndOfInput then
@@ -993,15 +1000,28 @@ begin
       end;
       Exit;
     end;
-    if Count <= Length(mLiteralSample) - mLiteralSampleLength then
+    for I := 0 to Count - 1 do
     begin
-      if Count > 0 then Move(Data^, mLiteralSample[mLiteralSampleLength], Count);
-      Inc(mLiteralSampleLength, Count);
-      Exit;
+      Value := Byte(Data[I]);
+      if (mLiteralSampleLength > 0) and
+        (Byte(mLiteralSample[mLiteralSampleLength - 1]) = Value) then
+      begin
+        if mLiteralRunLength = SINGLE_BYTE_RUN_LIMIT then Continue;
+        Inc(mLiteralRunLength);
+      end
+      else mLiteralRunLength := 1;
+      if mLiteralSampleLength = Length(mLiteralSample) then
+      begin
+        mStatSamplingStarted := True;
+        FeedSingleByteStatistics(@mLiteralSample[0], mLiteralSampleLength);
+        mLiteralSampleLength := 0;
+        FeedSingleByteStatistics(Data + I, Count - I);
+        Exit;
+      end;
+      mLiteralSample[mLiteralSampleLength] := AnsiChar(Value);
+      Inc(mLiteralSampleLength);
     end;
-    mStatSamplingStarted := True;
-    FeedSingleByteStatistics(@mLiteralSample[0], mLiteralSampleLength);
-    mLiteralSampleLength := 0;
+    Exit;
   end;
   Used := 0;
   for I := 0 to Count - 1 do
@@ -1244,6 +1264,7 @@ begin
   mStatLastByte := 0;
   mStatRunLength := 0;
   mLiteralSampleLength := 0;
+  mLiteralRunLength := 0;
   mStatSamplingStarted := False;
   mInputState := ePureAscii;
   mLastChar := #0; (*illegal value as signal*)
