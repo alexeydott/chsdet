@@ -124,18 +124,18 @@ compile or execute Delphi and cannot establish a runtime PASS.
 
 The runner also links three new fixtures with explicit registration:
 
-- `ChsDet.RegressionTests.pas`: 20 public API / Unicode / mapping / false-positive scenarios.
+- `ChsDet.RegressionTests.pas`: 22 public API / Unicode / mapping / false-positive scenarios.
 - `ChsDet.ProberTests.pas`: 15 low-level model, state, confidence and memory-boundary scenarios, including malformed/incomplete MBCS tails, exact summary joins and 64-bit sequence counters.
 - `ChsDet.StreamingTests.pas`: 11 word/tag boundary, mixed ASCII/non-ASCII word, bounded-prefix memory and chunked corpus scenarios.
 
-The range matrix requires at least 20/15/11 tests in these fixtures, rejects empty
+The range matrix requires at least 22/15/11 tests in these fixtures, rejects empty
 execution and retains the original raw-table checks. The Japanese-context
 memory-boundary test uses Windows `VirtualAlloc` / `VirtualProtect` guard pages.
 It checks a meaningful postcondition after the protected single-byte read;
 an unexpected access violation is not swallowed.
 
-The current native Delphi 12 matrix executes 100 tests per configuration on
-Win32 and Win64 with all four R/Q combinations. All 100 pass with no ignored
+The current native Delphi 12 matrix executes 102 tests per configuration on
+Win32 and Win64 with all four R/Q combinations. All 102 pass with no ignored
 tests, failures or errors; recognition snapshots match across R/Q modes within
 each platform. These native results are separate from the historical Free Pascal
 evidence linked below.
@@ -161,10 +161,12 @@ chunk sizes 1, 3, 64 and 8192; the original Unicode and OEM corpus stays enforce
 
 Context-exception regressions add Western punctuation around OEM-like word
 bytes (including a sole euro sign at EOF) and repeated graphic-like letters
-following CP1251 or CP1252 prose. The latter asserts that OEM/NFO does not erase
-the competing text evidence; it does not claim a unique exact SBCS label under
-overwhelming repetition. Genuine repeated OEM accents and pure NFO rows remain
-covered by the preceding positive regressions.
+following CP1251 or CP1252 prose. The latter now requires the exact original code
+page for runs of 8, 31, 512 and 4096 bytes, rather than merely forbidding OEM.
+Additional checks cover all two-block splits around a short terminal run,
+chunk sizes 1/2/3/7/64/257/8192, long-run EOF handling, Reset of pending input,
+idempotent Finish, and accented CP437 frame fixtures at the same chunk sizes.
+Genuine repeated OEM accents and pure NFO rows retain their positive coverage.
 
 See [the review](review-2026-10-24/REPORT.ru.md),
 [actual supplementary execution evidence](review-2026-10-24/SUMMARY.md), and

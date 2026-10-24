@@ -51,6 +51,7 @@ type nsInputState = (
     OemArtDistinctCount, Oem850DistinctCount, Oem852DistinctCount: Integer;
     PreviousByte, BeforePreviousByte: Byte;
     WesternPunctuationSeen: Boolean;
+    OemBoxStartSeen, OemBoxEndSeen, OemBoxSideSeen: Boolean;
     Oem850WordCount, Oem852WordCount: Integer;
     OemArtRunLength, OemArtLineCount: Integer;
     Oem850ByteCount: Integer;
@@ -85,6 +86,7 @@ type nsInputState = (
     function HasOemArtLayout: Boolean;
     function HasOemWordContext: Boolean;
     function HasWesternPunctuation: Boolean;
+    function HasOemBoxFrame: Boolean;
     function DetectOemTextSignature: eInternalCharsetID;
     function LooksLikeDbcsText: Boolean;
     function LooksLikeUtf8Text: Boolean;
@@ -118,6 +120,7 @@ type nsInputState = (
       mEscCharSetProber: TCustomDetector;
       mDetectedBOM: eBOMKind;
       mKnownCharsetsCache: RawByteString;
+      mStatLastByte, mStatRunLength: Byte;
 
 		  procedure Report(aCharsetID: eInternalCharsetID);
       function ReportWithConfidence(aCharsetID: eInternalCharsetID; Confidence: float): Boolean;
@@ -130,6 +133,8 @@ type nsInputState = (
       function DetectOemTextSignature: eInternalCharsetID;
       function DetectLegacyByteSignature: eInternalCharsetID;
       procedure DoEnableCharset(Charset: eInternalCharsetID; SetEnabledTo: Boolean);
+      procedure FeedSingleByteStatistics(Data: PAnsiChar; Count: Integer;
+        EndOfInput: Boolean = False);
 		public
     	constructor Create;
       destructor Destroy; override;
@@ -164,6 +169,7 @@ uses
 
 const
 	MINIMUM_THRESHOLD: float  = 0.20;
+  SINGLE_BYTE_RUN_LIMIT = 8;
   OEM_ART_CONFIDENCE: float = 0.95;
   OEM_TEXT_CONFIDENCE: float = 0.80;
   OEM_ART_MIN_BYTES = 64;
@@ -252,6 +258,9 @@ begin
   PreviousByte := 0;
   BeforePreviousByte := 0;
   WesternPunctuationSeen := False;
+  OemBoxStartSeen := False;
+  OemBoxEndSeen := False;
+  OemBoxSideSeen := False;
   Oem850WordCount := 0;
   Oem852WordCount := 0;
   OemArtRunLength := 0;
@@ -287,6 +296,16 @@ var
 begin
   Inc(TotalByteCount);
   ByteIndex := TotalByteCount - 1;
+
+  // Require the matching corner/horizontal triplets and a vertical side,
+  // rather than interpreting any repeated Cyrillic-compatible byte as a frame.
+  if ((BeforePreviousByte = $C9) and (PreviousByte = $CD) and (Value = $CD)) or
+     ((BeforePreviousByte = $DA) and (PreviousByte = $C4) and (Value = $C4)) then
+    OemBoxStartSeen := True;
+  if ((BeforePreviousByte = $CD) and (PreviousByte = $CD) and (Value = $BB)) or
+     ((BeforePreviousByte = $C4) and (PreviousByte = $C4) and (Value = $BF)) then
+    OemBoxEndSeen := True;
+  if Value in [$BA, $B3] then OemBoxSideSeen := True;
 
   if (PreviousByte in [$80, $91..$94, $96, $97]) and
      not (BeforePreviousByte in [Ord('A')..Ord('Z'), Ord('a')..Ord('z')]) and
@@ -530,6 +549,11 @@ begin
      not (BeforePreviousByte in [Ord('A')..Ord('Z'), Ord('a')..Ord('z')]));
 end;
 
+function TObservedByteStats.HasOemBoxFrame: Boolean;
+begin
+  Result := OemBoxStartSeen and OemBoxEndSeen and OemBoxSideSeen and HasOemArtLayout;
+end;
+
 function TObservedByteStats.LooksLikeOemArt: Boolean;
 begin
   Result :=
@@ -742,6 +766,7 @@ begin
         HandleData(PAnsiChar(mPrefix), Length(mPrefix));
       mPrefix := '';
     end;
+    FeedSingleByteStatistics(nil, 0, True);
     if not mGotData or (mDetectedCharset <> UNKNOWN_CHARSET) then
       Exit;
 
@@ -790,8 +815,9 @@ begin
           end;
 
           StructuredMultiByteText := mObservedBytes.LooksLikeStructuredMultiByteText;
-          AllowOemArt := not ((BestConfidence > MINIMUM_THRESHOLD) and
-            (mObservedBytes.HighByteCount > mObservedBytes.OemArtByteCount));
+          AllowOemArt := mObservedBytes.HasOemBoxFrame or
+            not ((BestConfidence > MINIMUM_THRESHOLD) and
+              (mObservedBytes.HighByteCount > mObservedBytes.OemArtByteCount));
           // Long repeated graphic rows carry layout evidence, not language
           // bigrams. Allow this to beat SBCS repetitions, never a CJK/Unicode model.
           if AllowOemArt and mObservedBytes.HasOemArtLayout and LooksLikeOemArt and
@@ -831,6 +857,55 @@ begin
   finally
     mDone := True;
   end;
+end;
+
+procedure TnsUniversalDetector.FeedSingleByteStatistics(Data: PAnsiChar; Count: Integer;
+  EndOfInput: Boolean);
+var
+  Buffer: array [0..255] of AnsiChar;
+  Used, I: Integer;
+  Value: Byte;
+  procedure Flush;
+  begin
+    if Used = 0 then Exit;
+    mCharSetProbers[1].HandleData(@Buffer[0], Used);
+    mCharSetProbers[2].HandleData(@Buffer[0], Used);
+    Used := 0;
+  end;
+  procedure EmitRun;
+  var
+    Copies, J: Integer;
+  begin
+    if mStatRunLength = 0 then Exit;
+    Copies := mStatRunLength;
+    if mStatRunLength = SINGLE_BYTE_RUN_LIMIT then Copies := 1;
+    for J := 1 to Copies do
+    begin
+      if mStatRunLength = SINGLE_BYTE_RUN_LIMIT then Buffer[Used] := ' '
+      else Buffer[Used] := AnsiChar(mStatLastByte);
+      Inc(Used);
+      if Used = Length(Buffer) then Flush;
+    end;
+    mStatRunLength := 0;
+  end;
+begin
+  Used := 0;
+  for I := 0 to Count - 1 do
+  begin
+    Value := Byte(Data[I]);
+    if (mStatRunLength = 0) or (Value <> mStatLastByte) then
+    begin
+      EmitRun;
+      mStatLastByte := Value;
+      mStatRunLength := 1;
+    end
+    else if mStatRunLength < SINGLE_BYTE_RUN_LIMIT then
+      Inc(mStatRunLength);
+  end;
+  // Long uniform runs are neutral separators, not lexical evidence. Runs below
+  // the limit remain literal. Defer the last run until a new byte or true EOF.
+  if EndOfInput then EmitRun;
+  Flush;
 end;
 
 function TnsUniversalDetector.HandleData(aBuf: PAnsiChar; aLen: integer): nsResult;
@@ -931,7 +1006,7 @@ begin
 
   // SBCS needs ASCII-only blocks too: their last word can acquire a high byte
   // in a later block. Its streaming filter discards completed English words.
-  mCharSetProbers[1].HandleData(aBuf, aLen);
+  FeedSingleByteStatistics(aBuf, aLen);
   case mInputState of
     eEscAscii:
       begin
@@ -989,7 +1064,7 @@ begin
           // block may change the language score, byte order or GB18030 family.
           if i = 0 then
             mCharSetProbers[3].HandleData(aBuf, aLen);
-          if (i <> 3) and (i <> 1) then
+          if (i <> 3) and (i <> 1) and (i <> 2) then
             mCharSetProbers[i].HandleData(aBuf, aLen);
 //finally
 //FreeMem(newBuf, aLen);
@@ -1052,6 +1127,8 @@ begin
   mSeenGreek1253Byte := FALSE;
   mSeenGreekIsoByte := FALSE;
   mObservedBytes.Reset;
+  mStatLastByte := 0;
+  mStatRunLength := 0;
   mInputState := ePureAscii;
   mLastChar := #0; (*illegal value as signal*)
   mEscCharSetProber.Reset;

@@ -34,9 +34,71 @@ type
     [Test] procedure SingleSymbolNfoLinesRemainSupported;
     [Test] procedure WesternPunctuationDisambiguatesEmbeddedOemLikeBytes;
     [Test] procedure GraphicRunsMustNotOverrideNonOemContext;
+    [Test] procedure SingleByteRunSamplingSurvivesSplitsEofAndReset;
+    [Test] procedure AccentedNfoFramesRemainChunkIndependent;
   end;
 
 implementation
+
+procedure TChsRegressionTests.SingleByteRunSamplingSurvivesSplitsEofAndReset;
+const
+  Chunks: array [0..6] of Integer = (1, 2, 3, 7, 64, 257, 8192);
+var
+  Prose, Data: TBytes;
+  Detector: IChsEncodingDetector;
+  Expected, Actual: TChsDetectionResult;
+  RunLength, Split, Chunk: Integer;
+begin
+  Prose := TFile.ReadAllBytes(TPath.Combine(TChsCorpus.DataDir, 'windows-1251.txt'));
+  Detector := TChsEncodingDetector.New;
+  RunLength := 8;
+  while RunLength <= 4096 do
+  begin
+    Data := Copy(Prose, 0, 256);
+    SetLength(Data, 256 + RunLength);
+    FillChar(Data[256], RunLength, $DB);
+    Expected := TChsEncodingDetector.Detect(Data);
+    Assert.AreEqual<Integer>(1251, Expected.CodePage);
+    for Chunk in Chunks do
+    begin
+      Actual := DetectChunks(Data, Chunk);
+      Assert.AreEqual<Integer>(1251, Actual.CodePage);
+      Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+    end;
+    if RunLength = 8 then
+      for Split := 0 to Length(Data) do
+      begin
+        Detector.Reset;
+        Detector.Feed(Data, 0, Split);
+        Detector.Feed(Data, Split, Length(Data) - Split);
+        Actual := Detector.Finish;
+        Assert.AreEqual<Integer>(1251, Actual.CodePage, 'split=' + IntToStr(Split));
+        Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+      end;
+    Detector.Reset;
+    Detector.Feed(TBytes.Create($DB, $DB, $DB, $DB, $DB, $DB, $DB, $DB));
+    Detector.Reset;
+    Detector.Feed(Data);
+    Actual := Detector.Finish;
+    Assert.AreEqual<Integer>(1251, Actual.CodePage);
+    Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+    Assert.AreEqual<Double>(Actual.Confidence, Detector.Finish.Confidence);
+    RunLength := RunLength * 512;
+  end;
+end;
+
+procedure TChsRegressionTests.AccentedNfoFramesRemainChunkIndependent;
+const
+  Chunks: array [0..6] of Integer = (1, 2, 3, 7, 64, 257, 8192);
+var
+  Data: TBytes;
+  Chunk: Integer;
+begin
+  Data := TFile.ReadAllBytes(TPath.Combine(TChsCorpus.DataDir, 'cp437-small-nfo-art.txt'));
+  for Chunk in Chunks do
+    Assert.AreEqual<Integer>(437, DetectChunks(Data, Chunk).CodePage,
+      'Accented framed NFO, chunk=' + IntToStr(Chunk));
+end;
 
 procedure TChsRegressionTests.WesternPunctuationDisambiguatesEmbeddedOemLikeBytes;
 const
@@ -73,11 +135,12 @@ end;
 procedure TChsRegressionTests.GraphicRunsMustNotOverrideNonOemContext;
 const
   Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+  RunLengths: array [0..3] of Integer = (8, 31, 512, 4096);
   WesternText: array [0..17] of Byte =
     ($52, $E9, $73, $75, $6D, $E9, $20, $63, $61, $66, $E9, $20, $31, $30, $20, $80, $2E, $20);
 var
   Data, Prose: TBytes;
-  Line, I, Chunk, Kind: Integer;
+  Line, I, Chunk, Kind, RunLength: Integer;
   Actual: TChsDetectionResult;
 begin
   // CP1251 prose is independent of the ambiguous repeated high-byte rows.
@@ -90,22 +153,27 @@ begin
       SetLength(Prose, 288);
       for I := 0 to High(Prose) do Prose[I] := WesternText[I mod Length(WesternText)];
     end;
-    Data := Copy(Prose, 0, 256);
-    SetLength(Data, 256 + 4 * 514);
-    for Line := 0 to 3 do
+    for RunLength in RunLengths do
     begin
-      for I := 0 to 511 do Data[256 + Line * 514 + I] := $DB;
-      Data[256 + Line * 514 + 512] := 13;
-      Data[256 + Line * 514 + 513] := 10;
-    end;
-    for Chunk in Chunks do
-    begin
-      Actual := DetectChunks(Data, Chunk);
-      Assert.IsTrue((Actual.CodePage <> 437) and (Actual.CodePage <> 850) and
-        (Actual.CodePage <> 852) and (Actual.CodePage <> 858),
-        Format('Graphic-like repetitions must not erase prose: kind=%d chunk=%d', [Kind, Chunk]));
-      // Under overwhelming repeated-letter evidence the exact SBCS label can
-      // remain ambiguous. This regression forbids the OEM/NFO override itself.
+      Data := Copy(Prose, 0, 256);
+      SetLength(Data, 256 + 4 * (RunLength + 2));
+      for Line := 0 to 3 do
+      begin
+        for I := 0 to RunLength - 1 do Data[256 + Line * (RunLength + 2) + I] := $DB;
+        Data[256 + Line * (RunLength + 2) + RunLength] := 13;
+        Data[256 + Line * (RunLength + 2) + RunLength + 1] := 10;
+      end;
+      for Chunk in Chunks do
+      begin
+        Actual := DetectChunks(Data, Chunk);
+        Assert.IsTrue((Actual.CodePage <> 437) and (Actual.CodePage <> 850) and
+          (Actual.CodePage <> 852) and (Actual.CodePage <> 858),
+          Format('Graphic-like repetitions must not erase prose: kind=%d chunk=%d', [Kind, Chunk]));
+        if Kind = 0 then Assert.AreEqual<Integer>(1251, Actual.CodePage,
+          'Cyrillic prose must retain its exact label despite repeated rows')
+        else Assert.AreEqual<Integer>(1252, Actual.CodePage,
+          'Western prose must retain its exact label despite repeated rows');
+      end;
     end;
   end;
 end;
