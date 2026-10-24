@@ -32,9 +32,83 @@ type
     [Test] procedure ShortUtf16WithSparseControlsIsStillText;
     [Test] procedure RepeatedOemWordAccentsRemainSupported;
     [Test] procedure SingleSymbolNfoLinesRemainSupported;
+    [Test] procedure WesternPunctuationDisambiguatesEmbeddedOemLikeBytes;
+    [Test] procedure GraphicRunsMustNotOverrideNonOemContext;
   end;
 
 implementation
+
+procedure TChsRegressionTests.WesternPunctuationDisambiguatesEmbeddedOemLikeBytes;
+const
+  Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+var
+  Data, WordBytes: TBytes;
+  Kind, I, Chunk: Integer;
+begin
+  for Kind := 0 to 1 do
+  begin
+    // Independent Western evidence: a standalone CP1252 euro and em dash.
+    WordBytes := TBytes.Create($66, $61, $87, $61, $64, $65, $20, $31, $30, $20,
+      $80, $20, $97, $20);
+    if Kind = 1 then WordBytes[2] := $A0;
+    SetLength(Data, Length(WordBytes) * 100);
+    for I := 0 to 99 do
+      Move(WordBytes[0], Data[I * Length(WordBytes)], Length(WordBytes));
+    for Chunk in Chunks do
+      Assert.AreEqual<Integer>(1252, DetectChunks(Data, Chunk).CodePage,
+        Format('Western punctuation: kind=%d chunk=%d', [Kind, Chunk]));
+    // The sole disambiguating punctuation may arrive as the final byte.
+    WordBytes := TBytes.Create($66, $61, $87, $61, $64, $65, $20);
+    if Kind = 1 then WordBytes[2] := $A0;
+    SetLength(Data, Length(WordBytes) * 100);
+    for I := 0 to 99 do
+      Move(WordBytes[0], Data[I * Length(WordBytes)], Length(WordBytes));
+    Data := Append(Data, [$31, $30, $20, $80]);
+    for Chunk in Chunks do
+      Assert.AreEqual<Integer>(1252, DetectChunks(Data, Chunk).CodePage,
+        Format('Trailing Western punctuation: kind=%d chunk=%d', [Kind, Chunk]));
+  end;
+end;
+
+procedure TChsRegressionTests.GraphicRunsMustNotOverrideNonOemContext;
+const
+  Chunks: array [0..3] of Integer = (1, 3, 64, 8192);
+  WesternText: array [0..17] of Byte =
+    ($52, $E9, $73, $75, $6D, $E9, $20, $63, $61, $66, $E9, $20, $31, $30, $20, $80, $2E, $20);
+var
+  Data, Prose: TBytes;
+  Line, I, Chunk, Kind: Integer;
+  Actual: TChsDetectionResult;
+begin
+  // CP1251 prose is independent of the ambiguous repeated high-byte rows.
+  for Kind := 0 to 1 do
+  begin
+    if Kind = 0 then
+      Prose := TFile.ReadAllBytes(TPath.Combine(TChsCorpus.DataDir, 'windows-1251.txt'))
+    else
+    begin
+      SetLength(Prose, 288);
+      for I := 0 to High(Prose) do Prose[I] := WesternText[I mod Length(WesternText)];
+    end;
+    Data := Copy(Prose, 0, 256);
+    SetLength(Data, 256 + 4 * 514);
+    for Line := 0 to 3 do
+    begin
+      for I := 0 to 511 do Data[256 + Line * 514 + I] := $DB;
+      Data[256 + Line * 514 + 512] := 13;
+      Data[256 + Line * 514 + 513] := 10;
+    end;
+    for Chunk in Chunks do
+    begin
+      Actual := DetectChunks(Data, Chunk);
+      Assert.IsTrue((Actual.CodePage <> 437) and (Actual.CodePage <> 850) and
+        (Actual.CodePage <> 852) and (Actual.CodePage <> 858),
+        Format('Graphic-like repetitions must not erase prose: kind=%d chunk=%d', [Kind, Chunk]));
+      // Under overwhelming repeated-letter evidence the exact SBCS label can
+      // remain ambiguous. This regression forbids the OEM/NFO override itself.
+    end;
+  end;
+end;
 
 procedure TChsRegressionTests.ShortUtf16WithSparseControlsIsStillText;
 const

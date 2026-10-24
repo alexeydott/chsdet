@@ -2,12 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The current recognition and streaming regressions comprise 44 DUnitX methods in
+The current recognition and streaming regressions comprise 46 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
 model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
 byte filtering, reset and guard-page memory boundaries. They are explicitly
-registered and linked by the runner; the full suite currently contains 98 tests.
+registered and linked by the runner; the full suite currently contains 100 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests
@@ -133,7 +133,7 @@ the representable count remains finite; this is not arbitrary-precision input
 accounting. Three additional regressions enforce bounded allocation while
 streaming 2 MiB, exact model-summary joins, and counts beyond `2^32`.
 
-Delphi 12 Win32 and Win64 validation passes all 98 tests in every R/Q combination,
+Delphi 12 Win32 and Win64 validation passes all 100 tests in every R/Q combination,
 with matching recognition snapshots across R/Q modes within each platform.
 
 ### MBCS Syntax and End-of-Input Audit
@@ -176,13 +176,27 @@ actual winning CJK/Unicode model. OEM art likewise needs two distinct art bytes,
 or two graphic rows with runs of at least eight art bytes. The existing art
 volume/ratio requirements still apply. The final row may end at EOF. This layout
 can outrank repetitive SBCS scores, but never a winning CJK/Unicode model.
+An additional guard now prevents either art path from overriding a model above
+the minimum reporting threshold when high bytes outside the art set supply
+competing text evidence. Pure graphic rows retain their positive coverage.
 Counters for layout are bounded and neighbour bytes survive chunk boundaries.
+
+Standalone CP1252-style punctuation (`0x80`, `0x91` through `0x94`, `0x96`,
+`0x97`) between non-ASCII-letter boundaries blocks OEM text signatures. It is
+also legal in OEM encodings, so this is a conservative preference rather than
+proof of CP1252. The pending final byte is checked against EOF as a right boundary.
+It prevents repeated in-word OEM-like bytes from overpowering independent euro
+or dash evidence. An accent next to an ASCII letter does not trigger this guard.
 
 Repetition alone remains insufficient: the isolated-symbol negative fixtures
 still pass. Added positive fixtures cover CP850 c-cedilla words, CP852 a-acute
 words, CP858 euro prices, and single-symbol CP437 block rows. These contextual
 preferences cannot distinguish byte-identical texts with different intended
 encodings; neither diversity nor layout is proof of the original encoding.
+In mixed prose with extremely long repeated letters, the exact SBCS label can
+still be wrong even though the false OEM/NFO override is prevented. The added
+negative test deliberately checks that narrower property rather than claiming
+full recognition accuracy on these ambiguous inputs.
 
 Before correction, native regressions reproduced a binary small-integer array
 reported as UTF-16 and repeated CP1252 `0x87` reported as OEM. The resulting

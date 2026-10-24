@@ -50,6 +50,7 @@ type nsInputState = (
     SeenBytes: set of Byte;
     OemArtDistinctCount, Oem850DistinctCount, Oem852DistinctCount: Integer;
     PreviousByte, BeforePreviousByte: Byte;
+    WesternPunctuationSeen: Boolean;
     Oem850WordCount, Oem852WordCount: Integer;
     OemArtRunLength, OemArtLineCount: Integer;
     Oem850ByteCount: Integer;
@@ -83,6 +84,7 @@ type nsInputState = (
     function LooksLikeOemArt: Boolean;
     function HasOemArtLayout: Boolean;
     function HasOemWordContext: Boolean;
+    function HasWesternPunctuation: Boolean;
     function DetectOemTextSignature: eInternalCharsetID;
     function LooksLikeDbcsText: Boolean;
     function LooksLikeUtf8Text: Boolean;
@@ -249,6 +251,7 @@ begin
   Oem852DistinctCount := 0;
   PreviousByte := 0;
   BeforePreviousByte := 0;
+  WesternPunctuationSeen := False;
   Oem850WordCount := 0;
   Oem852WordCount := 0;
   OemArtRunLength := 0;
@@ -284,6 +287,11 @@ var
 begin
   Inc(TotalByteCount);
   ByteIndex := TotalByteCount - 1;
+
+  if (PreviousByte in [$80, $91..$94, $96, $97]) and
+     not (BeforePreviousByte in [Ord('A')..Ord('Z'), Ord('a')..Ord('z')]) and
+     not (Value in [Ord('A')..Ord('Z'), Ord('a')..Ord('z')]) then
+    WesternPunctuationSeen := True;
 
   // A repeated accent inside words supplies context missing from isolated
   // Western punctuation. Preserve both neighbours across input blocks.
@@ -514,6 +522,14 @@ begin
     (Oem852WordCount >= LEGACY_MIN_HIGH_BYTES);
 end;
 
+function TObservedByteStats.HasWesternPunctuation: Boolean;
+begin
+  // EOF supplies the missing right word boundary for a trailing symbol.
+  Result := WesternPunctuationSeen or
+    ((PreviousByte in [$80, $91..$94, $96, $97]) and
+     not (BeforePreviousByte in [Ord('A')..Ord('Z'), Ord('a')..Ord('z')]));
+end;
+
 function TObservedByteStats.LooksLikeOemArt: Boolean;
 begin
   Result :=
@@ -536,6 +552,11 @@ begin
     Exit;
 
   HighRatio := HighByteCount / TotalByteCount;
+
+  // CP1252 punctuation at word boundaries contradicts an accent-only guess.
+  // It is also legal in OEM pages, so prefer abstention over forced certainty.
+  if HasWesternPunctuation then
+    Exit;
 
   if HighRatio > OEM_LATIN_MAX_HIGH_RATIO then
     Exit;
@@ -707,7 +728,7 @@ procedure TnsUniversalDetector.DataEnd;
 var
   ProberConfidence, BestConfidence: float;
   LegacyCharset, Candidate, BestCharset: eInternalCharsetID;
-  StructuredMultiByteText: Boolean;
+  StructuredMultiByteText, AllowOemArt: Boolean;
   I: Integer;
 begin
   if mDone then
@@ -769,9 +790,11 @@ begin
           end;
 
           StructuredMultiByteText := mObservedBytes.LooksLikeStructuredMultiByteText;
+          AllowOemArt := not ((BestConfidence > MINIMUM_THRESHOLD) and
+            (mObservedBytes.HighByteCount > mObservedBytes.OemArtByteCount));
           // Long repeated graphic rows carry layout evidence, not language
           // bigrams. Allow this to beat SBCS repetitions, never a CJK/Unicode model.
-          if mObservedBytes.HasOemArtLayout and LooksLikeOemArt and
+          if AllowOemArt and mObservedBytes.HasOemArtLayout and LooksLikeOemArt and
              not (BestCharset in [SHIFT_JIS_CHARSET, GB18030_CHARSET, GBK_CHARSET,
                BIG5_CHARSET, EUC_JP_CHARSET, EUC_KR_CHARSET, X_EUC_TW_CHARSET,
                UTF8_CHARSET, UTF16_LE_CHARSET, UTF16_BE_CHARSET]) and
@@ -785,7 +808,7 @@ begin
                 BIG5_CHARSET, EUC_JP_CHARSET, EUC_KR_CHARSET, X_EUC_TW_CHARSET,
                 UTF8_CHARSET, UTF16_LE_CHARSET, UTF16_BE_CHARSET])) then
           begin
-            if LooksLikeOemArt and (BestConfidence < OEM_ART_CONFIDENCE) and
+            if AllowOemArt and LooksLikeOemArt and (BestConfidence < OEM_ART_CONFIDENCE) and
                ReportWithConfidence(IBM437_CHARSET, OEM_ART_CONFIDENCE) then
               Exit;
             LegacyCharset := DetectLegacyByteSignature;
