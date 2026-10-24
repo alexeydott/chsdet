@@ -25,6 +25,12 @@ try {
       $cases = @($xml.SelectNodes('//test-case'))
       $tableCases = @($xml.SelectNodes('//test-suite[@name="TChsTableTests"]//test-case'))
       if ($tableCases.Count -lt 4) { throw "Table tests not discovered: $out" }
+      if ($cases.Count -eq 0) { throw "No tests executed: $out" }
+      foreach ($fixture in @(@('TChsRegressionTests', 12), @('TChsProberTests', 9),
+                              @('TChsStreamingTests', 6))) {
+        $required = @($xml.SelectNodes('//test-suite[@name="' + $fixture[0] + '"]//test-case'))
+        if ($required.Count -lt $fixture[1]) { throw "Regression fixture not discovered: $($fixture[0]) in $out" }
+      }
       foreach ($case in $cases) {
         if ($case.success -ne 'True' -and $case.result -ne 'Success' -and $case.result -ne 'Passed') {
           throw "Non-passing or ignored test: $($case.name) in $out"

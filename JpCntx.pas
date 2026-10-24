@@ -214,9 +214,10 @@ procedure TJapaneseContextAnalysis.HandleData(const aBuf: PAnsiChar; aLen: integ
 var
   charLen: PRUint32;
   order: PRInt32;
-  i: integer;
+  i, Remaining: integer;
+  Tail: array [0..2] of AnsiChar;
 begin
-  if mDone then
+  if mDone or (aLen <= 0) then
 	  exit;
   (*The buffer we got is byte oriented, and a character may span in more than one*)
   (*buffers. In case the last one or two byte in last buffer is not complete, we *)
@@ -224,10 +225,27 @@ begin
   (*We can choose to record those bytes as well and analyse the character once it *)
   (*is complete, but since a character will not make much difference, by simply skipping*)
   (*this character will simply our logic and improve performance.*)
+  // Consume a pending tail once, even when it spans several short blocks.
+  if mNeedToSkipCharNum >= aLen then
+  begin
+    Dec(mNeedToSkipCharNum, aLen);
+    Exit;
+  end;
   i := mNeedToSkipCharNum;
+  mNeedToSkipCharNum := 0;
   while i < integer(aLen) do
     begin
-      order := GetOrder(aBuf+i, @charLen);
+      // GetOrder inspects the second byte before returning the character
+      // length. Pad a short tail locally so it cannot read past this block.
+      Remaining := aLen - i;
+      if Remaining < SizeOf(Tail) then
+      begin
+        FillChar(Tail, SizeOf(Tail), 0);
+        Move(aBuf[i], Tail[0], Remaining);
+        order := GetOrder(@Tail[0], @charLen);
+      end
+      else
+        order := GetOrder(aBuf+i, @charLen);
       i := i + integer(charLen);
       if i > integer(aLen) then
         begin

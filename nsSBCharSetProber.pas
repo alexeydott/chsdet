@@ -80,9 +80,6 @@ uses
 
 const
   SAMPLE_SIZE: byte = 64;
-  SB_ENOUGH_REL_THRESHOLD = 1024;
-  POSITIVE_SHORTCUT_THRESHOLD = SHORTCUT_THRESHOLD;
-  NEGATIVE_SHORTCUT_THRESHOLD = 1 - POSITIVE_SHORTCUT_THRESHOLD;
   SYMBOL_CAT_ORDER: byte = 250;
   POSITIVE_CAT = (NUMBER_OF_SEQ_CAT-1);
 (*#define NEGATIVE_APPROACH 1*)
@@ -136,7 +133,7 @@ begin
     begin
       r := (1.0) * mSeqCounters[POSITIVE_CAT] / mTotalSeqs / mModel.mTypicalPositiveRatio;
       r := r * mFreqChar / mTotalChar;
-      if r >= 1.0 then
+      if r > SURE_YES then
 	      r := SURE_YES;
 
       Result := r;
@@ -151,7 +148,6 @@ function TnsSingleByteCharSetProber.HandleData(aBuf: PAnsiChar; aLen: integer): 
 var
   order: byte;
   i: integer;
-  cf: float;
 begin
   Result := inherited HandleData(aBuf, aLen);
   if Result = psNotMe then
@@ -188,16 +184,9 @@ begin
         end;
       mLastOrder:= order;
     end;
-  if mState = psDetecting then
-	  if mTotalSeqs > SB_ENOUGH_REL_THRESHOLD then
-      begin
-        cf := GetConfidence;
-        if cf > POSITIVE_SHORTCUT_THRESHOLD then
-	        mState:= psFoundIt
-        else
-	        if cf < NEGATIVE_SHORTCUT_THRESHOLD then
-		        mState:= psNotMe;
-      end;
+  // Statistical confidence is evidence, not a terminal encoding signature.
+  // Keep counting all blocks so an early prefix cannot freeze the group on
+  // a different candidate merely because callers chose a smaller chunk size.
 
   Result := mState;
 end;

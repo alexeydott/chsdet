@@ -1,0 +1,11 @@
+PASS GB18030 confidence preserves charset and reset
+PASS MultiModel HandleData returns final state
+PASS Unicode prober retains every byte at every split
+PASS Single-byte filter retains byte 80 and word boundaries
+PASS UTF-16LE model has two-byte character lengths
+PASS Single-byte scores consume the complete corpus at every chunk size
+PASS Single-byte confidence saturation is monotonic
+PASS Japanese context consumes incomplete tails exactly once
+PASS Japanese context reads only the supplied bytes
+Prober cases: 9/9
+exit_code=0

@@ -1,0 +1,42 @@
+[
+  {
+    "set": "prober",
+    "version": "baseline",
+    "exit_code": 1
+  },
+  {
+    "set": "streaming",
+    "version": "baseline",
+    "exit_code": 1
+  },
+  {
+    "set": "wrapper",
+    "version": "baseline",
+    "exit_code": 1
+  },
+  {
+    "set": "corpus",
+    "version": "final",
+    "exit_code": 0
+  },
+  {
+    "set": "regressions",
+    "version": "final",
+    "exit_code": 0
+  },
+  {
+    "set": "prober",
+    "version": "final",
+    "exit_code": 0
+  },
+  {
+    "set": "wrapper",
+    "version": "final",
+    "exit_code": 0
+  },
+  {
+    "set": "streaming",
+    "version": "final",
+    "exit_code": 0
+  }
+]

@@ -12,6 +12,9 @@ uses
   ChsDet.Corpus in 'tests\ChsDet.Corpus.pas',
   ChsDet.Tests in 'tests\ChsDet.Tests.pas',
   ChsDet.TableTests in 'tests\ChsDet.TableTests.pas',
+  ChsDet.RegressionTests in 'tests\ChsDet.RegressionTests.pas',
+  ChsDet.ProberTests in 'tests\ChsDet.ProberTests.pas',
+  ChsDet.StreamingTests in 'tests\ChsDet.StreamingTests.pas',
   ChsDet.EncodingDetector in 'ChsDet.EncodingDetector.pas',
   ChsDet.Fluent in 'ChsDet.Fluent.pas',
   nsCore in 'nsCore.pas',
@@ -53,7 +56,7 @@ begin
     Runner.AddLogger(TDUnitXXMLNUnitFileLogger.Create);
 
     Results := Runner.Execute;
-    if not Results.AllPassed then
+    if (not Results.AllPassed) or (Results.PassCount = 0) then
       ExitCode := 1;
   except
     on E: Exception do

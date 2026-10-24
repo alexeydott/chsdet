@@ -2,6 +2,21 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
+The October 2026 detection review adds 27 substantive DUnitX methods in
+`tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
+`tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
+model scores, state transitions, byte filtering, reset and guard-page memory
+boundaries. They are explicitly registered and linked by the runner.
+
+Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
+checks that the new fixtures were discovered. The runner fails when no tests
+pass, and the matrix rejects missing, ignored or failed cases.
+
+Supplementary Linux/FPC execution and its limitations are documented in
+[tests/portable/README.md](tests/portable/README.md). The actual before/after
+evidence and research plan are in
+[the review report](tests/review-2026-10-24/REPORT.ru.md).
+
 The repository also includes a corpus benchmark:
 
 - `ChsDetCorpusBench.dpr`
@@ -88,3 +103,7 @@ The benchmark writes a fresh Markdown accuracy matrix to `tests/corpus/MATRIX.md
 - Greek byte streams without C1 bytes and without non-C1 discriminator bytes remain ambiguous between `windows-1253` and `ISO-8859-7`
 - Latin-1-like Western text remains collapsed into `windows-1252`, because `ISO-8859-1` is not currently exposed as a separate detector result
 - Very short or highly ambiguous UTF-8 without BOM samples can still remain `Unknown`
+- A mixed word whose ASCII prefix is delivered before its first non-ASCII byte
+  can still lose that prefix in the SBCS filter. Full chunk invariance for all
+  possible mixed-script words is not claimed by the current tests.
+- The small generated corpus measures regressions, not population-wide accuracy.

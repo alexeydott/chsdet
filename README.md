@@ -23,6 +23,7 @@ The table below is copied from the original [ReadMe.txt](ReadMe.txt) and updated
 | 858 | `IBM858` | DOS Latin-1 with euro sign. |
 | 866 | `IBM866` | DOS Cyrillic. |
 | 932 | `Shift_JIS` | Japanese. |
+| 936 | `GBK` | GB18030-compatible input without four-byte sequences. |
 | 950 | `Big5` | Traditional Chinese. |
 | 1200 | `UTF-16LE` | Unicode with BOM-aware detection. |
 | 1201 | `UTF-16BE` | Unicode with BOM-aware detection. |
@@ -45,7 +46,7 @@ The table below is copied from the original [ReadMe.txt](ReadMe.txt) and updated
 | 50225 | `ISO-2022-KR` | Escape-based Korean encoding. |
 | 50227 | `ISO-2022-CN` | Escape-based Chinese encoding. |
 | 51932 | `EUC-JP` | Japanese multibyte encoding. |
-| 51936 | `x-euc-tw` | Traditional Chinese EUC variant exposed by the detector core. |
+| 51950 | `x-euc-tw` | EUC Traditional Chinese; 51936 identifies EUC-CN, not EUC-TW. |
 | 51949 | `EUC-KR` | Korean multibyte encoding. |
 | 52936 | `HZ-GB-2312` | 7-bit Chinese encoding. |
 | 54936 | `GB18030` | Simplified Chinese multibyte encoding. |
@@ -94,7 +95,12 @@ end;
 
 - Encoding detection must run on the original byte representation of the text. Pass `TBytes`, `TStream`, or a file path. Do not convert unknown text into `string` first, because the original encoding information may already be lost at that point.
 - `UTF-8` without BOM can still be conservative for short or ambiguous samples (see [tests](testing.md))
+- Statistical decisions remain provisional until `Finish` / `DataEnd`; stream helpers therefore read to EOF unless a BOM or a recognized escape designator provides an early result. A late GB18030 character or malformed Unicode tail can change a prefix guess.
+- `Finish` closes the current detection, including an empty or unknown result. Repeated `Finish` is idempotent; call `Reset` before feeding a new input. Disabled code pages remain disabled after `Reset`.
+- `Confidence` is a heuristic score, not a calibrated probability of correct detection.
+- `GetEncoding` refuses the unusual UCS-4 byte orders 2143 and 3412: their legacy numeric aliases 12000/12001 must not select an ordinary UTF-32 decoder. `GetEncodingDef` still returns the caller's explicit fallback when resolution is unavailable.
+- See the [October 2026 detection review](tests/review-2026-10-24/REPORT.ru.md) for fixes, reproducible tests, remaining limitations and research-based development ideas. Supplementary Free Pascal results do not replace the Delphi Win32/Win64 validation matrix.
 
 ## License
 
-The repository includes the original license text in [Licence.txt](Licence.txt).
+The repository includes the original license text in [LICENSE](LICENSE).

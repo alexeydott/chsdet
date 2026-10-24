@@ -1,0 +1,5455 @@
+[
+  {
+    "tier": "strict",
+    "family": "ASCII",
+    "file_name": "ascii.txt",
+    "expected_codepage": "0",
+    "expected_name": "ASCII",
+    "notes": "Pure ASCII baseline",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "ASCII",
+    "file_name": "ascii.txt",
+    "expected_codepage": "0",
+    "expected_name": "ASCII",
+    "notes": "Pure ASCII baseline",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "ASCII",
+    "file_name": "ascii.txt",
+    "expected_codepage": "0",
+    "expected_name": "ASCII",
+    "notes": "Pure ASCII baseline",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "ASCII",
+    "file_name": "ascii.txt",
+    "expected_codepage": "0",
+    "expected_name": "ASCII",
+    "notes": "Pure ASCII baseline",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "ASCII",
+    "file_name": "ascii.txt",
+    "expected_codepage": "0",
+    "expected_name": "ASCII",
+    "notes": "Pure ASCII baseline",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "ASCII",
+    "file_name": "ascii.txt",
+    "expected_codepage": "0",
+    "expected_name": "ASCII",
+    "notes": "Pure ASCII baseline",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "ASCII",
+    "file_name": "ascii.txt",
+    "expected_codepage": "0",
+    "expected_name": "ASCII",
+    "notes": "Pure ASCII baseline",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-bom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 with BOM",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "7"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-bom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 with BOM",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "7"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-bom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 with BOM",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "7"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-bom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 with BOM",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "7"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-bom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 with BOM",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "7"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-bom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 with BOM",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "7"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-bom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 with BOM",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "7"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-nobom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 without BOM using a clear multibyte sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-nobom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 without BOM using a clear multibyte sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-nobom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 without BOM using a clear multibyte sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-nobom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 without BOM using a clear multibyte sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-nobom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 without BOM using a clear multibyte sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-nobom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 without BOM using a clear multibyte sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf8-nobom.txt",
+    "expected_codepage": "65001",
+    "expected_name": "UTF-8",
+    "notes": "UTF-8 without BOM using a clear multibyte sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16le-bom.bin",
+    "expected_codepage": "1200",
+    "expected_name": "UTF-16LE",
+    "notes": "UTF-16 LE BOM path",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.990000000000",
+      "6"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16le-bom.bin",
+    "expected_codepage": "1200",
+    "expected_name": "UTF-16LE",
+    "notes": "UTF-16 LE BOM path",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.990000000000",
+      "6"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16le-bom.bin",
+    "expected_codepage": "1200",
+    "expected_name": "UTF-16LE",
+    "notes": "UTF-16 LE BOM path",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.990000000000",
+      "6"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16le-bom.bin",
+    "expected_codepage": "1200",
+    "expected_name": "UTF-16LE",
+    "notes": "UTF-16 LE BOM path",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.990000000000",
+      "6"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16le-bom.bin",
+    "expected_codepage": "1200",
+    "expected_name": "UTF-16LE",
+    "notes": "UTF-16 LE BOM path",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.990000000000",
+      "6"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16le-bom.bin",
+    "expected_codepage": "1200",
+    "expected_name": "UTF-16LE",
+    "notes": "UTF-16 LE BOM path",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.990000000000",
+      "6"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16le-bom.bin",
+    "expected_codepage": "1200",
+    "expected_name": "UTF-16LE",
+    "notes": "UTF-16 LE BOM path",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.990000000000",
+      "6"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16be-bom.bin",
+    "expected_codepage": "1201",
+    "expected_name": "UTF-16BE",
+    "notes": "UTF-16 BE BOM path",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.990000000000",
+      "5"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16be-bom.bin",
+    "expected_codepage": "1201",
+    "expected_name": "UTF-16BE",
+    "notes": "UTF-16 BE BOM path",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.990000000000",
+      "5"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16be-bom.bin",
+    "expected_codepage": "1201",
+    "expected_name": "UTF-16BE",
+    "notes": "UTF-16 BE BOM path",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.990000000000",
+      "5"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16be-bom.bin",
+    "expected_codepage": "1201",
+    "expected_name": "UTF-16BE",
+    "notes": "UTF-16 BE BOM path",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.990000000000",
+      "5"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16be-bom.bin",
+    "expected_codepage": "1201",
+    "expected_name": "UTF-16BE",
+    "notes": "UTF-16 BE BOM path",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.990000000000",
+      "5"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16be-bom.bin",
+    "expected_codepage": "1201",
+    "expected_name": "UTF-16BE",
+    "notes": "UTF-16 BE BOM path",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.990000000000",
+      "5"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf16be-bom.bin",
+    "expected_codepage": "1201",
+    "expected_name": "UTF-16BE",
+    "notes": "UTF-16 BE BOM path",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.990000000000",
+      "5"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32le-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "UTF-32LE",
+    "notes": "UTF-32 LE BOM path",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "UTF-32LE",
+      "Unicode",
+      "0.990000000000",
+      "2"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32le-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "UTF-32LE",
+    "notes": "UTF-32 LE BOM path",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "UTF-32LE",
+      "Unicode",
+      "0.990000000000",
+      "2"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32le-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "UTF-32LE",
+    "notes": "UTF-32 LE BOM path",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "UTF-32LE",
+      "Unicode",
+      "0.990000000000",
+      "2"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32le-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "UTF-32LE",
+    "notes": "UTF-32 LE BOM path",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "UTF-32LE",
+      "Unicode",
+      "0.990000000000",
+      "2"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32le-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "UTF-32LE",
+    "notes": "UTF-32 LE BOM path",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "UTF-32LE",
+      "Unicode",
+      "0.990000000000",
+      "2"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32le-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "UTF-32LE",
+    "notes": "UTF-32 LE BOM path",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "UTF-32LE",
+      "Unicode",
+      "0.990000000000",
+      "2"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32le-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "UTF-32LE",
+    "notes": "UTF-32 LE BOM path",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "UTF-32LE",
+      "Unicode",
+      "0.990000000000",
+      "2"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32be-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "UTF-32BE",
+    "notes": "UTF-32 BE BOM path",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "UTF-32BE",
+      "Unicode",
+      "0.990000000000",
+      "1"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32be-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "UTF-32BE",
+    "notes": "UTF-32 BE BOM path",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "UTF-32BE",
+      "Unicode",
+      "0.990000000000",
+      "1"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32be-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "UTF-32BE",
+    "notes": "UTF-32 BE BOM path",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "UTF-32BE",
+      "Unicode",
+      "0.990000000000",
+      "1"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32be-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "UTF-32BE",
+    "notes": "UTF-32 BE BOM path",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "UTF-32BE",
+      "Unicode",
+      "0.990000000000",
+      "1"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32be-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "UTF-32BE",
+    "notes": "UTF-32 BE BOM path",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "UTF-32BE",
+      "Unicode",
+      "0.990000000000",
+      "1"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32be-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "UTF-32BE",
+    "notes": "UTF-32 BE BOM path",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "UTF-32BE",
+      "Unicode",
+      "0.990000000000",
+      "1"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "utf32be-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "UTF-32BE",
+    "notes": "UTF-32 BE BOM path",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "UTF-32BE",
+      "Unicode",
+      "0.990000000000",
+      "1"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-2143-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "X-ISO-10646-UCS-4-2143",
+    "notes": "UCS-4 unusual byte order 2143",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "X-ISO-10646-UCS-4-2143",
+      "Unicode",
+      "0.990000000000",
+      "3"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-2143-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "X-ISO-10646-UCS-4-2143",
+    "notes": "UCS-4 unusual byte order 2143",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "X-ISO-10646-UCS-4-2143",
+      "Unicode",
+      "0.990000000000",
+      "3"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-2143-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "X-ISO-10646-UCS-4-2143",
+    "notes": "UCS-4 unusual byte order 2143",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "X-ISO-10646-UCS-4-2143",
+      "Unicode",
+      "0.990000000000",
+      "3"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-2143-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "X-ISO-10646-UCS-4-2143",
+    "notes": "UCS-4 unusual byte order 2143",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "X-ISO-10646-UCS-4-2143",
+      "Unicode",
+      "0.990000000000",
+      "3"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-2143-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "X-ISO-10646-UCS-4-2143",
+    "notes": "UCS-4 unusual byte order 2143",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "X-ISO-10646-UCS-4-2143",
+      "Unicode",
+      "0.990000000000",
+      "3"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-2143-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "X-ISO-10646-UCS-4-2143",
+    "notes": "UCS-4 unusual byte order 2143",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "X-ISO-10646-UCS-4-2143",
+      "Unicode",
+      "0.990000000000",
+      "3"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-2143-bom.bin",
+    "expected_codepage": "12000",
+    "expected_name": "X-ISO-10646-UCS-4-2143",
+    "notes": "UCS-4 unusual byte order 2143",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12000",
+      "X-ISO-10646-UCS-4-2143",
+      "Unicode",
+      "0.990000000000",
+      "3"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-3412-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "X-ISO-10646-UCS-4-3412",
+    "notes": "UCS-4 unusual byte order 3412",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "X-ISO-10646-UCS-4-3412",
+      "Unicode",
+      "0.990000000000",
+      "4"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-3412-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "X-ISO-10646-UCS-4-3412",
+    "notes": "UCS-4 unusual byte order 3412",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "X-ISO-10646-UCS-4-3412",
+      "Unicode",
+      "0.990000000000",
+      "4"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-3412-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "X-ISO-10646-UCS-4-3412",
+    "notes": "UCS-4 unusual byte order 3412",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "X-ISO-10646-UCS-4-3412",
+      "Unicode",
+      "0.990000000000",
+      "4"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-3412-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "X-ISO-10646-UCS-4-3412",
+    "notes": "UCS-4 unusual byte order 3412",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "X-ISO-10646-UCS-4-3412",
+      "Unicode",
+      "0.990000000000",
+      "4"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-3412-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "X-ISO-10646-UCS-4-3412",
+    "notes": "UCS-4 unusual byte order 3412",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "X-ISO-10646-UCS-4-3412",
+      "Unicode",
+      "0.990000000000",
+      "4"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-3412-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "X-ISO-10646-UCS-4-3412",
+    "notes": "UCS-4 unusual byte order 3412",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "X-ISO-10646-UCS-4-3412",
+      "Unicode",
+      "0.990000000000",
+      "4"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Unicode",
+    "file_name": "ucs4-3412-bom.bin",
+    "expected_codepage": "12001",
+    "expected_name": "X-ISO-10646-UCS-4-3412",
+    "notes": "UCS-4 unusual byte order 3412",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "12001",
+      "X-ISO-10646-UCS-4-3412",
+      "Unicode",
+      "0.990000000000",
+      "4"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "windows-1251.txt",
+    "expected_codepage": "1251",
+    "expected_name": "windows-1251",
+    "notes": "Windows Cyrillic baseline",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1251",
+      "windows-1251",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "windows-1251.txt",
+    "expected_codepage": "1251",
+    "expected_name": "windows-1251",
+    "notes": "Windows Cyrillic baseline",
+    "chunk": 1,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "windows-1251.txt",
+    "expected_codepage": "1251",
+    "expected_name": "windows-1251",
+    "notes": "Windows Cyrillic baseline",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1251",
+      "windows-1251",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "windows-1251.txt",
+    "expected_codepage": "1251",
+    "expected_name": "windows-1251",
+    "notes": "Windows Cyrillic baseline",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1251",
+      "windows-1251",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "windows-1251.txt",
+    "expected_codepage": "1251",
+    "expected_name": "windows-1251",
+    "notes": "Windows Cyrillic baseline",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1251",
+      "windows-1251",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "windows-1251.txt",
+    "expected_codepage": "1251",
+    "expected_name": "windows-1251",
+    "notes": "Windows Cyrillic baseline",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1251",
+      "windows-1251",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "windows-1251.txt",
+    "expected_codepage": "1251",
+    "expected_name": "windows-1251",
+    "notes": "Windows Cyrillic baseline",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1251",
+      "windows-1251",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "iso-8859-5.txt",
+    "expected_codepage": "28595",
+    "expected_name": "ISO-8859-5",
+    "notes": "ISO Cyrillic sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28595",
+      "ISO-8859-5",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "iso-8859-5.txt",
+    "expected_codepage": "28595",
+    "expected_name": "ISO-8859-5",
+    "notes": "ISO Cyrillic sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28595",
+      "ISO-8859-5",
+      "russian",
+      "0.919068625037",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "iso-8859-5.txt",
+    "expected_codepage": "28595",
+    "expected_name": "ISO-8859-5",
+    "notes": "ISO Cyrillic sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28595",
+      "ISO-8859-5",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "iso-8859-5.txt",
+    "expected_codepage": "28595",
+    "expected_name": "ISO-8859-5",
+    "notes": "ISO Cyrillic sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28595",
+      "ISO-8859-5",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "iso-8859-5.txt",
+    "expected_codepage": "28595",
+    "expected_name": "ISO-8859-5",
+    "notes": "ISO Cyrillic sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28595",
+      "ISO-8859-5",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "iso-8859-5.txt",
+    "expected_codepage": "28595",
+    "expected_name": "ISO-8859-5",
+    "notes": "ISO Cyrillic sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28595",
+      "ISO-8859-5",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "iso-8859-5.txt",
+    "expected_codepage": "28595",
+    "expected_name": "ISO-8859-5",
+    "notes": "ISO Cyrillic sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28595",
+      "ISO-8859-5",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-r.txt",
+    "expected_codepage": "20866",
+    "expected_name": "KOI8-R",
+    "notes": "KOI8-R sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "20866",
+      "KOI8-R",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-r.txt",
+    "expected_codepage": "20866",
+    "expected_name": "KOI8-R",
+    "notes": "KOI8-R sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "20866",
+      "KOI8-R",
+      "russian",
+      "0.919068625037",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-r.txt",
+    "expected_codepage": "20866",
+    "expected_name": "KOI8-R",
+    "notes": "KOI8-R sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "20866",
+      "KOI8-R",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-r.txt",
+    "expected_codepage": "20866",
+    "expected_name": "KOI8-R",
+    "notes": "KOI8-R sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "20866",
+      "KOI8-R",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-r.txt",
+    "expected_codepage": "20866",
+    "expected_name": "KOI8-R",
+    "notes": "KOI8-R sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "20866",
+      "KOI8-R",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-r.txt",
+    "expected_codepage": "20866",
+    "expected_name": "KOI8-R",
+    "notes": "KOI8-R sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "20866",
+      "KOI8-R",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-r.txt",
+    "expected_codepage": "20866",
+    "expected_name": "KOI8-R",
+    "notes": "KOI8-R sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "20866",
+      "KOI8-R",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm866.txt",
+    "expected_codepage": "866",
+    "expected_name": "IBM866",
+    "notes": "DOS Cyrillic sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "866",
+      "IBM866",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm866.txt",
+    "expected_codepage": "866",
+    "expected_name": "IBM866",
+    "notes": "DOS Cyrillic sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "866",
+      "IBM866",
+      "russian",
+      "0.919068625037",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm866.txt",
+    "expected_codepage": "866",
+    "expected_name": "IBM866",
+    "notes": "DOS Cyrillic sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "866",
+      "IBM866",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm866.txt",
+    "expected_codepage": "866",
+    "expected_name": "IBM866",
+    "notes": "DOS Cyrillic sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "866",
+      "IBM866",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm866.txt",
+    "expected_codepage": "866",
+    "expected_name": "IBM866",
+    "notes": "DOS Cyrillic sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "866",
+      "IBM866",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm866.txt",
+    "expected_codepage": "866",
+    "expected_name": "IBM866",
+    "notes": "DOS Cyrillic sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "866",
+      "IBM866",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm866.txt",
+    "expected_codepage": "866",
+    "expected_name": "IBM866",
+    "notes": "DOS Cyrillic sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "866",
+      "IBM866",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm855.txt",
+    "expected_codepage": "855",
+    "expected_name": "IBM855",
+    "notes": "Alternate DOS Cyrillic sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "855",
+      "IBM855",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm855.txt",
+    "expected_codepage": "855",
+    "expected_name": "IBM855",
+    "notes": "Alternate DOS Cyrillic sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "855",
+      "IBM855",
+      "russian",
+      "0.919068625037",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm855.txt",
+    "expected_codepage": "855",
+    "expected_name": "IBM855",
+    "notes": "Alternate DOS Cyrillic sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "855",
+      "IBM855",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm855.txt",
+    "expected_codepage": "855",
+    "expected_name": "IBM855",
+    "notes": "Alternate DOS Cyrillic sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "855",
+      "IBM855",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm855.txt",
+    "expected_codepage": "855",
+    "expected_name": "IBM855",
+    "notes": "Alternate DOS Cyrillic sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "855",
+      "IBM855",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm855.txt",
+    "expected_codepage": "855",
+    "expected_name": "IBM855",
+    "notes": "Alternate DOS Cyrillic sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "855",
+      "IBM855",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "ibm855.txt",
+    "expected_codepage": "855",
+    "expected_name": "IBM855",
+    "notes": "Alternate DOS Cyrillic sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "855",
+      "IBM855",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "x-mac-cyrillic.txt",
+    "expected_codepage": "10007",
+    "expected_name": "x-mac-cyrillic",
+    "notes": "Mac Cyrillic sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "x-mac-cyrillic.txt",
+    "expected_codepage": "10007",
+    "expected_name": "x-mac-cyrillic",
+    "notes": "Mac Cyrillic sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.919068625037",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "x-mac-cyrillic.txt",
+    "expected_codepage": "10007",
+    "expected_name": "x-mac-cyrillic",
+    "notes": "Mac Cyrillic sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "x-mac-cyrillic.txt",
+    "expected_codepage": "10007",
+    "expected_name": "x-mac-cyrillic",
+    "notes": "Mac Cyrillic sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "x-mac-cyrillic.txt",
+    "expected_codepage": "10007",
+    "expected_name": "x-mac-cyrillic",
+    "notes": "Mac Cyrillic sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "x-mac-cyrillic.txt",
+    "expected_codepage": "10007",
+    "expected_name": "x-mac-cyrillic",
+    "notes": "Mac Cyrillic sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "x-mac-cyrillic.txt",
+    "expected_codepage": "10007",
+    "expected_name": "x-mac-cyrillic",
+    "notes": "Mac Cyrillic sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-u.txt",
+    "expected_codepage": "21866",
+    "expected_name": "KOI8-U",
+    "notes": "Ukrainian KOI8 sample with distinctive Ukrainian letters",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "21866",
+      "KOI8-U",
+      "ukrainian",
+      "0.849926952313",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-u.txt",
+    "expected_codepage": "21866",
+    "expected_name": "KOI8-U",
+    "notes": "Ukrainian KOI8 sample with distinctive Ukrainian letters",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "21866",
+      "KOI8-U",
+      "ukrainian",
+      "0.750834285403",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-u.txt",
+    "expected_codepage": "21866",
+    "expected_name": "KOI8-U",
+    "notes": "Ukrainian KOI8 sample with distinctive Ukrainian letters",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "21866",
+      "KOI8-U",
+      "ukrainian",
+      "0.779215681780",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-u.txt",
+    "expected_codepage": "21866",
+    "expected_name": "KOI8-U",
+    "notes": "Ukrainian KOI8 sample with distinctive Ukrainian letters",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "21866",
+      "KOI8-U",
+      "ukrainian",
+      "0.813271956333",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-u.txt",
+    "expected_codepage": "21866",
+    "expected_name": "KOI8-U",
+    "notes": "Ukrainian KOI8 sample with distinctive Ukrainian letters",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "21866",
+      "KOI8-U",
+      "ukrainian",
+      "0.833866369878",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-u.txt",
+    "expected_codepage": "21866",
+    "expected_name": "KOI8-U",
+    "notes": "Ukrainian KOI8 sample with distinctive Ukrainian letters",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "21866",
+      "KOI8-U",
+      "ukrainian",
+      "0.847450667890",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Cyrillic",
+    "file_name": "koi8-u.txt",
+    "expected_codepage": "21866",
+    "expected_name": "KOI8-U",
+    "notes": "Ukrainian KOI8 sample with distinctive Ukrainian letters",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "21866",
+      "KOI8-U",
+      "ukrainian",
+      "0.849926952313",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "cp437-nfo-art.txt",
+    "expected_codepage": "437",
+    "expected_name": "IBM437",
+    "notes": "NFO-style pseudo-graphics with CP437 box and block drawing bytes",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "437",
+      "IBM437",
+      "DOS",
+      "0.950000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "cp437-nfo-art.txt",
+    "expected_codepage": "437",
+    "expected_name": "IBM437",
+    "notes": "NFO-style pseudo-graphics with CP437 box and block drawing bytes",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "437",
+      "IBM437",
+      "DOS",
+      "0.950000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "cp437-nfo-art.txt",
+    "expected_codepage": "437",
+    "expected_name": "IBM437",
+    "notes": "NFO-style pseudo-graphics with CP437 box and block drawing bytes",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "437",
+      "IBM437",
+      "DOS",
+      "0.950000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "cp437-nfo-art.txt",
+    "expected_codepage": "437",
+    "expected_name": "IBM437",
+    "notes": "NFO-style pseudo-graphics with CP437 box and block drawing bytes",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "437",
+      "IBM437",
+      "DOS",
+      "0.950000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "cp437-nfo-art.txt",
+    "expected_codepage": "437",
+    "expected_name": "IBM437",
+    "notes": "NFO-style pseudo-graphics with CP437 box and block drawing bytes",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "437",
+      "IBM437",
+      "DOS",
+      "0.950000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "cp437-nfo-art.txt",
+    "expected_codepage": "437",
+    "expected_name": "IBM437",
+    "notes": "NFO-style pseudo-graphics with CP437 box and block drawing bytes",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "437",
+      "IBM437",
+      "DOS",
+      "0.950000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "cp437-nfo-art.txt",
+    "expected_codepage": "437",
+    "expected_name": "IBM437",
+    "notes": "NFO-style pseudo-graphics with CP437 box and block drawing bytes",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "437",
+      "IBM437",
+      "DOS",
+      "0.950000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm850.txt",
+    "expected_codepage": "850",
+    "expected_name": "IBM850",
+    "notes": "DOS Latin-1 sample with OEM-specific accented bytes",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "850",
+      "IBM850",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm850.txt",
+    "expected_codepage": "850",
+    "expected_name": "IBM850",
+    "notes": "DOS Latin-1 sample with OEM-specific accented bytes",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "850",
+      "IBM850",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm850.txt",
+    "expected_codepage": "850",
+    "expected_name": "IBM850",
+    "notes": "DOS Latin-1 sample with OEM-specific accented bytes",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "850",
+      "IBM850",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm850.txt",
+    "expected_codepage": "850",
+    "expected_name": "IBM850",
+    "notes": "DOS Latin-1 sample with OEM-specific accented bytes",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "850",
+      "IBM850",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm850.txt",
+    "expected_codepage": "850",
+    "expected_name": "IBM850",
+    "notes": "DOS Latin-1 sample with OEM-specific accented bytes",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "850",
+      "IBM850",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm850.txt",
+    "expected_codepage": "850",
+    "expected_name": "IBM850",
+    "notes": "DOS Latin-1 sample with OEM-specific accented bytes",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "850",
+      "IBM850",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm850.txt",
+    "expected_codepage": "850",
+    "expected_name": "IBM850",
+    "notes": "DOS Latin-1 sample with OEM-specific accented bytes",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "850",
+      "IBM850",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm852.txt",
+    "expected_codepage": "852",
+    "expected_name": "IBM852",
+    "notes": "DOS Central European sample with Polish, Czech, and Hungarian letters",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "852",
+      "IBM852",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm852.txt",
+    "expected_codepage": "852",
+    "expected_name": "IBM852",
+    "notes": "DOS Central European sample with Polish, Czech, and Hungarian letters",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "852",
+      "IBM852",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm852.txt",
+    "expected_codepage": "852",
+    "expected_name": "IBM852",
+    "notes": "DOS Central European sample with Polish, Czech, and Hungarian letters",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "852",
+      "IBM852",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm852.txt",
+    "expected_codepage": "852",
+    "expected_name": "IBM852",
+    "notes": "DOS Central European sample with Polish, Czech, and Hungarian letters",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "852",
+      "IBM852",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm852.txt",
+    "expected_codepage": "852",
+    "expected_name": "IBM852",
+    "notes": "DOS Central European sample with Polish, Czech, and Hungarian letters",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "852",
+      "IBM852",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm852.txt",
+    "expected_codepage": "852",
+    "expected_name": "IBM852",
+    "notes": "DOS Central European sample with Polish, Czech, and Hungarian letters",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "852",
+      "IBM852",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm852.txt",
+    "expected_codepage": "852",
+    "expected_name": "IBM852",
+    "notes": "DOS Central European sample with Polish, Czech, and Hungarian letters",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "852",
+      "IBM852",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm858.txt",
+    "expected_codepage": "858",
+    "expected_name": "IBM858",
+    "notes": "DOS Latin-1 sample with euro sign discriminator",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "858",
+      "IBM858",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm858.txt",
+    "expected_codepage": "858",
+    "expected_name": "IBM858",
+    "notes": "DOS Latin-1 sample with euro sign discriminator",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "858",
+      "IBM858",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm858.txt",
+    "expected_codepage": "858",
+    "expected_name": "IBM858",
+    "notes": "DOS Latin-1 sample with euro sign discriminator",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "858",
+      "IBM858",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm858.txt",
+    "expected_codepage": "858",
+    "expected_name": "IBM858",
+    "notes": "DOS Latin-1 sample with euro sign discriminator",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "858",
+      "IBM858",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm858.txt",
+    "expected_codepage": "858",
+    "expected_name": "IBM858",
+    "notes": "DOS Latin-1 sample with euro sign discriminator",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "858",
+      "IBM858",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm858.txt",
+    "expected_codepage": "858",
+    "expected_name": "IBM858",
+    "notes": "DOS Latin-1 sample with euro sign discriminator",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "858",
+      "IBM858",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "DOS",
+    "file_name": "ibm858.txt",
+    "expected_codepage": "858",
+    "expected_name": "IBM858",
+    "notes": "DOS Latin-1 sample with euro sign discriminator",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "858",
+      "IBM858",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Central European",
+    "file_name": "windows-1250.txt",
+    "expected_codepage": "1250",
+    "expected_name": "windows-1250",
+    "notes": "Windows Central European sample with C1 discriminator bytes",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1250",
+      "windows-1250",
+      "central european",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Central European",
+    "file_name": "windows-1250.txt",
+    "expected_codepage": "1250",
+    "expected_name": "windows-1250",
+    "notes": "Windows Central European sample with C1 discriminator bytes",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1250",
+      "windows-1250",
+      "central european",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Central European",
+    "file_name": "windows-1250.txt",
+    "expected_codepage": "1250",
+    "expected_name": "windows-1250",
+    "notes": "Windows Central European sample with C1 discriminator bytes",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1250",
+      "windows-1250",
+      "central european",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Central European",
+    "file_name": "windows-1250.txt",
+    "expected_codepage": "1250",
+    "expected_name": "windows-1250",
+    "notes": "Windows Central European sample with C1 discriminator bytes",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1250",
+      "windows-1250",
+      "central european",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Central European",
+    "file_name": "windows-1250.txt",
+    "expected_codepage": "1250",
+    "expected_name": "windows-1250",
+    "notes": "Windows Central European sample with C1 discriminator bytes",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1250",
+      "windows-1250",
+      "central european",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Central European",
+    "file_name": "windows-1250.txt",
+    "expected_codepage": "1250",
+    "expected_name": "windows-1250",
+    "notes": "Windows Central European sample with C1 discriminator bytes",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1250",
+      "windows-1250",
+      "central european",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Central European",
+    "file_name": "windows-1250.txt",
+    "expected_codepage": "1250",
+    "expected_name": "windows-1250",
+    "notes": "Windows Central European sample with C1 discriminator bytes",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1250",
+      "windows-1250",
+      "central european",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Western",
+    "file_name": "windows-1252.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Western European sample with C1 bytes",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Western",
+    "file_name": "windows-1252.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Western European sample with C1 bytes",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Western",
+    "file_name": "windows-1252.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Western European sample with C1 bytes",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Western",
+    "file_name": "windows-1252.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Western European sample with C1 bytes",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Western",
+    "file_name": "windows-1252.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Western European sample with C1 bytes",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Western",
+    "file_name": "windows-1252.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Western European sample with C1 bytes",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Western",
+    "file_name": "windows-1252.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Western European sample with C1 bytes",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "iso-8859-7.txt",
+    "expected_codepage": "28597",
+    "expected_name": "ISO-8859-7",
+    "notes": "Greek ISO sample without C1 bytes",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "iso-8859-7.txt",
+    "expected_codepage": "28597",
+    "expected_name": "ISO-8859-7",
+    "notes": "Greek ISO sample without C1 bytes",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.942734872429",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "iso-8859-7.txt",
+    "expected_codepage": "28597",
+    "expected_name": "ISO-8859-7",
+    "notes": "Greek ISO sample without C1 bytes",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "iso-8859-7.txt",
+    "expected_codepage": "28597",
+    "expected_name": "ISO-8859-7",
+    "notes": "Greek ISO sample without C1 bytes",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "iso-8859-7.txt",
+    "expected_codepage": "28597",
+    "expected_name": "ISO-8859-7",
+    "notes": "Greek ISO sample without C1 bytes",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "iso-8859-7.txt",
+    "expected_codepage": "28597",
+    "expected_name": "ISO-8859-7",
+    "notes": "Greek ISO sample without C1 bytes",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "iso-8859-7.txt",
+    "expected_codepage": "28597",
+    "expected_name": "ISO-8859-7",
+    "notes": "Greek ISO sample without C1 bytes",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample with C1 bytes",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample with C1 bytes",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.946166934524",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample with C1 bytes",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample with C1 bytes",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample with C1 bytes",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample with C1 bytes",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample with C1 bytes",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253-no-c1.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample without C1 bytes, using non-C1 discriminator bytes",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253-no-c1.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample without C1 bytes, using non-C1 discriminator bytes",
+    "chunk": 1,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "852",
+      "IBM852",
+      "DOS",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253-no-c1.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample without C1 bytes, using non-C1 discriminator bytes",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253-no-c1.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample without C1 bytes, using non-C1 discriminator bytes",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253-no-c1.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample without C1 bytes, using non-C1 discriminator bytes",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253-no-c1.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample without C1 bytes, using non-C1 discriminator bytes",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Greek",
+    "file_name": "windows-1253-no-c1.txt",
+    "expected_codepage": "1253",
+    "expected_name": "windows-1253",
+    "notes": "Greek Windows sample without C1 bytes, using non-C1 discriminator bytes",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1253",
+      "windows-1253",
+      "greek",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "windows-1255.txt",
+    "expected_codepage": "1255",
+    "expected_name": "windows-1255",
+    "notes": "Hebrew Windows sample with shekel sign",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1255",
+      "windows-1255",
+      "hebrew",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "windows-1255.txt",
+    "expected_codepage": "1255",
+    "expected_name": "windows-1255",
+    "notes": "Hebrew Windows sample with shekel sign",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1255",
+      "windows-1255",
+      "hebrew",
+      "0.826896236918",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "windows-1255.txt",
+    "expected_codepage": "1255",
+    "expected_name": "windows-1255",
+    "notes": "Hebrew Windows sample with shekel sign",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1255",
+      "windows-1255",
+      "hebrew",
+      "0.849744091929",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "windows-1255.txt",
+    "expected_codepage": "1255",
+    "expected_name": "windows-1255",
+    "notes": "Hebrew Windows sample with shekel sign",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1255",
+      "windows-1255",
+      "hebrew",
+      "0.947558044200",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "windows-1255.txt",
+    "expected_codepage": "1255",
+    "expected_name": "windows-1255",
+    "notes": "Hebrew Windows sample with shekel sign",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1255",
+      "windows-1255",
+      "hebrew",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "windows-1255.txt",
+    "expected_codepage": "1255",
+    "expected_name": "windows-1255",
+    "notes": "Hebrew Windows sample with shekel sign",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1255",
+      "windows-1255",
+      "hebrew",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "windows-1255.txt",
+    "expected_codepage": "1255",
+    "expected_name": "windows-1255",
+    "notes": "Hebrew Windows sample with shekel sign",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1255",
+      "windows-1255",
+      "hebrew",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "iso-8859-8.txt",
+    "expected_codepage": "28598",
+    "expected_name": "ISO-8859-8",
+    "notes": "Visual Hebrew sample to distinguish ISO-8859-8 from logical Windows-1255",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28598",
+      "ISO-8859-8",
+      "hebrew",
+      "0.946169431595",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "iso-8859-8.txt",
+    "expected_codepage": "28598",
+    "expected_name": "ISO-8859-8",
+    "notes": "Visual Hebrew sample to distinguish ISO-8859-8 from logical Windows-1255",
+    "chunk": 1,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1255",
+      "windows-1255",
+      "hebrew",
+      "0.909261586008",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "iso-8859-8.txt",
+    "expected_codepage": "28598",
+    "expected_name": "ISO-8859-8",
+    "notes": "Visual Hebrew sample to distinguish ISO-8859-8 from logical Windows-1255",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28598",
+      "ISO-8859-8",
+      "hebrew",
+      "0.925228599911",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "iso-8859-8.txt",
+    "expected_codepage": "28598",
+    "expected_name": "ISO-8859-8",
+    "notes": "Visual Hebrew sample to distinguish ISO-8859-8 from logical Windows-1255",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28598",
+      "ISO-8859-8",
+      "hebrew",
+      "0.931662543832",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "iso-8859-8.txt",
+    "expected_codepage": "28598",
+    "expected_name": "ISO-8859-8",
+    "notes": "Visual Hebrew sample to distinguish ISO-8859-8 from logical Windows-1255",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28598",
+      "ISO-8859-8",
+      "hebrew",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "iso-8859-8.txt",
+    "expected_codepage": "28598",
+    "expected_name": "ISO-8859-8",
+    "notes": "Visual Hebrew sample to distinguish ISO-8859-8 from logical Windows-1255",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28598",
+      "ISO-8859-8",
+      "hebrew",
+      "0.945267551566",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Hebrew",
+    "file_name": "iso-8859-8.txt",
+    "expected_codepage": "28598",
+    "expected_name": "ISO-8859-8",
+    "notes": "Visual Hebrew sample to distinguish ISO-8859-8 from logical Windows-1255",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "28598",
+      "ISO-8859-8",
+      "hebrew",
+      "0.946169431595",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "windows-1252-no-c1.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "No C1 bytes; sample is byte-compatible with ISO-8859-1-like content",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "windows-1252-no-c1.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "No C1 bytes; sample is byte-compatible with ISO-8859-1-like content",
+    "chunk": 1,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.712147821124",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "windows-1252-no-c1.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "No C1 bytes; sample is byte-compatible with ISO-8859-1-like content",
+    "chunk": 2,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1251",
+      "windows-1251",
+      "Bulgarian",
+      "0.566960964470",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "windows-1252-no-c1.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "No C1 bytes; sample is byte-compatible with ISO-8859-1-like content",
+    "chunk": 3,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.400306899033",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "windows-1252-no-c1.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "No C1 bytes; sample is byte-compatible with ISO-8859-1-like content",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.448529418558",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "windows-1252-no-c1.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "No C1 bytes; sample is byte-compatible with ISO-8859-1-like content",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.488696159795",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "windows-1252-no-c1.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "No C1 bytes; sample is byte-compatible with ISO-8859-1-like content",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "iso-8859-1-like.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Source bytes are ISO-8859-1-compatible; detector contract collapses this family into windows-1252",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "iso-8859-1-like.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Source bytes are ISO-8859-1-compatible; detector contract collapses this family into windows-1252",
+    "chunk": 1,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "28597",
+      "ISO-8859-7",
+      "greek",
+      "0.712147821124",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "iso-8859-1-like.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Source bytes are ISO-8859-1-compatible; detector contract collapses this family into windows-1252",
+    "chunk": 2,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1251",
+      "windows-1251",
+      "Bulgarian",
+      "0.566960964470",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "iso-8859-1-like.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Source bytes are ISO-8859-1-compatible; detector contract collapses this family into windows-1252",
+    "chunk": 3,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "10007",
+      "x-mac-cyrillic",
+      "russian",
+      "0.400306899033",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "iso-8859-1-like.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Source bytes are ISO-8859-1-compatible; detector contract collapses this family into windows-1252",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.448529418558",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "iso-8859-1-like.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Source bytes are ISO-8859-1-compatible; detector contract collapses this family into windows-1252",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.488696159795",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "informational",
+    "family": "Western",
+    "file_name": "iso-8859-1-like.txt",
+    "expected_codepage": "1252",
+    "expected_name": "windows-1252",
+    "notes": "Source bytes are ISO-8859-1-compatible; detector contract collapses this family into windows-1252",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "1252",
+      "windows-1252",
+      "eu",
+      "0.500000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "shift-jis.txt",
+    "expected_codepage": "932",
+    "expected_name": "Shift_JIS",
+    "notes": "Shift_JIS sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "932",
+      "Shift_JIS",
+      "japanese",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "shift-jis.txt",
+    "expected_codepage": "932",
+    "expected_name": "Shift_JIS",
+    "notes": "Shift_JIS sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "932",
+      "Shift_JIS",
+      "japanese",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "shift-jis.txt",
+    "expected_codepage": "932",
+    "expected_name": "Shift_JIS",
+    "notes": "Shift_JIS sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "932",
+      "Shift_JIS",
+      "japanese",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "shift-jis.txt",
+    "expected_codepage": "932",
+    "expected_name": "Shift_JIS",
+    "notes": "Shift_JIS sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "932",
+      "Shift_JIS",
+      "japanese",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "shift-jis.txt",
+    "expected_codepage": "932",
+    "expected_name": "Shift_JIS",
+    "notes": "Shift_JIS sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "932",
+      "Shift_JIS",
+      "japanese",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "shift-jis.txt",
+    "expected_codepage": "932",
+    "expected_name": "Shift_JIS",
+    "notes": "Shift_JIS sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "932",
+      "Shift_JIS",
+      "japanese",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "shift-jis.txt",
+    "expected_codepage": "932",
+    "expected_name": "Shift_JIS",
+    "notes": "Shift_JIS sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "932",
+      "Shift_JIS",
+      "japanese",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "euc-jp.txt",
+    "expected_codepage": "51932",
+    "expected_name": "EUC-JP",
+    "notes": "EUC-JP sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51932",
+      "EUC-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "euc-jp.txt",
+    "expected_codepage": "51932",
+    "expected_name": "EUC-JP",
+    "notes": "EUC-JP sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51932",
+      "EUC-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "euc-jp.txt",
+    "expected_codepage": "51932",
+    "expected_name": "EUC-JP",
+    "notes": "EUC-JP sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51932",
+      "EUC-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "euc-jp.txt",
+    "expected_codepage": "51932",
+    "expected_name": "EUC-JP",
+    "notes": "EUC-JP sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51932",
+      "EUC-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "euc-jp.txt",
+    "expected_codepage": "51932",
+    "expected_name": "EUC-JP",
+    "notes": "EUC-JP sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51932",
+      "EUC-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "euc-jp.txt",
+    "expected_codepage": "51932",
+    "expected_name": "EUC-JP",
+    "notes": "EUC-JP sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51932",
+      "EUC-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "euc-jp.txt",
+    "expected_codepage": "51932",
+    "expected_name": "EUC-JP",
+    "notes": "EUC-JP sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51932",
+      "EUC-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "iso-2022-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "ISO-2022-JP sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "iso-2022-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "ISO-2022-JP sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "iso-2022-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "ISO-2022-JP sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "iso-2022-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "ISO-2022-JP sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "iso-2022-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "ISO-2022-JP sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "iso-2022-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "ISO-2022-JP sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "iso-2022-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "ISO-2022-JP sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "euc-kr.txt",
+    "expected_codepage": "51949",
+    "expected_name": "EUC-KR",
+    "notes": "EUC-KR sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51949",
+      "EUC-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "euc-kr.txt",
+    "expected_codepage": "51949",
+    "expected_name": "EUC-KR",
+    "notes": "EUC-KR sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51949",
+      "EUC-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "euc-kr.txt",
+    "expected_codepage": "51949",
+    "expected_name": "EUC-KR",
+    "notes": "EUC-KR sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51949",
+      "EUC-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "euc-kr.txt",
+    "expected_codepage": "51949",
+    "expected_name": "EUC-KR",
+    "notes": "EUC-KR sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51949",
+      "EUC-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "euc-kr.txt",
+    "expected_codepage": "51949",
+    "expected_name": "EUC-KR",
+    "notes": "EUC-KR sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51949",
+      "EUC-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "euc-kr.txt",
+    "expected_codepage": "51949",
+    "expected_name": "EUC-KR",
+    "notes": "EUC-KR sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51949",
+      "EUC-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "euc-kr.txt",
+    "expected_codepage": "51949",
+    "expected_name": "EUC-KR",
+    "notes": "EUC-KR sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "51949",
+      "EUC-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "iso-2022-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "ISO-2022-KR sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "iso-2022-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "ISO-2022-KR sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "iso-2022-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "ISO-2022-KR sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "iso-2022-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "ISO-2022-KR sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "iso-2022-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "ISO-2022-KR sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "iso-2022-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "ISO-2022-KR sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "iso-2022-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "ISO-2022-KR sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "big5.txt",
+    "expected_codepage": "950",
+    "expected_name": "Big5",
+    "notes": "Traditional Chinese Big5 sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "950",
+      "Big5",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "big5.txt",
+    "expected_codepage": "950",
+    "expected_name": "Big5",
+    "notes": "Traditional Chinese Big5 sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "950",
+      "Big5",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "big5.txt",
+    "expected_codepage": "950",
+    "expected_name": "Big5",
+    "notes": "Traditional Chinese Big5 sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "950",
+      "Big5",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "big5.txt",
+    "expected_codepage": "950",
+    "expected_name": "Big5",
+    "notes": "Traditional Chinese Big5 sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "950",
+      "Big5",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "big5.txt",
+    "expected_codepage": "950",
+    "expected_name": "Big5",
+    "notes": "Traditional Chinese Big5 sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "950",
+      "Big5",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "big5.txt",
+    "expected_codepage": "950",
+    "expected_name": "Big5",
+    "notes": "Traditional Chinese Big5 sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "950",
+      "Big5",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "big5.txt",
+    "expected_codepage": "950",
+    "expected_name": "Big5",
+    "notes": "Traditional Chinese Big5 sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "950",
+      "Big5",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "hz-gb-2312.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "HZ-GB-2312 sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "hz-gb-2312.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "HZ-GB-2312 sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "hz-gb-2312.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "HZ-GB-2312 sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "hz-gb-2312.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "HZ-GB-2312 sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "hz-gb-2312.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "HZ-GB-2312 sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "hz-gb-2312.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "HZ-GB-2312 sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "hz-gb-2312.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "HZ-GB-2312 sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "gb18030.txt",
+    "expected_codepage": "54936",
+    "expected_name": "GB18030",
+    "notes": "Simplified Chinese GB18030 sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "gb18030.txt",
+    "expected_codepage": "54936",
+    "expected_name": "GB18030",
+    "notes": "Simplified Chinese GB18030 sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "gb18030.txt",
+    "expected_codepage": "54936",
+    "expected_name": "GB18030",
+    "notes": "Simplified Chinese GB18030 sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "gb18030.txt",
+    "expected_codepage": "54936",
+    "expected_name": "GB18030",
+    "notes": "Simplified Chinese GB18030 sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "gb18030.txt",
+    "expected_codepage": "54936",
+    "expected_name": "GB18030",
+    "notes": "Simplified Chinese GB18030 sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "gb18030.txt",
+    "expected_codepage": "54936",
+    "expected_name": "GB18030",
+    "notes": "Simplified Chinese GB18030 sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "gb18030.txt",
+    "expected_codepage": "54936",
+    "expected_name": "GB18030",
+    "notes": "Simplified Chinese GB18030 sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "iso-2022-cn.txt",
+    "expected_codepage": "50227",
+    "expected_name": "ISO-2022-CN",
+    "notes": "RFC 1922 escape-stream sample",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50227",
+      "ISO-2022-CN",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "iso-2022-cn.txt",
+    "expected_codepage": "50227",
+    "expected_name": "ISO-2022-CN",
+    "notes": "RFC 1922 escape-stream sample",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50227",
+      "ISO-2022-CN",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "iso-2022-cn.txt",
+    "expected_codepage": "50227",
+    "expected_name": "ISO-2022-CN",
+    "notes": "RFC 1922 escape-stream sample",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50227",
+      "ISO-2022-CN",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "iso-2022-cn.txt",
+    "expected_codepage": "50227",
+    "expected_name": "ISO-2022-CN",
+    "notes": "RFC 1922 escape-stream sample",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50227",
+      "ISO-2022-CN",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "iso-2022-cn.txt",
+    "expected_codepage": "50227",
+    "expected_name": "ISO-2022-CN",
+    "notes": "RFC 1922 escape-stream sample",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50227",
+      "ISO-2022-CN",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "iso-2022-cn.txt",
+    "expected_codepage": "50227",
+    "expected_name": "ISO-2022-CN",
+    "notes": "RFC 1922 escape-stream sample",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50227",
+      "ISO-2022-CN",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "iso-2022-cn.txt",
+    "expected_codepage": "50227",
+    "expected_name": "ISO-2022-CN",
+    "notes": "RFC 1922 escape-stream sample",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50227",
+      "ISO-2022-CN",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "esc-minimal-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "esc-minimal-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "esc-minimal-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "esc-minimal-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "esc-minimal-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "esc-minimal-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Japanese",
+    "file_name": "esc-minimal-jp.txt",
+    "expected_codepage": "50222",
+    "expected_name": "ISO-2022-JP",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50222",
+      "ISO-2022-JP",
+      "japanese",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "esc-minimal-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "esc-minimal-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "esc-minimal-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "esc-minimal-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "esc-minimal-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "esc-minimal-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Korean",
+    "file_name": "esc-minimal-kr.txt",
+    "expected_codepage": "50225",
+    "expected_name": "ISO-2022-KR",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "50225",
+      "ISO-2022-KR",
+      "kr",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "esc-minimal-hz.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 0,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "esc-minimal-hz.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 1,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "esc-minimal-hz.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 2,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "esc-minimal-hz.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 3,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "esc-minimal-hz.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 7,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "esc-minimal-hz.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 64,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "tier": "strict",
+    "family": "Chinese",
+    "file_name": "esc-minimal-hz.txt",
+    "expected_codepage": "52936",
+    "expected_name": "HZ-GB-2312",
+    "notes": "Literal ESC regression bytes; no platform encoder required",
+    "chunk": 8192,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "52936",
+      "HZ-GB-2312",
+      "ch",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  }
+]

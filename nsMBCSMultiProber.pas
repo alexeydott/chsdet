@@ -312,6 +312,15 @@ var
   conf,
   bestConf: double;
 begin
+  // A confidence query must preserve a completed structural detection.
+  if mState = psFoundIt then
+    Exit(SURE_YES);
+  if mState = psNotMe then
+  begin
+    mDetectedCharset := UNKNOWN_CHARSET;
+    Exit(SURE_NO);
+  end;
+
   mBestGuess := -1;
   bestConf := SURE_NO;
   for i := 0 to Pred(mCharsetsCount) do

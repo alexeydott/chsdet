@@ -319,7 +319,7 @@ const
   // X_EUC_TW_CHARSET
     (
       Name:  'x-euc-tw';
-      CodePage:  51936;
+      CodePage:  51950;
       Language:  'ch';
     ),
   // SHIFT_JIS_CHARSET
@@ -487,7 +487,7 @@ begin
 
   while curPtr < aBuf+aLen do
     begin
-      if curPtr^ > #$80 then
+      if curPtr^ >= #$80 then
         meetMSB := TRUE
       else
         if ((curPtr^ < 'A') or ((curPtr^ > 'Z') and (curPtr^ < 'a')) or (curPtr^ > 'z')) then

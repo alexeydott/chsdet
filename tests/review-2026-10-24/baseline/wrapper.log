@@ -1,0 +1,9 @@
+PASS overflow-safe bounds and state preservation
+FAIL UCS-4 2143 decoder refusal and explicit fallback: Exception: Exotic UCS-4 received an incompatible UTF-32 decoder
+FAIL UCS-4 3412 decoder refusal and explicit fallback: Exception: Exotic UCS-4 received an incompatible UTF-32 decoder
+PASS valid ASCII after reset of incomplete UTF-8
+FAIL EUC-TW Windows code-page mapping: Exception: EUC-TW has the EUC-CN code page
+FAIL Finish is terminal until Reset, including empty input: Exception: Finish did not finalize empty input
+PASS Whole mixed ASCII/Cyrillic word retains Windows-1251 evidence
+Wrapper cases: 3/7
+exit_code=1

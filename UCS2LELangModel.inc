@@ -1,5 +1,5 @@
 const
-  UCS2LECharLenTable: array [0..5] of PRUint32 = (2, 2, 2, 2, 2, 2);
+  UCS2LECharLenTable: array [0..5] of Byte = (2, 2, 2, 2, 2, 2);
 
   UCS2LE_cls: array [AnsiChar] of Byte = (
   0,0,0,0,0,0,0,0,  // 00 - 07  //allow 0x00 as a legal value
