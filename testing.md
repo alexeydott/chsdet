@@ -103,6 +103,29 @@ Reproduce the complete native matrix:
   -Compiler64 'D:\Embarcadero RAD Studio\23.0\bin\dcc64.exe'
 ```
 
+### Mixed SBCS Word Streaming
+
+The SBCS filter preserves unfinished ASCII prefixes across input blocks. Once a
+word contains a byte at or above `0x80`, its saved prefix and remaining bytes
+reach the models in their original order. Delimiters discard ASCII-only words
+and normalize the end of a retained word to a single space. `Reset` clears all
+pending filter state; confidence queries do not flush an unfinished word.
+The universal detector forwards ASCII-only blocks to the SBCS filter too.
+
+Four targeted regressions compare all 13 SBCS child models at every split of
+short mixed-word inputs, exercise an 8193-byte ASCII prefix with small chunks,
+check delimiter/reset behavior, and require the independently labelled CP1251
+public-API sample to retain its code page and confidence across every split.
+They also cover an unterminated word at EOF and trailing ASCII-only words.
+
+The filter buffers only an unfinished ASCII prefix, not the entire document or
+the non-ASCII part of a word. Capacity grows geometrically and is reused until
+`Reset`; memory is proportional to the longest pending ASCII prefix. Arbitrarily
+long delimiter-free words are not subject to an artificial truncation limit.
+
+Delphi 12 Win32 and Win64 validation passes all 86 tests in every R/Q combination,
+with matching recognition snapshots across R/Q modes within each platform.
+
 ### General Notes
 
 - The suite uses repeated phrases instead of tiny samples to keep statistical detection stable
@@ -130,7 +153,4 @@ Reproduce the complete native matrix:
 - Greek byte streams without C1 bytes and without non-C1 discriminator bytes remain ambiguous between `windows-1253` and `ISO-8859-7`
 - Latin-1-like Western text remains collapsed into `windows-1252`, because `ISO-8859-1` is not currently exposed as a separate detector result
 - Very short or highly ambiguous UTF-8 without BOM samples can still remain `Unknown`
-- A mixed word whose ASCII prefix is delivered before its first non-ASCII byte
-  can still lose that prefix in the SBCS filter. Full chunk invariance for all
-  possible mixed-script words is not claimed by the current tests.
 - The small generated corpus measures regressions, not population-wide accuracy.

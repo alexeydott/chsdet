@@ -118,14 +118,20 @@ compile or execute Delphi and cannot establish a runtime PASS.
 The runner also links three new fixtures with explicit registration:
 
 - `ChsDet.RegressionTests.pas`: 12 public API / Unicode / mapping scenarios.
-- `ChsDet.ProberTests.pas`: 9 low-level model, state, confidence and memory-boundary scenarios.
-- `ChsDet.StreamingTests.pas`: 6 word/tag boundary and chunked corpus scenarios.
+- `ChsDet.ProberTests.pas`: 10 low-level model, state, confidence and memory-boundary scenarios, including rejection of a stale Shift_JIS winner after a malformed tail.
+- `ChsDet.StreamingTests.pas`: 10 word/tag boundary, mixed ASCII/non-ASCII word and chunked corpus scenarios.
 
-The range matrix verifies all three fixture counts (12/9/6), rejects empty
+The range matrix requires at least 12/10/10 tests in these fixtures, rejects empty
 execution and retains the original raw-table checks. The Japanese-context
 memory-boundary test uses Windows `VirtualAlloc` / `VirtualProtect` guard pages.
 It checks a meaningful postcondition after the protected single-byte read;
 an unexpected access violation is not swallowed.
+
+The current native Delphi 12 matrix executes 86 tests per configuration on
+Win32 and Win64 with all four R/Q combinations. All 86 pass with no ignored
+tests, failures or errors; recognition snapshots match across R/Q modes within
+each platform. These native results are separate from the historical Free Pascal
+evidence linked below.
 
 See [the review](review-2026-10-24/REPORT.ru.md),
 [actual supplementary execution evidence](review-2026-10-24/SUMMARY.md), and

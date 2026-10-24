@@ -789,6 +789,9 @@ begin
         end;
     end;
 
+  // SBCS needs ASCII-only blocks too: their last word can acquire a high byte
+  // in a later block. Its streaming filter discards completed English words.
+  mCharSetProbers[1].HandleData(aBuf, aLen);
   case mInputState of
     eEscAscii:
       begin
@@ -846,7 +849,7 @@ begin
           // block may change the language score, byte order or GB18030 family.
           if i = 0 then
             mCharSetProbers[3].HandleData(aBuf, aLen);
-          if i <> 3 then
+          if (i <> 3) and (i <> 1) then
             mCharSetProbers[i].HandleData(aBuf, aLen);
 //finally
 //FreeMem(newBuf, aLen);
