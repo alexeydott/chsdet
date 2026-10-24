@@ -45,9 +45,126 @@ type
     [Test] procedure ShortSingleByteHighBytesRemainEligible;
     [Test] procedure AnsiSgrNfoFramesRemainChunkIndependent;
     [Test] procedure AnsiNfoRejectsUnsupportedAndIncompleteEscapes;
+    [Test] procedure SgrLengthBoundaryCannotManufactureAFrame;
+    [Test] procedure MalformedSgrBetweenCrLfDoesNotPoisonNextFrame;
   end;
 
 implementation
+
+procedure TChsRegressionTests.SgrLengthBoundaryCannotManufactureAFrame;
+const
+  Chunks: array [0..5] of Integer = (1, 2, 3, 7, 32, 8192);
+var
+  Sequence, Frame, Prose, Data: TBytes;
+  State: TOemBoxState;
+  Detector: IChsEncodingDetector;
+  Expected, Actual: TChsDetectionResult;
+  LengthBytes, Kind, Variant, I, Offset, Line, Chunk, Split, SequenceOffset: Integer;
+  IsFrame: Boolean;
+begin
+  Detector := TChsEncodingDetector.New;
+  for LengthBytes := 31 to 33 do
+    for Variant := 0 to 3 do
+    begin
+      SetLength(Sequence, LengthBytes);
+      Sequence[0] := 27;
+      Sequence[1] := Ord('[');
+      for I := 2 to LengthBytes - 2 do Sequence[I] := Ord(';');
+      Sequence[LengthBytes - 1] := Ord('m');
+      if Variant = 2 then Sequence[LengthBytes - 1] := Ord('C');
+      if Variant = 3 then SetLength(Sequence, LengthBytes - 1);
+      Frame := TBytes.Create(9, $C9, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BB, 13, 10,
+        9, $BA, 32, 32, 32, 32);
+      SequenceOffset := Length(Frame);
+      Frame := Append(Frame, Sequence);
+      Frame := Append(Frame, [32, 32, 32, 32, $BA, 13, 10,
+        9, $C8, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BC]);
+      if Variant = 1 then Frame[SequenceOffset + Length(Sequence) + 4] := 32;
+      IsFrame := (Variant = 0) and (LengthBytes <= 32);
+      FillChar(State, SizeOf(State), 0);
+      for I := 0 to High(Frame) do State.Feed(Frame[I]);
+      Assert.AreEqual<Boolean>(IsFrame, State.HasFrame,
+        Format('SGR bytes=%d variant=%d', [LengthBytes, Variant]));
+      for Kind := 0 to 1 do
+      begin
+        Prose := Copy(TFile.ReadAllBytes(TPath.Combine(TChsCorpus.DataDir,
+          'windows-1251.txt')), 0, 256);
+        if Kind = 1 then
+          for I := 0 to High(Prose) do
+            case I mod 4 of
+              0: Prose[I] := Ord('a');
+              1: Prose[I] := $E9;
+              2: Prose[I] := $80;
+              3: Prose[I] := 32;
+            end;
+        Data := Append(Append(Prose, [13, 10]), Frame);
+        Data := Append(Data, [13, 10]);
+        Offset := Length(Data);
+        SetLength(Data, Offset + 4 * 258);
+        for Line := 0 to 3 do
+        begin
+          FillChar(Data[Offset + Line * 258], 256, $DB);
+          Data[Offset + Line * 258 + 256] := 13;
+          Data[Offset + Line * 258 + 257] := 10;
+        end;
+        Expected := TChsEncodingDetector.Detect(Data);
+        Assert.AreEqual<Boolean>(IsFrame, Expected.CodePage = 437);
+        for Chunk in Chunks do
+        begin
+          Actual := DetectChunks(Data, Chunk);
+          Assert.AreEqual<Integer>(Expected.CodePage, Actual.CodePage);
+          Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+        end;
+        for Split := 258 + SequenceOffset - 1 to
+          258 + SequenceOffset + Length(Sequence) + 1 do
+        begin
+          Detector.Reset;
+          Detector.Feed(Data, 0, Split);
+          Detector.Feed(Data, Split, Length(Data) - Split);
+          Actual := Detector.Finish;
+          Assert.AreEqual<Integer>(Expected.CodePage, Actual.CodePage);
+          Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+        end;
+      end;
+    end;
+end;
+
+procedure TChsRegressionTests.MalformedSgrBetweenCrLfDoesNotPoisonNextFrame;
+const
+  Chunks: array [0..4] of Integer = (1, 2, 3, 32, 8192);
+var
+  Data, Frame: TBytes;
+  State: TOemBoxState;
+  LengthBytes, I, Kind, Offset, Line, Chunk: Integer;
+begin
+  Frame := TBytes.Create($C9, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BB, 13, 10,
+    $BA, 32, 32, 32, 32, 32, 32, 32, 32, $BA, 13, 10,
+    $C8, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BC);
+  for LengthBytes := 31 to 33 do
+    for Kind := 0 to 1 do
+    begin
+      Data := TBytes.Create(13, 27, Ord('['));
+      for I := 1 to LengthBytes - 3 do Data := Append(Data, [Ord(';')]);
+      if Kind = 0 then Data := Append(Data, [Ord('C'), 10])
+      else Data := Append(Data, [Ord('m'), 10]);
+      Data := Append(Data, Frame);
+      FillChar(State, SizeOf(State), 0);
+      for I := 0 to High(Data) do State.Feed(Data[I]);
+      Assert.IsTrue(State.HasFrame, 'Invalid previous row must not poison next top border');
+      Data := Append(Data, [13, 10, $82, $85, $89, 13, 10]);
+      Offset := Length(Data);
+      SetLength(Data, Offset + 2 * 130);
+      for Line := 0 to 1 do
+      begin
+        FillChar(Data[Offset + Line * 130], 128, $DB);
+        Data[Offset + Line * 130 + 128] := 13;
+        Data[Offset + Line * 130 + 129] := 10;
+      end;
+      for Chunk in Chunks do
+        Assert.AreEqual<Integer>(437, DetectChunks(Data, Chunk).CodePage,
+          'Recovery must preserve accented NFO through the public API');
+    end;
+end;
 
 procedure TChsRegressionTests.AnsiNfoRejectsUnsupportedAndIncompleteEscapes;
 const

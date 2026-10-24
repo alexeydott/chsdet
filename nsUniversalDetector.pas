@@ -297,7 +297,8 @@ begin
   end;
   if Value in [10, 13] then
   begin
-    if (Value <> 10) or not PreviousCR then FinishLine;
+    // Even a CRLF continuation must discard a malformed intervening escape.
+    if (Value <> 10) or not PreviousCR or InvalidRow then FinishLine;
     PreviousCR := Value = 13;
     Exit;
   end;

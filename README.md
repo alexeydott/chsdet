@@ -100,7 +100,7 @@ end;
 `GetEncoding` returns `False` when the result cannot be resolved by the RTL, including the `ASCII` pseudo code page `0`. `GetEncodingDef` returns the resolved encoding, or your explicit fallback, or `TEncoding.Default` when no fallback is supplied. A caller-supplied fallback remains caller-owned.
 
 ## Validation and Documentation
-The current suite passes **111/111 tests** on Delphi 12 Win32 and Win64 in each of the four `R+/R-` and `Q+/Q-` combinations. Recognition snapshots match across directive modes within each platform. The bounded-prefix memory regression also fails on the previous byte-buffer implementation, confirming that it protects the resource limit.
+The current suite passes **113/113 tests** on Delphi 12 Win32 and Win64 in each of the four `R+/R-` and `Q+/Q-` combinations. Recognition snapshots match across directive modes within each platform. The bounded-prefix memory regression also fails on the previous byte-buffer implementation, confirming that it protects the resource limit.
 
 Run the complete native matrix:
 
