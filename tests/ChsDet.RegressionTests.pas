@@ -40,9 +40,93 @@ type
     [Test] procedure UnrelatedCornerFragmentsAreNotAnNfoFrame;
     [Test] procedure RepeatedShortEvidenceSurvivesPaddingThreshold;
     [Test] procedure NfoFrameRequiresCompleteAlignedRows;
+    [Test] procedure EmptyNormalizedHighByteEvidenceCannotSelectWestern;
+    [Test] procedure TabbedFramesRejectCursorControls;
   end;
 
 implementation
+
+procedure TChsRegressionTests.EmptyNormalizedHighByteEvidenceCannotSelectWestern;
+const
+  Sizes: array [0..3] of Integer = (127, 128, 129, 4096);
+  Chunks: array [0..4] of Integer = (1, 3, 7, 128, 8192);
+var
+  Data: TBytes;
+  Size, I, Chunk: Integer;
+  Detector: IChsEncodingDetector;
+  Expected, Actual: TChsDetectionResult;
+begin
+  Detector := TChsEncodingDetector.New;
+  for Size in Sizes do
+  begin
+    SetLength(Data, Size);
+    FillChar(Data[0], 8, $E0);
+    for I := 8 to High(Data) do
+      if Odd(I) then Data[I] := Ord('a') else Data[I] := 32;
+    Expected := TChsEncodingDetector.Detect(Data);
+    if Size > 128 then Assert.AreEqual<Integer>(-1, Expected.CodePage);
+    for Chunk in Chunks do
+    begin
+      Actual := DetectChunks(Data, Chunk);
+      Assert.IsTrue(Actual.CodePage <> 1252,
+        Format('No Western evidence: size=%d chunk=%d', [Size, Chunk]));
+      Assert.AreEqual<Integer>(Expected.CodePage, Actual.CodePage);
+      Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+    end;
+    Detector.Reset;
+    Detector.Feed(TBytes.Create($31, $30, $20, $80));
+    Assert.AreEqual<Integer>(1252, Detector.Finish.CodePage);
+    Detector.Reset;
+    Detector.Feed(Data);
+    Assert.AreEqual<Integer>(Expected.CodePage, Detector.Finish.CodePage);
+  end;
+end;
+
+procedure TChsRegressionTests.TabbedFramesRejectCursorControls;
+const
+  Chunks: array [0..4] of Integer = (1, 3, 7, 128, 8192);
+var
+  Prose, Frame, Data: TBytes;
+  State: TOemBoxState;
+  Kind, Control, I, Offset, Line, Chunk: Integer;
+begin
+  for Kind := 0 to 1 do
+    for Control in [0, 8, 27, 32, 127] do
+    begin
+      // Aligned byte columns are not a visible frame if cursor controls occur.
+      Frame := TBytes.Create(9, $C9, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BB, 13, 10,
+        9, $BA, 32, 32, 32, Byte(Control), 32, 32, 32, 32, $BA, 13, 10,
+        9, $C8, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BC);
+      FillChar(State, SizeOf(State), 0);
+      for I := 0 to High(Frame) do State.Feed(Frame[I]);
+      Assert.AreEqual<Boolean>(Control = 32, State.HasFrame,
+        'Only the printable variant proves frame geometry');
+      Prose := Copy(TFile.ReadAllBytes(TPath.Combine(TChsCorpus.DataDir,
+        'windows-1251.txt')), 0, 256);
+      if Kind = 1 then
+        for I := 0 to High(Prose) do
+          case I mod 4 of
+            0: Prose[I] := Ord('a');
+            1: Prose[I] := $E9;
+            2: Prose[I] := $80;
+            3: Prose[I] := 32;
+          end;
+      Data := Append(Append(Prose, TBytes.Create(13, 10)), Frame);
+      Data := Append(Data, TBytes.Create(13, 10));
+      Offset := Length(Data);
+      SetLength(Data, Offset + 4 * 258);
+      for Line := 0 to 3 do
+      begin
+        FillChar(Data[Offset + Line * 258], 256, $DB);
+        Data[Offset + Line * 258 + 256] := 13;
+        Data[Offset + Line * 258 + 257] := 10;
+      end;
+      for Chunk in Chunks do
+        Assert.AreEqual<Boolean>(Control = 32, DetectChunks(Data, Chunk).CodePage = 437,
+          Format('Cursor-controlled pseudo-frame: kind=%d control=%d chunk=%d',
+            [Kind, Control, Chunk]));
+    end;
+end;
 
 procedure TChsRegressionTests.RepeatedShortEvidenceSurvivesPaddingThreshold;
 const

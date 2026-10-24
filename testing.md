@@ -2,12 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The current recognition and streaming regressions comprise 52 DUnitX methods in
+The current recognition and streaming regressions comprise 54 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
 model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
 byte filtering, reset and guard-page memory boundaries. They are explicitly
-registered and linked by the runner; the full suite currently contains 106 tests.
+registered and linked by the runner; the full suite currently contains 108 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests
@@ -133,7 +133,7 @@ the representable count remains finite; this is not arbitrary-precision input
 accounting. Three additional regressions enforce bounded allocation while
 streaming 2 MiB, exact model-summary joins, and counts beyond `2^32`.
 
-Delphi 12 Win32 and Win64 validation passes all 106 tests in every R/Q combination,
+Delphi 12 Win32 and Win64 validation passes all 108 tests in every R/Q combination,
 with matching recognition snapshots across R/Q modes within each platform.
 
 ### MBCS Syntax and End-of-Input Audit
@@ -210,12 +210,24 @@ Ambiguous short words may remain unknown rather than acquiring a false Western
 label. This remains a conservative sampling policy, not a guarantee of label
 stability when new, different evidence fills the buffer.
 
+SBCS/Latin-1 candidates are ineligible if their actual statistical sample contains
+no high bytes. Repeated high bytes can all disappear when the evidence buffer
+switches to neutralized sampling; the remaining ASCII must not manufacture a
+Western label. Tests exercise both sides of the 128-byte evidence boundary,
+chunk-independent labels/confidence and Reset after a positive CP1252 result.
+Raw Unicode/CJK and contextual OEM decisions remain independent of this guard.
+
 Tests cover 127/128/129-byte transitions, repeats up to 4096 bytes and chunk sizes
 from one byte to whole input. Missing bottom borders, missing corners or sides,
 and shifted rows cannot trigger the accented-frame exception in CP1251/CP1252
 prose. Complete frames retain their positive public-API coverage. Frame recognition
 uses constant-size row geometry with eight-column tab stops, CRLF and EOF handling.
 Aligned tab/space indentation is accepted; one space is not mistaken for a tab.
+Nonprintable bytes other than TAB/CR/LF invalidate the current row's frame proof.
+In particular NUL, BS, ESC and DEL are not treated as printable one-column cells.
+Public-API regressions combine tab-indented pseudo-frames with CP1251/CP1252 prose
+and graphic padding, alongside the equivalent printable positive frame. This is
+not an ANSI terminal interpreter; control-bearing frames do not get this exception.
 Other OEM art heuristics remain available for unframed art: rejecting the frame
 exception alone does not mean that every incomplete NFO must be non-OEM.
 

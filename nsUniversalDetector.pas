@@ -46,7 +46,7 @@ type nsInputState = (
   TOemBoxState = record
     Column, LeftColumn, LastColumn, HorizontalCount: Integer;
     FirstByte, LastByte, HorizontalByte: Byte;
-    InteriorIsHorizontal, PreviousCR: Boolean;
+    InteriorIsHorizontal, PreviousCR, InvalidRow: Boolean;
     OpenLeft, OpenRight: Integer;
     OpenStyle: Byte;
     HasSide, Complete: Boolean;
@@ -137,6 +137,7 @@ type nsInputState = (
       mLiteralSampleLength: Integer;
       mLiteralRunLength: Byte;
       mStatSamplingStarted: Boolean;
+      mStatHasHighByte: Boolean;
 
 		  procedure Report(aCharsetID: eInternalCharsetID);
       function ReportWithConfidence(aCharsetID: eInternalCharsetID; Confidence: float): Boolean;
@@ -276,6 +277,9 @@ begin
     Column := Column + (8 - Column mod 8);
     Exit;
   end;
+  // Control bytes have no reliable printable-cell width (notably BS and ESC).
+  // Do not use such a row as proof that ambiguous bytes form an OEM frame.
+  if (Value < 32) or (Value = 127) then InvalidRow := True;
   Inc(Column);
   if Value = 32 then Exit;
   if LeftColumn = 0 then
@@ -308,7 +312,7 @@ begin
   Style := 0;
   IsTop := False;
   IsBottom := False;
-  if InteriorIsHorizontal and (HorizontalCount >= 8) then
+  if not InvalidRow and InteriorIsHorizontal and (HorizontalCount >= 8) then
   begin
     if (FirstByte = $C9) and (LastByte = $BB) then
     begin Style := $BA; IsTop := True end;
@@ -326,7 +330,7 @@ begin
     OpenRight := LastColumn;
     HasSide := False;
   end
-  else if (OpenStyle <> 0) and (LeftColumn = OpenLeft) and
+  else if not InvalidRow and (OpenStyle <> 0) and (LeftColumn = OpenLeft) and
     (LastColumn = OpenRight) then
   begin
     if (FirstByte = OpenStyle) and (LastByte = OpenStyle) then HasSide := True
@@ -342,6 +346,7 @@ begin
   LastColumn := 0;
   HorizontalCount := 0;
   InteriorIsHorizontal := False;
+  InvalidRow := False;
 end;
 
 function TOemBoxState.HasFrame: Boolean;
@@ -886,6 +891,9 @@ begin
           BestCharset := UNKNOWN_CHARSET;
           for I := 0 to Pred(NUM_OF_CHARSET_PROBERS) do
           begin
+            // Raw high bytes may all have been removed as repetitive padding.
+            // An ASCII-only statistical sample cannot support an SBCS label.
+            if (I in [1, 2]) and not mStatHasHighByte then Continue;
             ProberConfidence := mCharSetProbers[I].GetConfidence;
             Candidate := mCharSetProbers[I].GetDetectedCharset;
             if (Candidate = UNKNOWN_CHARSET) or
@@ -980,6 +988,7 @@ var
     begin
       if mStatRunLength = SINGLE_BYTE_RUN_LIMIT then Buffer[Used] := ' '
       else Buffer[Used] := AnsiChar(mStatLastByte);
+      if Byte(Buffer[Used]) >= $80 then mStatHasHighByte := True;
       Inc(Used);
       if Used = Length(Buffer) then Flush;
     end;
@@ -994,6 +1003,8 @@ begin
     begin
       if mLiteralSampleLength > 0 then
       begin
+        for I := 0 to mLiteralSampleLength - 1 do
+          if Byte(mLiteralSample[I]) >= $80 then mStatHasHighByte := True;
         mCharSetProbers[1].HandleData(@mLiteralSample[0], mLiteralSampleLength);
         mCharSetProbers[2].HandleData(@mLiteralSample[0], mLiteralSampleLength);
         mLiteralSampleLength := 0;
@@ -1266,6 +1277,7 @@ begin
   mLiteralSampleLength := 0;
   mLiteralRunLength := 0;
   mStatSamplingStarted := False;
+  mStatHasHighByte := False;
   mInputState := ePureAscii;
   mLastChar := #0; (*illegal value as signal*)
   mEscCharSetProber.Reset;
