@@ -78,6 +78,33 @@ The benchmark writes a fresh Markdown accuracy matrix to `tests/corpus/MATRIX.md
 
 ## Test Design Notes
 
+### Delphi 12 PR #3 Blocker Validation
+
+The blocker fixes were validated with Delphi compiler 36.0 on Win32 and Win64,
+with all four combinations of range checking (`R+`/`R-`) and overflow checking
+(`Q+`/`Q-`). Each of the eight configurations passed all 82 tests, with no
+ignored tests or errors. Recognition snapshots matched across R/Q modes within
+each platform; cross-platform floating-point bit identity is not asserted.
+
+The MBCS regression feeds a high-confidence Shift_JIS prefix followed by a tail
+rejected by its state machine, using chunk sizes 1, 2, 7, 1200 and 1202. Both the
+prober and public wrapper must discard that candidate. Statistical shortcuts
+no longer skip the remainder of a block or inherit structural certainty.
+The existing GB18030 structural-signature/reset test remains in place.
+
+The UTF-16 fixture builder clears its managed result before allocation, so
+successive endian cases cannot retain bytes from the previously returned array.
+
+Reproduce the complete native matrix:
+
+```powershell
+./tests/run-range-matrix.ps1 `
+  -Compiler32 'D:\Embarcadero RAD Studio\23.0\bin\dcc32.exe' `
+  -Compiler64 'D:\Embarcadero RAD Studio\23.0\bin\dcc64.exe'
+```
+
+### General Notes
+
 - The suite uses repeated phrases instead of tiny samples to keep statistical detection stable
 - File-based tests write temporary files and clean them up after each run
 - Encoding-specific samples are generated with `TEncoding.GetEncoding(...)`, including `1251`, `1252`, `866`, and `932`

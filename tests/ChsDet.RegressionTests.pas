@@ -37,6 +37,8 @@ const
 var
   I, J, Offset: Integer;
 begin
+  // Delphi may reuse a same-length result array from the previous endian case.
+  Result := nil;
   SetLength(Result, Length(Text) * 6);
   Offset := 0;
   if BigEndian then

@@ -9,6 +9,7 @@ type
   TChsProberTests = class
   public
     [Test] procedure Gb18030FoundCharsetSurvivesConfidenceQueriesAndReset;
+    [Test] procedure RejectedSjisWinnerDoesNotSurviveMalformedTail;
     [Test] procedure MultiModelReturnsItsFinalState;
     [Test] procedure UnicodeProberPreservesUtf16AtEverySplit;
     [Test] procedure SingleByteFilterKeepsByte80;
@@ -24,7 +25,8 @@ implementation
 uses
   System.SysUtils, System.IOUtils, nsCore, nsCodingStateMachine, MultiModelProber,
   nsMBCSMultiProber, MBUnicodeMultiProber, nsSBCSGroupProber, ChsDet.Corpus,
-  nsSBCharSetProber, LangCyrillicModel, JpCntx, Winapi.Windows;
+  nsSBCharSetProber, LangCyrillicModel, JpCntx, Winapi.Windows,
+  ChsDet.EncodingDetector;
 
 {$I '../UTF8LangModel.inc'}
 {$I '../UCS2LELangModel.inc'}
@@ -40,6 +42,70 @@ type
   public
     procedure SetSequenceCounts(PositivePairs, TotalPairs: Cardinal);
   end;
+
+  TInspectableMbcsProber = class(TnsMBCSMultiProber)
+  public
+    function SjisState: eProbingState;
+  end;
+
+function TInspectableMbcsProber.SjisState: eProbingState;
+begin
+  Result := mSMState[0];
+end;
+
+procedure TChsProberTests.RejectedSjisWinnerDoesNotSurviveMalformedTail;
+const
+  ChunkSizes: array [0..4] of Integer = (1, 2, 7, 1200, 1202);
+var
+  Prober: TInspectableMbcsProber;
+  Data: AnsiString;
+  I, Chunk, Offset, Count: Integer;
+  Detector: IChsEncodingDetector;
+  Detection: TChsDetectionResult;
+begin
+  SetLength(Data, 1202);
+  for I := 0 to 599 do
+  begin
+    Data[I * 2 + 1] := AnsiChar($82);
+    Data[I * 2 + 2] := AnsiChar($A0);
+  end;
+  Data[1201] := AnsiChar($FD);
+  Data[1202] := AnsiChar($40);
+  Prober := TInspectableMbcsProber.Create;
+  try
+    Prober.HandleData(PAnsiChar(Data), 1200);
+    Assert.IsTrue(Prober.GetConfidence > SHORTCUT_THRESHOLD);
+    Assert.AreEqual<Integer>(Ord(SHIFT_JIS_CHARSET), Ord(Prober.GetDetectedCharset));
+    for Chunk in ChunkSizes do
+    begin
+      Prober.Reset;
+      Detector := TChsEncodingDetector.New;
+      Offset := 0;
+      while Offset < Length(Data) do
+      begin
+        Count := Chunk;
+        if Count > Length(Data) - Offset then
+          Count := Length(Data) - Offset;
+        Prober.HandleData(PAnsiChar(Data) + Offset, Count);
+        Detector.Feed(Data[Offset + 1], Count);
+        Inc(Offset, Count);
+      end;
+      Detection := Detector.Finish;
+      Assert.IsTrue(Detection.CodePage <> 932,
+        Format('The public API must not return the rejected SJIS winner, chunk=%d', [Chunk]));
+      Assert.AreEqual<Integer>(Ord(psNotMe), Ord(Prober.SjisState),
+        Format('The complete tail must reach the SJIS machine, chunk=%d', [Chunk]));
+      for I := 1 to 2 do
+      begin
+        Prober.GetConfidence;
+        Assert.IsTrue(Prober.GetDetectedCharset <> SHIFT_JIS_CHARSET,
+          Format('Confidence must not retain a rejected winner, chunk=%d', [Chunk]));
+      end;
+    end;
+  finally
+    Prober.Free;
+  end;
+end;
 
 function ByteString(const Values: array of Byte): AnsiString;
 var
