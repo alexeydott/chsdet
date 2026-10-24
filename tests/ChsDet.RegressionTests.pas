@@ -42,9 +42,113 @@ type
     [Test] procedure NfoFrameRequiresCompleteAlignedRows;
     [Test] procedure EmptyNormalizedHighByteEvidenceCannotSelectWestern;
     [Test] procedure TabbedFramesRejectCursorControls;
+    [Test] procedure ShortSingleByteHighBytesRemainEligible;
+    [Test] procedure AnsiSgrNfoFramesRemainChunkIndependent;
+    [Test] procedure AnsiNfoRejectsUnsupportedAndIncompleteEscapes;
   end;
 
 implementation
+
+procedure TChsRegressionTests.AnsiNfoRejectsUnsupportedAndIncompleteEscapes;
+const
+  Sequences: array [0..4] of RawByteString =
+    (#27'[2C', #27'[2J', #27']0;title'#7, #27'[31',
+     #27'[111111111111111111111111111111111m');
+var
+  State: TOemBoxState;
+  Frame, Prefix, Suffix: TBytes;
+  Sequence: RawByteString;
+  I: Integer;
+begin
+  Prefix := TBytes.Create($C9, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BB, 13, 10,
+    $BA, 32, 32, 32, 32);
+  Suffix := TBytes.Create(32, 32, 32, 32, $BA, 13, 10,
+    $C8, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $CD, $BC);
+  for Sequence in Sequences do
+  begin
+    Frame := Copy(Prefix);
+    for I := 1 to Length(Sequence) do Frame := Append(Frame, [Byte(Sequence[I])]);
+    Frame := Append(Frame, Suffix);
+    FillChar(State, SizeOf(State), 0);
+    for I := 0 to High(Frame) do State.Feed(Frame[I]);
+    Assert.IsFalse(State.HasFrame, 'Only bounded SGR sequences are zero width');
+  end;
+  Frame := Append(Prefix, Suffix);
+  Frame := Append(Frame, [27, Ord('['), Ord('3'), Ord('1')]);
+  FillChar(State, SizeOf(State), 0);
+  for I := 0 to High(Frame) do State.Feed(Frame[I]);
+  Assert.IsFalse(State.HasFrame, 'Pending escape at EOF cannot close a frame');
+  Frame := Append(Frame, [Ord('m')]);
+  FillChar(State, SizeOf(State), 0);
+  for I := 0 to High(Frame) do State.Feed(Frame[I]);
+  Assert.IsTrue(State.HasFrame, 'Complete SGR at EOF preserves closing corner');
+end;
+
+procedure TChsRegressionTests.ShortSingleByteHighBytesRemainEligible;
+const
+  Chunks: array [0..4] of Integer = (1, 2, 3, 7, 8192);
+var
+  Data: TBytes;
+  Kind, Chunk: Integer;
+  Detector: IChsEncodingDetector;
+begin
+  Detector := TChsEncodingDetector.New;
+  for Kind := 0 to 1 do
+  begin
+    if Kind = 0 then
+      Data := TBytes.Create($CF, $F0, $E8, $E2, $E5, $F2, $20, $EC, $E8, $F0)
+    else Data := TBytes.Create($31, $30, $20, $80);
+    for Chunk in Chunks do
+      Assert.AreEqual<Integer>(1251 + Kind, DetectChunks(Data, Chunk).CodePage);
+    Detector.Reset;
+    Detector.Feed(TBytes.Create($61, $62, $63));
+    Detector.Finish;
+    Detector.Reset;
+    Detector.Feed(Data);
+    Assert.AreEqual<Integer>(1251 + Kind, Detector.Finish.CodePage);
+  end;
+end;
+
+procedure TChsRegressionTests.AnsiSgrNfoFramesRemainChunkIndependent;
+const
+  Chunks: array [0..5] of Integer = (1, 2, 3, 7, 128, 8192);
+var
+  Plain, Data: TBytes;
+  State: TOemBoxState;
+  I, Chunk, Split: Integer;
+  Detector: IChsEncodingDetector;
+  Expected, Actual: TChsDetectionResult;
+begin
+  Plain := TFile.ReadAllBytes(TPath.Combine(TChsCorpus.DataDir, 'cp437-small-nfo-art.txt'));
+  Data := TBytes.Create(27, Ord('['), Ord('1'), Ord(';'), Ord('3'), Ord('6'), Ord('m'));
+  for I := 0 to High(Plain) do
+  begin
+    if Plain[I] = 13 then Data := Append(Data, [27, Ord('['), Ord('0'), Ord('m')]);
+    Data := Append(Data, [Plain[I]]);
+    if (Plain[I] = 10) and (I < High(Plain)) then
+      Data := Append(Data, [27, Ord('['), Ord('1'), Ord(';'), Ord('3'), Ord('6'), Ord('m')]);
+  end;
+  Data := Append(Data, [27, Ord('['), Ord('m')]);
+  FillChar(State, SizeOf(State), 0);
+  for I := 0 to High(Data) do State.Feed(Data[I]);
+  Assert.IsTrue(State.HasFrame, 'SGR changes color, not frame columns');
+  Expected := TChsEncodingDetector.Detect(Data);
+  Assert.AreEqual<Integer>(437, Expected.CodePage, 'Colored accented CP437 NFO');
+  for Chunk in Chunks do
+  begin
+    Actual := DetectChunks(Data, Chunk);
+    Assert.AreEqual<Integer>(437, Actual.CodePage);
+    Assert.AreEqual<Double>(Expected.Confidence, Actual.Confidence);
+  end;
+  Detector := TChsEncodingDetector.New;
+  for Split := 0 to Length(Data) do
+  begin
+    Detector.Reset;
+    Detector.Feed(Data, 0, Split);
+    Detector.Feed(Data, Split, Length(Data) - Split);
+    Assert.AreEqual<Integer>(437, Detector.Finish.CodePage, 'split=' + IntToStr(Split));
+  end;
+end;
 
 procedure TChsRegressionTests.EmptyNormalizedHighByteEvidenceCannotSelectWestern;
 const

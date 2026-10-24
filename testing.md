@@ -2,12 +2,12 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
-The current recognition and streaming regressions comprise 54 DUnitX methods in
+The current recognition and streaming regressions comprise 57 DUnitX methods in
 `tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
 `tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
 model scores, exact bounded summaries, 64-bit sequence counts, state transitions,
 byte filtering, reset and guard-page memory boundaries. They are explicitly
-registered and linked by the runner; the full suite currently contains 108 tests.
+registered and linked by the runner; the full suite currently contains 111 tests.
 
 Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
 checks that the new fixtures were discovered. The runner fails when no tests
@@ -133,7 +133,7 @@ the representable count remains finite; this is not arbitrary-precision input
 accounting. Three additional regressions enforce bounded allocation while
 streaming 2 MiB, exact model-summary joins, and counts beyond `2^32`.
 
-Delphi 12 Win32 and Win64 validation passes all 108 tests in every R/Q combination,
+Delphi 12 Win32 and Win64 validation passes all 111 tests in every R/Q combination,
 with matching recognition snapshots across R/Q modes within each platform.
 
 ### MBCS Syntax and End-of-Input Audit
@@ -223,11 +223,20 @@ and shifted rows cannot trigger the accented-frame exception in CP1251/CP1252
 prose. Complete frames retain their positive public-API coverage. Frame recognition
 uses constant-size row geometry with eight-column tab stops, CRLF and EOF handling.
 Aligned tab/space indentation is accepted; one space is not mistaken for a tab.
-Nonprintable bytes other than TAB/CR/LF invalidate the current row's frame proof.
-In particular NUL, BS, ESC and DEL are not treated as printable one-column cells.
+Nonprintable bytes other than TAB/CR/LF invalidate the current row's frame proof,
+except bounded 7-bit ANSI SGR (`ESC [` digits/semicolons `m`, at most 32 bytes).
+These color/attribute sequences occupy no columns and survive chunk boundaries.
+In particular NUL, BS, unsupported ESC commands and DEL are not printable cells.
 Public-API regressions combine tab-indented pseudo-frames with CP1251/CP1252 prose
-and graphic padding, alongside the equivalent printable positive frame. This is
-not an ANSI terminal interpreter; control-bearing frames do not get this exception.
+and graphic padding, alongside the equivalent printable positive frame. A derived
+colorized version of the accented CP437 NFO fixture is tested at every two-way
+split and multiple chunk sizes. Complete visible frames also prove layout when
+trailing SGR resets interrupt raw art runs before newline. Existing raw art
+volume/ratio checks and Unicode/CJK exclusions still apply. Cursor movement,
+screen clearing, OSC, overlong and incomplete escapes do not establish a frame.
+This is not an ANSI terminal interpreter: cursor-positioned ANSI art is not
+reconstructed. Short CP1251 and CP1252 regressions confirm that the high-byte
+guard preserves genuine retained evidence, including after Reset.
 Other OEM art heuristics remain available for unframed art: rejecting the frame
 exception alone does not mean that every incomplete NFO must be non-OEM.
 

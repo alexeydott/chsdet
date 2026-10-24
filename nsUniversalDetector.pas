@@ -47,6 +47,7 @@ type nsInputState = (
     Column, LeftColumn, LastColumn, HorizontalCount: Integer;
     FirstByte, LastByte, HorizontalByte: Byte;
     InteriorIsHorizontal, PreviousCR, InvalidRow: Boolean;
+    EscapeState, EscapeLength: Byte;
     OpenLeft, OpenRight: Integer;
     OpenStyle: Byte;
     HasSide, Complete: Boolean;
@@ -265,6 +266,35 @@ end;
 
 procedure TOemBoxState.Feed(Value: Byte);
 begin
+  // Recognize only bounded ESC [ digits/semicolons m (SGR). These change
+  // rendition, not cursor position; every other escape invalidates the row.
+  if EscapeState <> 0 then
+  begin
+    Inc(EscapeLength);
+    if (EscapeLength <= 32) and (EscapeState = 1) and (Value = Ord('[')) then
+    begin
+      EscapeState := 2;
+      Exit;
+    end;
+    if (EscapeLength <= 32) and (EscapeState = 2) then
+    begin
+      if Value in [Ord('0')..Ord('9'), Ord(';')] then Exit;
+      if Value = Ord('m') then
+      begin
+        EscapeState := 0;
+        Exit;
+      end;
+    end;
+    EscapeState := 0;
+    InvalidRow := True;
+    if not (Value in [10, 13]) then Exit;
+  end;
+  if Value = 27 then
+  begin
+    EscapeState := 1;
+    EscapeLength := 1;
+    Exit;
+  end;
   if Value in [10, 13] then
   begin
     if (Value <> 10) or not PreviousCR then FinishLine;
@@ -309,6 +339,7 @@ var
   Style: Byte;
   IsTop, IsBottom: Boolean;
 begin
+  if EscapeState <> 0 then InvalidRow := True;
   Style := 0;
   IsTop := False;
   IsBottom := False;
@@ -347,6 +378,8 @@ begin
   HorizontalCount := 0;
   InteriorIsHorizontal := False;
   InvalidRow := False;
+  EscapeState := 0;
+  EscapeLength := 0;
 end;
 
 function TOemBoxState.HasFrame: Boolean;
@@ -653,7 +686,9 @@ end;
 
 function TObservedByteStats.HasOemBoxFrame: Boolean;
 begin
-  Result := OemBox.HasFrame and HasOemArtLayout;
+  // A complete visible frame proves layout even when trailing SGR resets
+  // interrupt raw graphic runs before their line endings.
+  Result := OemBox.HasFrame;
 end;
 
 function TObservedByteStats.LooksLikeOemArt: Boolean;
@@ -925,7 +960,8 @@ begin
               (mObservedBytes.HighByteCount > mObservedBytes.OemArtByteCount));
           // Long repeated graphic rows carry layout evidence, not language
           // bigrams. Allow this to beat SBCS repetitions, never a CJK/Unicode model.
-          if AllowOemArt and mObservedBytes.HasOemArtLayout and LooksLikeOemArt and
+          if AllowOemArt and (mObservedBytes.HasOemArtLayout or
+             mObservedBytes.HasOemBoxFrame) and LooksLikeOemArt and
              not (BestCharset in [SHIFT_JIS_CHARSET, GB18030_CHARSET, GBK_CHARSET,
                BIG5_CHARSET, EUC_JP_CHARSET, EUC_KR_CHARSET, X_EUC_TW_CHARSET,
                UTF8_CHARSET, UTF16_LE_CHARSET, UTF16_BE_CHARSET]) and
