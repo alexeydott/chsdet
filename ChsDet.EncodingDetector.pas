@@ -77,6 +77,13 @@ begin
   if CodePage <= 0 then
     Exit;
 
+  // These historical code-page aliases do not describe the actual byte order.
+  // Returning an ordinary UTF-32 decoder would silently decode different text.
+  if (BomKind in [BOM_UCS4_2143, BOM_UCS4_3412]) or
+     SameText(Name, 'X-ISO-10646-UCS-4-2143') or
+     SameText(Name, 'X-ISO-10646-UCS-4-3412') then
+    Exit;
+
   try
     AEncoding := TEncoding.GetEncoding(CodePage);
     Result := AEncoding <> nil;
@@ -211,7 +218,10 @@ end;
 
 procedure TChsEncodingDetector.Feed(const Bytes: TBytes; Offset, Count: Integer);
 begin
-  if (Offset < 0) or (Count < 0) or (Offset > Length(Bytes)) or (Offset + Count > Length(Bytes)) then
+  if (Offset < 0) or (Count < 0) or (Offset > Length(Bytes)) then
+    raise EArgumentOutOfRangeException.Create('Offset/Count');
+  // Subtract only after checking Offset, so no signed addition can overflow.
+  if Count > Length(Bytes) - Offset then
     raise EArgumentOutOfRangeException.Create('Offset/Count');
   if Count = 0 then
     Exit;

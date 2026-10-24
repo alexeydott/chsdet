@@ -38,6 +38,7 @@ type
       mContextAnalysis: array of TJapaneseContextAnalysis;
       mLastChar: array of TAnsiCharPair;
       mBestGuess: integer;
+      mStructuralWinner: integer;
       function GetConfidenceFor(index: integer): double; reintroduce;
 		public
 			constructor Create; reintroduce;
@@ -206,6 +207,11 @@ begin
           if codingState = eError then
             begin
               mSMState[j] := psNotMe;
+              if mDetectedCharset = mCodingSM[j].GetCharsetID then
+              begin
+                mState := psDetecting;
+                mDetectedCharset := UNKNOWN_CHARSET;
+              end;
               Dec(mActiveSM);
               if mActiveSM = 0 then
                 begin
@@ -218,6 +224,7 @@ begin
 
           if codingState = eItsMe then
             begin
+              mStructuralWinner := j;
               mSMState[j] := psFoundIt;
               mState := psFoundIt;
               mDetectedCharset := mCodingSM[j].GetCharsetID;
@@ -252,8 +259,8 @@ begin
                   mSMState[j] := psFoundIt;
     		          mState := psFoundIt;
                   mDetectedCharset := mCodingSM[j].GetCharsetID;
-                  Result := mState;
-                  Exit;
+                  // Statistical evidence is provisional: validate the rest of
+                  // this block as well as subsequent blocks before accepting it.
                 end;
             end;
         end;
@@ -312,12 +319,21 @@ var
   conf,
   bestConf: double;
 begin
+  // A confidence query must preserve a completed structural detection.
+  if (mStructuralWinner >= 0) and
+     (mSMState[mStructuralWinner] <> psNotMe) then
+    Exit(SURE_YES);
+  if mState = psNotMe then
+  begin
+    mDetectedCharset := UNKNOWN_CHARSET;
+    Exit(SURE_NO);
+  end;
+
   mBestGuess := -1;
   bestConf := SURE_NO;
   for i := 0 to Pred(mCharsetsCount) do
     begin
-      if (mSMState[i] = psFoundIt) or
-         (mSMState[i] = psNotMe) then
+      if mSMState[i] = psNotMe then
         continue;
       if mDistributionAnalysis[i] = nil then
         continue;
@@ -340,6 +356,8 @@ var
   i: integer;
 begin
   inherited Reset;
+  mStructuralWinner := -1;
+  mBestGuess := -1;
   for i := 0 to Pred(mCharsetsCount) do
     begin
       if mDistributionAnalysis[i] <> nil then

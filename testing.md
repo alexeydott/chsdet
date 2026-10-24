@@ -2,6 +2,21 @@
 
 This project now includes a DUnitX test runner in `ChsDetTests.dpr` and the main fixture in `tests/ChsDet.Tests.pas`.
 
+The October 2026 detection review adds 27 substantive DUnitX methods in
+`tests/ChsDet.RegressionTests.pas`, `tests/ChsDet.ProberTests.pas`, and
+`tests/ChsDet.StreamingTests.pas`. These cover exact outputs, malformed tails,
+model scores, state transitions, byte filtering, reset and guard-page memory
+boundaries. They are explicitly registered and linked by the runner.
+
+Run `tests/run-range-matrix.ps1` for the Delphi Win32/Win64 R/Q matrix. It also
+checks that the new fixtures were discovered. The runner fails when no tests
+pass, and the matrix rejects missing, ignored or failed cases.
+
+Supplementary Linux/FPC execution and its limitations are documented in
+[tests/portable/README.md](tests/portable/README.md). The actual before/after
+evidence and research plan are in
+[the review report](tests/review-2026-10-24/REPORT.ru.md).
+
 The repository also includes a corpus benchmark:
 
 - `ChsDetCorpusBench.dpr`
@@ -63,6 +78,33 @@ The benchmark writes a fresh Markdown accuracy matrix to `tests/corpus/MATRIX.md
 
 ## Test Design Notes
 
+### Delphi 12 PR #3 Blocker Validation
+
+The blocker fixes were validated with Delphi compiler 36.0 on Win32 and Win64,
+with all four combinations of range checking (`R+`/`R-`) and overflow checking
+(`Q+`/`Q-`). Each of the eight configurations passed all 82 tests, with no
+ignored tests or errors. Recognition snapshots matched across R/Q modes within
+each platform; cross-platform floating-point bit identity is not asserted.
+
+The MBCS regression feeds a high-confidence Shift_JIS prefix followed by a tail
+rejected by its state machine, using chunk sizes 1, 2, 7, 1200 and 1202. Both the
+prober and public wrapper must discard that candidate. Statistical shortcuts
+no longer skip the remainder of a block or inherit structural certainty.
+The existing GB18030 structural-signature/reset test remains in place.
+
+The UTF-16 fixture builder clears its managed result before allocation, so
+successive endian cases cannot retain bytes from the previously returned array.
+
+Reproduce the complete native matrix:
+
+```powershell
+./tests/run-range-matrix.ps1 `
+  -Compiler32 'D:\Embarcadero RAD Studio\23.0\bin\dcc32.exe' `
+  -Compiler64 'D:\Embarcadero RAD Studio\23.0\bin\dcc64.exe'
+```
+
+### General Notes
+
 - The suite uses repeated phrases instead of tiny samples to keep statistical detection stable
 - File-based tests write temporary files and clean them up after each run
 - Encoding-specific samples are generated with `TEncoding.GetEncoding(...)`, including `1251`, `1252`, `866`, and `932`
@@ -88,3 +130,7 @@ The benchmark writes a fresh Markdown accuracy matrix to `tests/corpus/MATRIX.md
 - Greek byte streams without C1 bytes and without non-C1 discriminator bytes remain ambiguous between `windows-1253` and `ISO-8859-7`
 - Latin-1-like Western text remains collapsed into `windows-1252`, because `ISO-8859-1` is not currently exposed as a separate detector result
 - Very short or highly ambiguous UTF-8 without BOM samples can still remain `Unknown`
+- A mixed word whose ASCII prefix is delivered before its first non-ASCII byte
+  can still lose that prefix in the SBCS filter. Full chunk invariance for all
+  possible mixed-script words is not claimed by the current tests.
+- The small generated corpus measures regressions, not population-wide accuracy.

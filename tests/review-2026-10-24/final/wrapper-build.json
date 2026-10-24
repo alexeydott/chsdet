@@ -1,0 +1,120 @@
+{
+  "command": [
+    "/workspace/scratch/8ec0f9f52ed3/fpc/usr/lib/x86_64-linux-gnu/fpc/3.2.2/ppcx64",
+    "-Mdelphi",
+    "-B",
+    "-gl",
+    "-O1",
+    "-Fu/workspace/scratch/8ec0f9f52ed3/fpc/usr/lib/x86_64-linux-gnu/fpc/3.2.2/units/x86_64-linux/rtl",
+    "-Fu/workspace/scratch/8ec0f9f52ed3/chsdet-fpc-final-review-final-wrapper/src",
+    "-Fi/workspace/scratch/8ec0f9f52ed3/chsdet-fpc-final-review-final-wrapper/src",
+    "-FU/workspace/scratch/8ec0f9f52ed3/chsdet-fpc-final-review-final-wrapper/units",
+    "-FE/workspace/scratch/8ec0f9f52ed3/chsdet-fpc-final-review-final-wrapper",
+    "-Cr",
+    "-Co",
+    "/workspace/scratch/8ec0f9f52ed3/chsdet-fpc-final-review-final-wrapper/src/WrapperProbe.dpr"
+  ],
+  "source_directory": "/workspace/scratch/8ec0f9f52ed3/chsdet",
+  "source_sha256": {
+    "Big5Freq.pas": "8e0f48117809e8a734c4717a7c7b1e3c977c473963b3fb860fea942b4284ac71",
+    "Big5LangModel.inc": "8747934e0b8d9c2c75d31fd3cc3ab1f96059a3e64b1dd650069fbad915ad0e02",
+    "Big5Statistics.inc": "1d63622d80cabcea512dea3fe2a7e1f613a4f15ee6eea8e08e63168686ace657",
+    "CharDistribution.pas": "25b730d15b3fe5edd598c4f04fe268dea6f461dd0b3329425b7e21128df94eb0",
+    "ChsDet.EncodingDetector.pas": "58160812e8c946b3de168637ad76143ca3db4dce8040416c1754b49f35dfa2d0",
+    "ChsDet.Fluent.pas": "8204aaadcb235b82e6b76eb8fe378175459157bc6ebbb046bcb77e70dbc24f64",
+    "ChsDet.Tests.pas": "aa5ff14799a054028ce41c5cf00c9825dafd1d711993bc4dff76b8f7051af61a",
+    "CustomDetector.pas": "d9534b3a502a12f0ebd5315a65190d418faeca5da0063313e9421285c90b12da",
+    "Dump.pas": "d9c98e30217832e8a9f7b4852ce10aae3f827d0cfcc31303869721dd3ed101be",
+    "EUCJPLangModel.inc": "4ddf04d73a22b2745a12d1ed4c2b8f51f86f260cd15ad13d827a6c7d3414626b",
+    "EUCJPStatistics.inc": "811ff2416c2a647d0badea5ab382f5468b3e0f35f1e9da60c19bd7ae7de76857",
+    "EUCKRFreq.pas": "10816dc7c0c2afa018df67463e0bb387216920dd60b5142ce678100f44be9f75",
+    "EUCKRLangModel.inc": "d3491d0794fe0062aa6289bf7f5253e022261a70fb471773288da6690c9972c1",
+    "EUCKRStatistics.inc": "95233edb4348f85b0ab2d25b1c0672038ed2cef00b788f0924991b1eb5179bbb",
+    "EUCSampler.pas": "2b30c3cc13a0ea96c6878a05c62c74be15410c99a4f7d1b87b719427af61fd9d",
+    "EUCTWFreq.pas": "dcb6e523f1f185e6c47e22f5c716fe2076c020022ed81a5f59f16f1a835d1927",
+    "EUCTWLangModel.inc": "9068117474ab97ce748807975174c82f4c0c33b7941e7d7871d7c9f4544553b8",
+    "EUCTWStatistics.inc": "033612409178f71190b17f14fde93d642154fd89330de3518bbbff1ba34375de",
+    "GB18030LangModel.inc": "cb3fd26abc6762695284929460ad5fc26f9b836081fd8fec2af1b0c590863059",
+    "GB2312Freq.pas": "591cc9529326f79dce4ab78600a08d79a6e7b2e201f87d82df3f74f52ac2b183",
+    "GB2312Statistics.inc": "826ebde145e97e2331377f8e8cb9d17666e1483b4e939bb099369041f50a7994",
+    "HZLangModel.inc": "72d92cd056e68bef6056887f48c6cb73295d5ff750741f94b4a3a4450368c20d",
+    "ISO2022CNLangModel.inc": "2febfd1d76f9a26b63f885b7537c6d5d6886c1e8634abb670f5bc1347351d48e",
+    "ISO2022JPLangModel.inc": "63991fdb54d77cbf170b25d9bca2a369c4c20dbebb7ec3c500e8bdfd6797ed78",
+    "ISO2022KRLangModel.inc": "d1f56a0b666e783e54e0f601131625b6b2fb3fb5146d5c8e345d785e42d33069",
+    "JISFreq.pas": "dc734e48db830c64adf5defd700dd3409c22ec5422f43ce376c699f6572ed26a",
+    "JpCntx.pas": "371ced1849247443f286894462e9545cb9d039b7b11ca61ea328da0dae1b1ce2",
+    "LangBulgarianModel.pas": "bf7da04bca3b3002a4e023af732717d8e572d6b8c4ce0813d5c6aa19dbbfd9f2",
+    "LangCyrillicModel.pas": "6ce50ada475462cc2f4363868a0af6923bce1ddf5fa58321728800241a9d5bf8",
+    "LangGreekModel.pas": "56e01228ce0e4e2b45cbe5b5a62307ebb499dbe464cf8ce946d1a18c3c159a24",
+    "LangHebrewModel.pas": "4eccaac47f47752a06553a82e6f7e7fa422fa41bd5d86c6ba6f32d03ca23a3b4",
+    "MBUnicodeMultiProber.pas": "60282ec4bb553fb21e973a760a0c960e577fd45bca6705c364a7846dcdbd8684",
+    "MultiModelProber.pas": "7eaf26421c25a9e96d3b5342e186abb9bc16fb26d12b0e739e2ca30ba7d7a1b7",
+    "SJISLangModel.inc": "c27e430ce20fbde548484f1a17a7a6baa201c44f91732b4f633cce033987c5f2",
+    "UCS2BELangModel.inc": "40a6d58e721c1c81cbad14e0dbe51491e9b2c7a584b100ea93e9d984952c4e58",
+    "UCS2LELangModel.inc": "6771cac72b005662bb142e6528f67eb43fc7a1219ae6eaa8d8780f5546eef592",
+    "UTF8LangModel.inc": "b82c4c96c2221c58d4f4b27f367b45f8fbe7f5a4bdcdd365b8ceb0deab3ee52c",
+    "chsdIntf.pas": "5a12e37237073da283bb43aa20d6e2a8e747f2e57df069f61e4b772d3d21f275",
+    "chsd_dll_intf.pas": "7ac8a6931f6ef40928526bdcd50a820f0957fe7e92ae47bb40b68021862096df",
+    "dbg.inc": "b58a0a4d961ec45de751037026294738bedde06e13cfee7aca339605cb0b87b6",
+    "nsCodingStateMachine.pas": "1b844735152812ba483e1c836e24184270b4875c7ad1c8c791a6cac07b1195df",
+    "nsCore.pas": "de07684ef68510f453c0daf2d4d86ccc5e1dac23f505012e8762dc405fa0a47b",
+    "nsEscCharsetProber.pas": "c6888cf5e0ec086c364fd37d4273646a6ca89d037b1a71add435d9190dd2ff7e",
+    "nsGroupProber.pas": "c276511bc4211b31d5ea8039c6dd957ace4298ca3c371e0d4cc19eceec388ad6",
+    "nsHebrewProber.pas": "7c0d8f2c09895831f8b0be072b58b3c991dd281f498b85437137898837b0c666",
+    "nsLatin1Prober.pas": "d389b9e36f6312752d5d39c82452764ece3cbcc40cb070d12540e01c260e5d77",
+    "nsMBCSMultiProber.pas": "714d44f491c970170219758cc8e90b811dbf4ace0ff62be6e79d7cfb27f45793",
+    "nsPkg.pas": "3e1999be2f1331a6a0378df7c827bdc12901a27be9a146dfb2aed2cb9a1d1abe",
+    "nsSBCSGroupProber.pas": "0dce9d66f64d7a696aa8ceafb4971d669fcebfb93fcc1e033a904601e8749a78",
+    "nsSBCharSetProber.pas": "44256850a3dc5ed47f236580cba13e5ff87435e3e2033e559b828d84ec2b6f04",
+    "nsUTF8Prober.pas": "cb6d1cad0c5047e86eaf86cb153b1b7c7c3683cd47fd948d1e89ceb8a5b66c48",
+    "nsUniversalDetector.pas": "76a6100e42ad747de2219d51ce61614de6be3d95a10c636b1dffd342d3159eb8"
+  },
+  "harness_sha256": "d0e432b2d3a858b1ff089a857e53b7f2178c7ec5e9ef02bc68eae4932d9effbe",
+  "transformations": [
+    {
+      "file": "ChsDet.EncodingDetector.pas",
+      "namespace_replacements": 2
+    },
+    {
+      "file": "ChsDet.Fluent.pas",
+      "namespace_replacements": 2
+    },
+    {
+      "file": "ChsDet.Tests.pas",
+      "namespace_replacements": 2
+    },
+    {
+      "file": "MBUnicodeMultiProber.pas",
+      "namespace_replacements": 1
+    },
+    {
+      "file": "MultiModelProber.pas",
+      "namespace_replacements": 2
+    },
+    {
+      "file": "nsGroupProber.pas",
+      "namespace_replacements": 2
+    },
+    {
+      "file": "nsLatin1Prober.pas",
+      "namespace_replacements": 1
+    },
+    {
+      "file": "nsMBCSMultiProber.pas",
+      "namespace_replacements": 2
+    },
+    {
+      "file": "nsSBCSGroupProber.pas",
+      "namespace_replacements": 1
+    },
+    {
+      "file": "nsSBCharSetProber.pas",
+      "namespace_replacements": 2
+    },
+    {
+      "file": "nsUniversalDetector.pas",
+      "namespace_replacements": 1
+    }
+  ],
+  "returncode": 0
+}

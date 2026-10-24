@@ -71,7 +71,6 @@ From a RAD Studio command environment, run PowerShell:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-range-matrix.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File tests/compare-pr1-baseline.ps1
 ```
 
 The first script rebuilds with `-B` into isolated DCU/output directories for
@@ -80,7 +79,10 @@ checks the NUnit XML for discovered table tests and non-passing cases, and
 compares exact snapshots across directive modes within each platform. It does
 not assume identical floating-point bits between Win32 and Win64.
 
-The second script uses an isolated temporary git worktree at main commit
+The historical `compare-pr1-baseline.ps1` helper was written for PR #1 at
+revision `100f39d`. It is **not a gate for the current detection changes**:
+its snapshot-equality requirement and copied harness refer to that historical
+review. Run it only in the historical checkout. It uses an isolated temporary git worktree at main commit
 `4660893fb7966f78982ef23fb2fb92215499cbec`. It copies the **same test harness and
 corpus** there, leaves production code from main intact, compares R-/Q-
 snapshots, and requires runtime range failures in the three deterministic raw
@@ -110,3 +112,22 @@ python tests/audit-tables.py
 This parses only the repository's literal table syntax, traverses the reachable
 state graph for every byte and checks frequency initializer counts. It does not
 compile or execute Delphi and cannot establish a runtime PASS.
+
+## October 2026 recognition regressions
+
+The runner also links three new fixtures with explicit registration:
+
+- `ChsDet.RegressionTests.pas`: 12 public API / Unicode / mapping scenarios.
+- `ChsDet.ProberTests.pas`: 9 low-level model, state, confidence and memory-boundary scenarios.
+- `ChsDet.StreamingTests.pas`: 6 word/tag boundary and chunked corpus scenarios.
+
+The range matrix verifies all three fixture counts (12/9/6), rejects empty
+execution and retains the original raw-table checks. The Japanese-context
+memory-boundary test uses Windows `VirtualAlloc` / `VirtualProtect` guard pages.
+It checks a meaningful postcondition after the protected single-byte read;
+an unexpected access violation is not swallowed.
+
+See [the review](review-2026-10-24/REPORT.ru.md),
+[actual supplementary execution evidence](review-2026-10-24/SUMMARY.md), and
+[portable runner instructions](portable/README.md). No Delphi execution result
+is implied by the Free Pascal reports.

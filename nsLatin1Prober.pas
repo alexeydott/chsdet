@@ -31,6 +31,8 @@ type
 		private
       mLastCharClass: AnsiChar;
       mFreqCounter: array of PRUint32;
+      mInTag: Boolean;
+      mInWord: Boolean;
 		public
     	constructor Create; override;
       destructor Destroy; override;
@@ -180,43 +182,53 @@ end;
 
 function TnsLatin1Prober.HandleData(aBuf: PAnsiChar; aLen: integer): eProbingState;
 var
-  newBuf1: PAnsiChar;
-  newLen1: integer;
-  OwnBuffer: Boolean;
+  Value: Byte;
   charClass: AnsiChar;
-  freq: byte;
-  i: integer;
+  freq: Byte;
+  i: Integer;
 begin
   Result := inherited HandleData(aBuf, aLen);
   if Result = psNotMe then
-    exit;
+    Exit;
 
-  newBuf1 := nil;
-  newLen1 := 0;
-  newBuf1 := AllocMem(aLen);
-  OwnBuffer := True;
-  try
-    if not FilterWithEnglishLetters(aBuf,aLen,newBuf1,newLen1) then
-      begin
-        newBuf1 := aBuf;
-        newLen1 := aLen;
-        OwnBuffer := False;
-      end;
-    for i := 0 to Pred(newLen1) do
-      begin
-        charClass := AnsiChar(Latin1_CharToClass[Byte(newBuf1[i])]);
-        freq := Latin1ClassModel[byte(mLastCharClass) * CLASS_NUM + byte(charClass)];
-        if freq = 0 then
-          begin
-            mState:= psNotMe;
-            break;
-          end;
-        inc(mFreqCounter[freq]);
-        mLastCharClass := charClass;
-      end;
-	finally
-    if OwnBuffer and (newBuf1 <> nil) then
-	    FreeMem(newBuf1, aLen);
+  for i := 0 to Pred(aLen) do
+  begin
+    Value := Byte(aBuf[i]);
+    // Filtering is part of the stream state. In particular, a tag or word
+    // delimiter can occupy a different input chunk from the preceding text.
+    if mInTag then
+    begin
+      if Value = Ord('>') then
+        mInTag := False;
+      Continue;
+    end;
+    if Value = Ord('<') then
+    begin
+      mInTag := True;
+      if not mInWord then
+        Continue;
+      Value := Ord(' ');
+      mInWord := False;
+    end
+    else if (Value >= $80) or (AnsiChar(Value) in ['A'..'Z', 'a'..'z']) then
+      mInWord := True
+    else
+    begin
+      if not mInWord then
+        Continue;
+      Value := Ord(' ');
+      mInWord := False;
+    end;
+
+    charClass := AnsiChar(Latin1_CharToClass[Value]);
+    freq := Latin1ClassModel[Byte(mLastCharClass) * CLASS_NUM + Byte(charClass)];
+    if freq = 0 then
+    begin
+      mState := psNotMe;
+      Break;
+    end;
+    Inc(mFreqCounter[freq]);
+    mLastCharClass := charClass;
   end;
   Result := mState;
 end;
@@ -227,6 +239,8 @@ var
 begin
   mState := psDetecting;
   mLastCharClass := AnsiChar(OTH);
+  mInTag := False;
+  mInWord := False;
   for i := 0 to Pred(FREQ_CAT_NUM) do
   	mFreqCounter[i] := 0;
 end;

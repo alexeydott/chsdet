@@ -1,0 +1,2018 @@
+[
+  {
+    "name": "utf16le_ascii_without_bom",
+    "chunk": 0,
+    "expected_codepage": 1200,
+    "expected_name": "UTF-16LE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_ascii_without_bom",
+    "chunk": 1,
+    "expected_codepage": 1200,
+    "expected_name": "UTF-16LE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_ascii_without_bom",
+    "chunk": 2,
+    "expected_codepage": 1200,
+    "expected_name": "UTF-16LE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_ascii_without_bom",
+    "chunk": 3,
+    "expected_codepage": 1200,
+    "expected_name": "UTF-16LE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_ascii_without_bom",
+    "chunk": 7,
+    "expected_codepage": 1200,
+    "expected_name": "UTF-16LE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_ascii_without_bom",
+    "chunk": 64,
+    "expected_codepage": 1200,
+    "expected_name": "UTF-16LE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_ascii_without_bom",
+    "chunk": 8192,
+    "expected_codepage": 1200,
+    "expected_name": "UTF-16LE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_ascii_without_bom",
+    "chunk": 0,
+    "expected_codepage": 1201,
+    "expected_name": "UTF-16BE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_ascii_without_bom",
+    "chunk": 1,
+    "expected_codepage": 1201,
+    "expected_name": "UTF-16BE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_ascii_without_bom",
+    "chunk": 2,
+    "expected_codepage": 1201,
+    "expected_name": "UTF-16BE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_ascii_without_bom",
+    "chunk": 3,
+    "expected_codepage": 1201,
+    "expected_name": "UTF-16BE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_ascii_without_bom",
+    "chunk": 7,
+    "expected_codepage": 1201,
+    "expected_name": "UTF-16BE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_ascii_without_bom",
+    "chunk": 64,
+    "expected_codepage": 1201,
+    "expected_name": "UTF-16BE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_ascii_without_bom",
+    "chunk": 8192,
+    "expected_codepage": 1201,
+    "expected_name": "UTF-16BE",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_unpaired_high_surrogate",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_unpaired_high_surrogate",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_unpaired_high_surrogate",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_unpaired_high_surrogate",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_unpaired_high_surrogate",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_unpaired_high_surrogate",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_unpaired_high_surrogate",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1200",
+      "UTF-16LE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_unpaired_high_surrogate",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_unpaired_high_surrogate",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_unpaired_high_surrogate",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_unpaired_high_surrogate",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_unpaired_high_surrogate",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_unpaired_high_surrogate",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_unpaired_high_surrogate",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "1201",
+      "UTF-16BE",
+      "Unicode",
+      "0.800000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_odd_length",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_odd_length",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_odd_length",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_odd_length",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_odd_length",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_odd_length",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16le_odd_length",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_odd_length",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_odd_length",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_odd_length",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_odd_length",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_odd_length",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_odd_length",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf16be_odd_length",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "nbsp_is_not_ascii",
+    "chunk": 0,
+    "expected_codepage": 1252,
+    "expected_name": "windows-1252",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "nbsp_is_not_ascii",
+    "chunk": 1,
+    "expected_codepage": 1252,
+    "expected_name": "windows-1252",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "nbsp_is_not_ascii",
+    "chunk": 2,
+    "expected_codepage": 1252,
+    "expected_name": "windows-1252",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "nbsp_is_not_ascii",
+    "chunk": 3,
+    "expected_codepage": 1252,
+    "expected_name": "windows-1252",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "nbsp_is_not_ascii",
+    "chunk": 7,
+    "expected_codepage": 1252,
+    "expected_name": "windows-1252",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "nbsp_is_not_ascii",
+    "chunk": 64,
+    "expected_codepage": 1252,
+    "expected_name": "windows-1252",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "nbsp_is_not_ascii",
+    "chunk": 8192,
+    "expected_codepage": 1252,
+    "expected_name": "windows-1252",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "valid_utf8_four_byte_scalar",
+    "chunk": 0,
+    "expected_codepage": 65001,
+    "expected_name": "UTF-8",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "valid_utf8_four_byte_scalar",
+    "chunk": 1,
+    "expected_codepage": 65001,
+    "expected_name": "UTF-8",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "valid_utf8_four_byte_scalar",
+    "chunk": 2,
+    "expected_codepage": 65001,
+    "expected_name": "UTF-8",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "valid_utf8_four_byte_scalar",
+    "chunk": 3,
+    "expected_codepage": 65001,
+    "expected_name": "UTF-8",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "valid_utf8_four_byte_scalar",
+    "chunk": 7,
+    "expected_codepage": 65001,
+    "expected_name": "UTF-8",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "valid_utf8_four_byte_scalar",
+    "chunk": 64,
+    "expected_codepage": 65001,
+    "expected_name": "UTF-8",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "valid_utf8_four_byte_scalar",
+    "chunk": 8192,
+    "expected_codepage": 65001,
+    "expected_name": "UTF-8",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "65001",
+      "UTF-8",
+      "Unicode",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_late_invalid_byte",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_late_invalid_byte",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_late_invalid_byte",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_late_invalid_byte",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_late_invalid_byte",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_late_invalid_byte",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_late_invalid_byte",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_truncated_scalar",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_truncated_scalar",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_truncated_scalar",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_truncated_scalar",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_truncated_scalar",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_truncated_scalar",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "utf8_truncated_scalar",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16le_is_not_returned",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": 1200,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16le_is_not_returned",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": 1200,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16le_is_not_returned",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": 1200,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16le_is_not_returned",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": 1200,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16le_is_not_returned",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": 1200,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16le_is_not_returned",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": 1200,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16le_is_not_returned",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1200,
+    "disabled_codepage": 1200,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16be_is_not_returned",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": 1201,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16be_is_not_returned",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": 1201,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16be_is_not_returned",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": 1201,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16be_is_not_returned",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": 1201,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16be_is_not_returned",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": 1201,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16be_is_not_returned",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": 1201,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf16be_is_not_returned",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 1201,
+    "disabled_codepage": 1201,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf8_is_not_returned",
+    "chunk": 0,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": 65001,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf8_is_not_returned",
+    "chunk": 1,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": 65001,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf8_is_not_returned",
+    "chunk": 2,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": 65001,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf8_is_not_returned",
+    "chunk": 3,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": 65001,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf8_is_not_returned",
+    "chunk": 7,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": 65001,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf8_is_not_returned",
+    "chunk": 64,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": 65001,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_utf8_is_not_returned",
+    "chunk": 8192,
+    "expected_codepage": null,
+    "expected_name": null,
+    "forbidden_codepage": 65001,
+    "disabled_codepage": 65001,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_ascii_is_unknown",
+    "chunk": 0,
+    "expected_codepage": -1,
+    "expected_name": "Unknown",
+    "forbidden_codepage": null,
+    "disabled_codepage": 0,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_ascii_is_unknown",
+    "chunk": 1,
+    "expected_codepage": -1,
+    "expected_name": "Unknown",
+    "forbidden_codepage": null,
+    "disabled_codepage": 0,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_ascii_is_unknown",
+    "chunk": 2,
+    "expected_codepage": -1,
+    "expected_name": "Unknown",
+    "forbidden_codepage": null,
+    "disabled_codepage": 0,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_ascii_is_unknown",
+    "chunk": 3,
+    "expected_codepage": -1,
+    "expected_name": "Unknown",
+    "forbidden_codepage": null,
+    "disabled_codepage": 0,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_ascii_is_unknown",
+    "chunk": 7,
+    "expected_codepage": -1,
+    "expected_name": "Unknown",
+    "forbidden_codepage": null,
+    "disabled_codepage": 0,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_ascii_is_unknown",
+    "chunk": 64,
+    "expected_codepage": -1,
+    "expected_name": "Unknown",
+    "forbidden_codepage": null,
+    "disabled_codepage": 0,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_ascii_is_unknown",
+    "chunk": 8192,
+    "expected_codepage": -1,
+    "expected_name": "Unknown",
+    "forbidden_codepage": null,
+    "disabled_codepage": 0,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "0",
+      "ASCII",
+      "ASCII",
+      "0.990000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "late_gb18030_discriminator",
+    "chunk": 0,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "late_gb18030_discriminator",
+    "chunk": 1,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "936",
+      "GBK",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "late_gb18030_discriminator",
+    "chunk": 2,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "936",
+      "GBK",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "late_gb18030_discriminator",
+    "chunk": 3,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "936",
+      "GBK",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "late_gb18030_discriminator",
+    "chunk": 7,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "936",
+      "GBK",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "late_gb18030_discriminator",
+    "chunk": 64,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "late_gb18030_discriminator",
+    "chunk": 8192,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": null,
+    "passed": true,
+    "returncode": 0,
+    "actual": [
+      "54936",
+      "GB18030",
+      "ch",
+      "0.010000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_gbk_retains_gb18030_candidate",
+    "chunk": 0,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": 936,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_gbk_retains_gb18030_candidate",
+    "chunk": 1,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": 936,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_gbk_retains_gb18030_candidate",
+    "chunk": 2,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": 936,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_gbk_retains_gb18030_candidate",
+    "chunk": 3,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": 936,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_gbk_retains_gb18030_candidate",
+    "chunk": 7,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": 936,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_gbk_retains_gb18030_candidate",
+    "chunk": 64,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": 936,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "disabled_gbk_retains_gb18030_candidate",
+    "chunk": 8192,
+    "expected_codepage": 54936,
+    "expected_name": "GB18030",
+    "forbidden_codepage": null,
+    "disabled_codepage": 936,
+    "passed": false,
+    "returncode": 0,
+    "actual": [
+      "-1",
+      "Unknown",
+      "Unknown",
+      "0.000000000000",
+      "0"
+    ],
+    "stderr": ""
+  }
+]

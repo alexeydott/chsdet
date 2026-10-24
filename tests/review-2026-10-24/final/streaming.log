@@ -1,0 +1,8 @@
+PASS SbcsWordBoundariesSurviveEverySplit assertions=2062
+PASS SbcsResetClearsPendingWordState assertions=4
+PASS Latin1SeparatorsSurviveEverySplit assertions=42
+PASS Latin1TagsSurviveEverySplit assertions=111
+PASS Latin1ResetClearsTagStateAndRejectsUndefinedBytes assertions=4
+PASS CorpusSingleByteResultsSurviveSmallChunks assertions=48
+Executed=6 passed=6 failed=0 assertions=2271
+exit_code=0

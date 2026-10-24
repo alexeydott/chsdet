@@ -1,0 +1,8 @@
+FAIL SbcsWordBoundariesSurviveEverySplit: Exception: windows-1253-no-c1.txt: split statistics 3
+PASS SbcsResetClearsPendingWordState assertions=4
+FAIL Latin1SeparatorsSurviveEverySplit: Exception: Latin1 confidence at split 1
+FAIL Latin1TagsSurviveEverySplit: Exception: Latin1 state at split 8
+PASS Latin1ResetClearsTagStateAndRejectsUndefinedBytes assertions=4
+FAIL CorpusSingleByteResultsSurviveSmallChunks: Exception: windows-1251.txt: code page chunk 1
+Executed=6 passed=2 failed=4 assertions=53
+exit_code=1

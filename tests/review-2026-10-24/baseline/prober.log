@@ -1,0 +1,11 @@
+FAIL GB18030 confidence preserves charset and reset: Exception: Reading confidence lost the structural GB18030 evidence
+FAIL MultiModel HandleData returns final state: Exception: HandleData returned a stale state
+FAIL Unicode prober retains every byte at every split: Exception: UTF-16 evidence lost: endian=0 split=0
+FAIL Single-byte filter retains byte 80 and word boundaries: Exception: Word containing byte 80 was discarded
+FAIL UTF-16LE model has two-byte character lengths: Exception: UTF-16LE length is not two for first byte 0A
+FAIL Single-byte scores consume the complete corpus at every chunk size: Exception: Chunk size 1 changed the charset
+FAIL Single-byte confidence saturation is monotonic: Exception: More positive evidence lowered confidence
+FAIL Japanese context consumes incomplete tails exactly once: Exception: TSJISContextAnalysis: an already consumed tail still skips later bytes
+FAIL Japanese context reads only the supplied bytes: EAccessViolation: Access violation
+Prober cases: 0/9
+exit_code=1

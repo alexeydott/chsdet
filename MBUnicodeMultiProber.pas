@@ -70,50 +70,10 @@ begin
 end;
 
 function TMBUnicodeMultiProber.HandleData(aBuf: PAnsiChar; aLen: integer): eProbingState;
-var
-  i: integer; (*do filtering to reduce load to probers*)
-  filteredLen: Integer;
-  highbyteBuf: PAnsiChar;
-  hptr: PAnsiChar;
-  keepNext: Boolean;
 begin
-	keepNext := TRUE;
-  (*assume previous is not ascii, it will do no harm except add some noise*)
-  highbyteBuf := AllocMem(aLen);
-  try
-    hptr:= highbyteBuf;
-    if hptr = nil  then
-      begin
-        Result := mState;
-        exit;
-      end;
-    for i:=0 to Pred(aLen) do
-      begin
-        if (Byte(aBuf[i]) >= $80) then
-          begin
-            hptr^ := aBuf[i];
-            inc(hptr);
-            keepNext:= TRUE;
-          end
-        else
-          begin
-            (*if previous is highbyte, keep this even it is a ASCII*)
-            if keepNext = TRUE then
-              begin
-                hptr^ := aBuf[i];
-                inc(hptr);
-                keepNext:= FALSE;
-              end;
-          end;
-      end;
-    filteredLen := hptr - highbyteBuf;
-
-    inherited HandleData(highbyteBuf, filteredLen);
-  finally
-	  FreeMem(highbyteBuf, aLen);
-  end;
-
-	Result := mState;
+  // UTF-16 is a sequence of byte pairs. Removing ASCII-valued bytes (including
+  // NULs) corrupts both the code units and their alignment across blocks.
+  Result := inherited HandleData(aBuf, aLen);
 end;
 
 //function TMBUnicodeMultiProber.GetConfidence: double;

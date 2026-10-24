@@ -63,11 +63,16 @@ type nsInputState = (
     Utf8ExpectedTrailByteCount: Integer;
     EvenZeroByteCount: Integer;
     OddZeroByteCount: Integer;
+    Utf16FirstByte: Byte;
+    Utf16LEHighSurrogate, Utf16BEHighSurrogate: Boolean;
+    Utf16LEInvalid, Utf16BEInvalid: Boolean;
 
     procedure Reset;
     procedure Feed(Value: Byte);
     procedure FeedDbcsByte(Value: Byte);
     procedure FeedUtf8Byte(Value: Byte);
+    procedure FeedUtf16Byte(Value: Byte);
+    function IsValidUtf16(Charset: eInternalCharsetID): Boolean;
     function LooksLikeOemArt: Boolean;
     function DetectOemTextSignature: eInternalCharsetID;
     function LooksLikeDbcsText: Boolean;
@@ -239,6 +244,11 @@ begin
   Utf8ExpectedTrailByteCount := 0;
   EvenZeroByteCount := 0;
   OddZeroByteCount := 0;
+  Utf16FirstByte := 0;
+  Utf16LEHighSurrogate := False;
+  Utf16BEHighSurrogate := False;
+  Utf16LEInvalid := False;
+  Utf16BEInvalid := False;
 end;
 
 procedure TObservedByteStats.Feed(Value: Byte);
@@ -280,6 +290,7 @@ begin
 
   FeedDbcsByte(Value);
   FeedUtf8Byte(Value);
+  FeedUtf16Byte(Value);
 end;
 
 procedure TObservedByteStats.FeedDbcsByte(Value: Byte);
@@ -377,6 +388,46 @@ begin
   end
   else if Value >= $80 then
     Inc(Utf8InvalidByteCount);
+end;
+
+procedure ValidateUtf16Unit(Value: Word; var HighSurrogate, Invalid: Boolean);
+begin
+  if Invalid then
+    Exit;
+  if HighSurrogate then
+  begin
+    Invalid := (Value < $DC00) or (Value > $DFFF);
+    HighSurrogate := False;
+  end
+  else if (Value >= $D800) and (Value <= $DBFF) then
+    HighSurrogate := True
+  else if (Value >= $DC00) and (Value <= $DFFF) then
+    Invalid := True;
+end;
+
+procedure TObservedByteStats.FeedUtf16Byte(Value: Byte);
+begin
+  // TotalByteCount already includes this byte. Preserve alignment across Feed.
+  if (TotalByteCount mod 2) <> 0 then
+    Utf16FirstByte := Value
+  else
+  begin
+    ValidateUtf16Unit(Word(Utf16FirstByte) or (Word(Value) shl 8),
+      Utf16LEHighSurrogate, Utf16LEInvalid);
+    ValidateUtf16Unit((Word(Utf16FirstByte) shl 8) or Word(Value),
+      Utf16BEHighSurrogate, Utf16BEInvalid);
+  end;
+end;
+
+function TObservedByteStats.IsValidUtf16(Charset: eInternalCharsetID): Boolean;
+begin
+  Result := (TotalByteCount > 0) and ((TotalByteCount mod 2) = 0);
+  if Charset = UTF16_LE_CHARSET then
+    Result := Result and not Utf16LEInvalid and not Utf16LEHighSurrogate
+  else if Charset = UTF16_BE_CHARSET then
+    Result := Result and not Utf16BEInvalid and not Utf16BEHighSurrogate
+  else
+    Result := False;
 end;
 
 function TObservedByteStats.LooksLikeOemArt: Boolean;
@@ -483,6 +534,10 @@ begin
   Result :=
     (ZeroRatio >= UTF16_MIN_ZERO_RATIO) and
     (ZeroParityRatio >= UTF16_MIN_ZERO_PARITY_RATIO);
+  if OddZeroByteCount > EvenZeroByteCount then
+    Result := Result and IsValidUtf16(UTF16_LE_CHARSET)
+  else
+    Result := Result and IsValidUtf16(UTF16_BE_CHARSET);
 end;
 
 function TObservedByteStats.LooksLikeStructuredMultiByteText: Boolean;
@@ -545,99 +600,97 @@ end;
 
 procedure TnsUniversalDetector.DataEnd;
 var
-	proberConfidence: float;
-  maxProberConfidence: float;
-  LegacyCharset: eInternalCharsetID;
-  DetectedCharset: eInternalCharsetID;
+  ProberConfidence, BestConfidence: float;
+  LegacyCharset, Candidate, BestCharset: eInternalCharsetID;
   StructuredMultiByteText: Boolean;
-  maxProber: PRInt32;
-  i: integer;
+  I: Integer;
 begin
-  if mStart and (Length(mPrefix) > 0) then
-  begin
-    mStart := False;
-    CheckBOM(PAnsiChar(mPrefix), Length(mPrefix));
-    if not ReportWithConfidence(CharsetFromBOM(mDetectedBOM), SURE_YES) then
-      HandleData(PAnsiChar(mPrefix), Length(mPrefix));
-    mPrefix := '';
-  end;
-  if not mGotData then
-    (* we haven't got any data yet, return immediately *)
-    (* caller program sometimes call DataEnd before anything has been sent to detector*)
-    exit;
-
-  if mDetectedCharset <> UNKNOWN_CHARSET then
+  if mDone then
+    Exit;
+  try
+    if mStart and (Length(mPrefix) > 0) then
     begin
-      mDone := TRUE;
-      exit;
+      mStart := False;
+      CheckBOM(PAnsiChar(mPrefix), Length(mPrefix));
+      if not ReportWithConfidence(CharsetFromBOM(mDetectedBOM), SURE_YES) then
+        HandleData(PAnsiChar(mPrefix), Length(mPrefix));
+      mPrefix := '';
     end;
-  case mInputState of
-    eHighbyte:
-      begin
-        if (mCharSetProbers[3].GetConfidence > MINIMUM_THRESHOLD) and
-           ReportWithConfidence(UTF8_CHARSET, mCharSetProbers[3].GetConfidence) then
-          Exit;
-        StructuredMultiByteText := mObservedBytes.LooksLikeStructuredMultiByteText;
+    if not mGotData or (mDetectedCharset <> UNKNOWN_CHARSET) then
+      Exit;
 
-        if mObservedBytes.LooksLikeUtf16Text then
+    // ASCII characters in UTF-16 contain no high bytes. Their zero-byte
+    // evidence must be evaluated even when the input state is ePureAscii.
+    if mObservedBytes.LooksLikeUtf16Text and
+       ReportWithConfidence(mObservedBytes.DetectUtf16TextSignature,
+         OEM_TEXT_CONFIDENCE) then
+      Exit;
+
+    case mInputState of
+      eHighbyte:
         begin
-          if ReportWithConfidence(mObservedBytes.DetectUtf16TextSignature, OEM_TEXT_CONFIDENCE) then
+          ProberConfidence := mCharSetProbers[3].GetConfidence;
+          if (ProberConfidence > MINIMUM_THRESHOLD) and
+             ReportWithConfidence(UTF8_CHARSET, ProberConfidence) then
             Exit;
-        end;
 
-        if (not StructuredMultiByteText) and LooksLikeOemArt then
-        begin
-          if ReportWithConfidence(IBM437_CHARSET, OEM_ART_CONFIDENCE) then
-            Exit;
-        end;
-
-        if not StructuredMultiByteText then
-        begin
-          LegacyCharset := DetectLegacyByteSignature;
-          if LegacyCharset <> UNKNOWN_CHARSET then
+          BestConfidence := 0.0;
+          BestCharset := UNKNOWN_CHARSET;
+          for I := 0 to Pred(NUM_OF_CHARSET_PROBERS) do
           begin
-            if ReportWithConfidence(LegacyCharset, OEM_TEXT_CONFIDENCE) then
-              Exit;
-          end;
-        end;
-
-        maxProberConfidence := 0.0;
-        maxProber := 0;
-        for i := 0 to Pred(NUM_OF_CHARSET_PROBERS) do
-          begin
-            proberConfidence := mCharSetProbers[i].GetConfidence;
-            if proberConfidence > maxProberConfidence then
+            ProberConfidence := mCharSetProbers[I].GetConfidence;
+            Candidate := mCharSetProbers[I].GetDetectedCharset;
+            if (Candidate = UNKNOWN_CHARSET) or
+               (mCharSetProbers[I].GetState = psNotMe) then
+              Continue;
+            if (Candidate = KOI8_R_CHARSET) and mObservedBytes.HasKoi8USignal then
+              Candidate := KOI8_U_CHARSET
+            else if (Candidate = WINDOWS_1252_CHARSET) and mObservedBytes.HasWin1250Signal then
+              Candidate := WINDOWS_1250_CHARSET;
+            Candidate := NormalizeCharsetByObservedBytes(Candidate);
+            if not IsCharsetEnabled(Candidate) then
+              Continue;
+            if (Candidate in [UTF16_LE_CHARSET, UTF16_BE_CHARSET]) and
+               not mObservedBytes.IsValidUtf16(Candidate) then
+              Continue;
+            if (Candidate = UTF8_CHARSET) and
+               (mCharSetProbers[3].GetConfidence <= SURE_NO) then
+              Continue;
+            if ProberConfidence > BestConfidence then
             begin
-              maxProberConfidence := proberConfidence;
-              maxProber := i;
+              BestConfidence := ProberConfidence;
+              BestCharset := Candidate;
             end;
           end;
-        (*do not report anything because we are not confident of it, that's in fact a negative answer*)
-        if maxProberConfidence > MINIMUM_THRESHOLD then
+
+          StructuredMultiByteText := mObservedBytes.LooksLikeStructuredMultiByteText;
+          // Isolated OEM signature bytes must not override a stronger model
+          // supported by the complete stream's character sequences.
+          if not StructuredMultiByteText then
           begin
-            DetectedCharset := mCharSetProbers[maxProber].GetDetectedCharset;
-            if (DetectedCharset = KOI8_R_CHARSET) and mObservedBytes.HasKoi8USignal then
-              DetectedCharset := KOI8_U_CHARSET
-            else if (DetectedCharset = WINDOWS_1252_CHARSET) and mObservedBytes.HasWin1250Signal then
-              DetectedCharset := WINDOWS_1250_CHARSET;
-	          ReportWithConfidence(DetectedCharset, maxProberConfidence);
+            if LooksLikeOemArt and (BestConfidence < OEM_ART_CONFIDENCE) and
+               ReportWithConfidence(IBM437_CHARSET, OEM_ART_CONFIDENCE) then
+              Exit;
+            LegacyCharset := DetectLegacyByteSignature;
+            if (LegacyCharset <> UNKNOWN_CHARSET) and
+               (BestConfidence < OEM_TEXT_CONFIDENCE) and
+               ReportWithConfidence(LegacyCharset, OEM_TEXT_CONFIDENCE) then
+              Exit;
           end;
-      end;
-    eEscAscii:
-      begin
-        DetectedCharset := mEscCharSetProber.GetDetectedCharset;
-        proberConfidence := mEscCharSetProber.GetConfidence;
-        ReportWithConfidence(DetectedCharset, proberConfidence);
-      end;
+          if BestConfidence > MINIMUM_THRESHOLD then
+            ReportWithConfidence(BestCharset, BestConfidence);
+        end;
+      eEscAscii:
+        begin
+          ProberConfidence := mEscCharSetProber.GetConfidence;
+          ReportWithConfidence(mEscCharSetProber.GetDetectedCharset, ProberConfidence);
+        end;
     else
-      begin
-      	mDetectedCharset := PURE_ASCII_CHARSET;
-        mDetectedConfidence := SURE_YES;
-      end;
-  end;{case}
-  {$ifdef DEBUG_chardet}
-  AddDump('Universal detector - DataEnd');
-  {$endif}
+      ReportWithConfidence(PURE_ASCII_CHARSET, SURE_YES);
+    end;
+  finally
+    mDone := True;
+  end;
 end;
 
 function TnsUniversalDetector.HandleData(aBuf: PAnsiChar; aLen: integer): nsResult;
@@ -686,6 +739,8 @@ begin
           Result := NS_OK;
           exit;
         end;
+      // Keep the first caller-supplied block intact. Splitting it internally
+      // can discard the ASCII prefix of a mixed-script word in SBCS filtering.
       SetString(PrefixPart, aBuf, aLen);
       mPrefix := mPrefix + PrefixPart;
       Result := HandleData(PAnsiChar(mPrefix), Length(mPrefix));
@@ -710,10 +765,9 @@ begin
           mSeenGreekIsoByte := TRUE;
       end;
 
-      (*other than 0xa0, if every othe character is ascii, the page is ascii*)
-      if (Byte(aBuf[i]) >= $80) and (aBuf[i] <> #$A0) then
+      // ASCII is strictly seven-bit; A0 (NBSP in several code pages) is not ASCII.
+      if Byte(aBuf[i]) >= $80 then
         begin
-          (*Since many Ascii only page contains NBSP *)
           (*we got a non-ascii byte (high-byte)*)
           if mInputState <> eHighbyte then
             begin
@@ -788,24 +842,12 @@ begin
 //BufPtr^ := aBuf[b];
 //inc(BufPtr);
 //end;
-          // Validate UTF-8 first so a pending sequence cannot lose to a CJK guess.
+          // Statistical choices remain provisional until DataEnd. A later
+          // block may change the language score, byte order or GB18030 family.
           if i = 0 then
             mCharSetProbers[3].HandleData(aBuf, aLen);
-          if i = 3 then
-            Continue;
-          st := mCharSetProbers[i].HandleData(aBuf,aLen);
-//          st := mCharSetProbers[i].HandleData(newBuf,aLen+startAt);
-          if st = psFoundIt then
-          begin
-            DetectedCharset := mCharSetProbers[i].GetDetectedCharset;
-            if (DetectedCharset = UTF8_CHARSET) or
-               (mCharSetProbers[3].GetState <> psNotMe) then
-              Continue;
-            DetectedConfidence := mCharSetProbers[i].GetConfidence;
-            if ReportWithConfidence(DetectedCharset, DetectedConfidence) then
-              mDone := True;
-            Break;
-          end;
+          if i <> 3 then
+            mCharSetProbers[i].HandleData(aBuf, aLen);
 //finally
 //FreeMem(newBuf, aLen);
 //end;
@@ -840,6 +882,10 @@ begin
      (mDetectedBOM = BOM_Not_Found) and
      (mCharSetProbers[3].GetConfidence <= SURE_NO) then
     Exit(False);
+  if (mDetectedBOM = BOM_Not_Found) and
+     (NormalizedCharset in [UTF16_LE_CHARSET, UTF16_BE_CHARSET]) and
+     not mObservedBytes.IsValidUtf16(NormalizedCharset) then
+    Exit;
   if not IsCharsetEnabled(NormalizedCharset) then
     Exit;
 
@@ -960,6 +1006,7 @@ begin
     end;
 
   if (Charset = GB18030_CHARSET) and
+     IsCharsetEnabled(GBK_CHARSET) and
      mObservedBytes.LooksLikeDbcsText and
      (not mObservedBytes.HasGb18030FourByteSequence) then
     begin

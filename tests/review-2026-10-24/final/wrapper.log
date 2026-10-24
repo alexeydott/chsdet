@@ -1,0 +1,9 @@
+PASS overflow-safe bounds and state preservation
+PASS UCS-4 2143 decoder refusal and explicit fallback
+PASS UCS-4 3412 decoder refusal and explicit fallback
+PASS valid ASCII after reset of incomplete UTF-8
+PASS EUC-TW Windows code-page mapping
+PASS Finish is terminal until Reset, including empty input
+PASS Whole mixed ASCII/Cyrillic word retains Windows-1251 evidence
+Wrapper cases: 7/7
+exit_code=0

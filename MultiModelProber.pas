@@ -86,6 +86,8 @@ begin
    AddDump('Multi Model - HandleData - start');
   {$endif}
   Result := mState;
+  if aLen <= 0 then
+    Exit;
   for i := 0 to Pred(aLen) do
     begin
 //      if mState = psDetecting then
@@ -144,9 +146,8 @@ begin
                 break;
               end;
           end;
-    end
-  else
-    Result := mState;
+    end;
+  Result := mState;
   {$IFDEF DEBUG_chardet}
    DumpStatus('Multi Model - HandleData - EXIT.');
   {$endif}

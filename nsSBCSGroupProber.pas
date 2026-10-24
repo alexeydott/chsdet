@@ -27,8 +27,11 @@ uses
 
 type
 	TnsSBCSGroupProber = class(TnsGroupProber)
+    private
+      mInInternationalWord: Boolean;
 		public
       constructor Create; reintroduce;
+      procedure Reset; override;
       function HandleData(aBuf: PAnsiChar;  aLen: integer): eProbingState; override;
 //      {$ifdef DEBUG_chardet}
 //      procedure DumpStatus; override;
@@ -94,29 +97,66 @@ begin
   // mProbers[11] = new nsSingleByteCharSetProber(&Win1250HungarianModel);
 end;
 
+procedure TnsSBCSGroupProber.Reset;
+begin
+  inherited Reset;
+  mInInternationalWord := False;
+end;
+
 function TnsSBCSGroupProber.HandleData(aBuf: PAnsiChar; aLen: integer): eProbingState;
 var
-  newBuf1: PAnsiChar;
-  newLen1: integer;
+  Filtered: PAnsiChar;
+  Output: PAnsiChar;
+  Segment: PAnsiChar;
+  Current: PAnsiChar;
+  FilteredLength: Integer;
 begin
-  newBuf1 := AllocMem(aLen);
-  newLen1 := 0;
-  (*apply filter to original buffer, and we got new buffer back*)
-  (*depend on what script it is, we will feed them the new buffer *)
-  (*we got after applying proper filter*)
-  (*this is done without any consideration to KeepEnglishLetters*)
-  (*of each prober since as of now, there are no probers here which*)
-  (*recognize languages with English characters.*)
   Result := mState;
+  if aLen <= 0 then
+    Exit;
+
+  Filtered := AllocMem(aLen);
   try
-    if (not FilterWithoutEnglishLetters(aBuf,aLen,newBuf1,newLen1)) or
-        (newLen1 = 0) then
-      exit; (* Nothing to see here, move on.*)
-    inherited HandleData(newBuf1, newLen1);
+    Output := Filtered;
+    Segment := aBuf;
+    Current := aBuf;
+    while Current < aBuf + aLen do
+    begin
+      if Byte(Current^) >= $80 then
+        mInInternationalWord := True
+      else if not (Current^ in ['A'..'Z', 'a'..'z']) then
+      begin
+        if mInInternationalWord then
+        begin
+          while Segment < Current do
+          begin
+            Output^ := Segment^;
+            Inc(Output);
+            Inc(Segment);
+          end;
+          // A delimiter in its own chunk still terminates the preceding word.
+          // Dropping it invents cross-word bigrams and breaks Hebrew word ends.
+          Output^ := ' ';
+          Inc(Output);
+        end;
+        mInInternationalWord := False;
+        Segment := Current + 1;
+      end;
+      Inc(Current);
+    end;
+    if mInInternationalWord then
+      while Segment < Current do
+      begin
+        Output^ := Segment^;
+        Inc(Output);
+        Inc(Segment);
+      end;
+    FilteredLength := Output - Filtered;
+    if FilteredLength > 0 then
+      Result := inherited HandleData(Filtered, FilteredLength);
   finally
-    FreeMem(newBuf1, aLen);
+    FreeMem(Filtered);
   end;
-  Result:= mState;
 end;
 
 {$ifdef DEBUG_chardet}
